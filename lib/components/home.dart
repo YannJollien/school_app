@@ -66,6 +66,25 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                ButtonTheme(
+                  minWidth: 200.0,
+                  height: 50.0,
+                  child: RaisedButton(
+
+                    onPressed: () {},
+                    color: Colors.blue[100],
+                    child: Text(
+                      "Game",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
