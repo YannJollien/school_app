@@ -40,10 +40,17 @@ class _ListState extends State<Lists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[600],
+        centerTitle: true,
+        title: Text(
+            "List",
+        ),
+      ),
       body: SafeArea(
         child: Container(
           alignment: Alignment.center,
-          color: Colors.cyan[300],
+          color: Colors.grey[400],
           child: Padding(
             padding: EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 0),
             child: Column(
