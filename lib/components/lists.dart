@@ -41,8 +41,7 @@ class _ListState extends State<Lists> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[600],
-        centerTitle: true,
+
         title: Text(
             "List",
         ),
@@ -50,7 +49,7 @@ class _ListState extends State<Lists> {
       body: SafeArea(
         child: Container(
           alignment: Alignment.center,
-          color: Colors.grey[400],
+            color: Colors.lightBlue[200],
           child: Padding(
             padding: EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 0),
             child: Column(

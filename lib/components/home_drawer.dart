@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/components/lists.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeDrawer extends StatelessWidget {
+
+  //To log out
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final firestoreInstance = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -11,7 +17,7 @@ class HomeDrawer extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(20.0),
-              color: Colors.grey[900],
+              color: Colors.lightBlue,
               child: Center(
                 child: Column(
                   children: <Widget>[
@@ -31,12 +37,16 @@ class HomeDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text(
-                      "userName",
-                      style: TextStyle(
-                          fontSize: 22.0, color: Colors.white
-                      ),
-                    ),
+                    /*StreamBuilder(
+                      stream: firestoreInstance.collection("users").where("id", isEqualTo: _auth.currentUser.uid).snapshots(),
+                      builder: (context, snapshot) {
+                        return (
+                        Text(
+                          snapshot.data.documents[0]["name"]
+                        )
+                        );
+                      },
+                    )*/
                   ],
                 ),
               ),
@@ -72,10 +82,50 @@ class HomeDrawer extends StatelessWidget {
                   fontSize: 18.0,
                 ),
               ),
-              onTap: null,
+              onTap: () {
+                //Navigator.pushNamed(context, '/list');
+                Navigator.of(context).pushNamed("/settings");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text(
+                "Log out",
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+              onTap: () async{
+                //Remove from fp to stop auto logged in
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('email');
+                //Log out
+                _signOut(context);
+              },
             ),
           ],
         )
     );
   }
+
+  //Method to logout
+  Future <void> _signOut(BuildContext context) async{
+    await _auth.signOut().then((_){
+      Navigator.of(context).pushNamed("/opening");
+    });
+  }
+
+  /*String getData() {
+    firestoreInstance
+        .collection("users")
+        .where("id", isEqualTo: _auth.currentUser.uid.toString())
+        .get()
+        .then((value) {
+      value.docs.forEach((result) {
+        print(result.data()["name"]);
+        return (result.data()["name"]).toString();
+      });
+    });
+  }*/
+
 }

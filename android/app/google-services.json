@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "718981971517",
+    "firebase_url": "https://flutterapp-30f82.firebaseio.com",
+    "project_id": "flutterapp-30f82",
+    "storage_bucket": "flutterapp-30f82.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718981971517:android:ce975fdccf3274149db454",
+        "android_client_info": {
+          "package_name": "com.example.schoolapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718981971517-82gpsu3co3677s9393iordfe2l9cv5jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASn_ym4W538RIwAiQOSPcEfXEpVNEQcf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718981971517-82gpsu3co3677s9393iordfe2l9cv5jt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
