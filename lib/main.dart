@@ -12,8 +12,11 @@ import 'components/login.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  //SharedPreferences prefs = await SharedPreferences.getInstance();
+  //var email = prefs.getString("email");
+  //print("Email"+email);
   runApp(MaterialApp(
-      home: Opening(),
+      home:Opening(),
       routes: {
         //'/': (context) => Loading(),
         '/opening': (context) => Opening(),

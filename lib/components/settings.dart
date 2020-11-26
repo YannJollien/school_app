@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/services/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatelessWidget {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +18,10 @@ class Settings extends StatelessWidget {
       ),
       body: FlatButton(
         onPressed: () async {
-          User user = await firebaseAuth.currentUser;
-          user.delete();
+          _auth.deleteUser();
+          //Remove from fp to stop auto logged in
+          //SharedPreferences prefs = await SharedPreferences.getInstance();
+          //prefs.remove('email');
           Navigator.of(context).pushNamed("/opening");
         },
         child: Text(

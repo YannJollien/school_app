@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/services/auth.dart';
+import 'package:schoolapp/shared/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
@@ -11,14 +13,16 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
+  final AuthService _auth = AuthService();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool isLoading = false;
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? Loading() : Scaffold(
         appBar: AppBar(title: Text("Login")),
         body: Form(
             key: _formKey,
@@ -69,25 +73,41 @@ class _LoginState extends State<Login> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: isLoading
-                        ? CircularProgressIndicator()
-                        : RaisedButton(
+                    child:  RaisedButton(
                       color: Colors.lightBlue,
-                      onPressed: () {
+                      onPressed: () async{
                         if (_formKey.currentState.validate()) {
+                          //Show loading
                           setState(() {
                             isLoading = true;
                           });
-                          logInToFb();
+                          dynamic result = await _auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
+                          if(result == null){
+                            setState(() {
+                              error = 'Could not sign in with those credentials';
+                              isLoading = false;
+                            });
+                          } else {
+                            //Go to home
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => Home()),
+                            );
+                          }
                         }
                       },
                       child: Text('Submit'),
                     ),
-                  )
+                  ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  ),
                 ]))));
   }
 
-  void logInToFb() async{
+  /*void logInToFb() async{
     FirebaseAuth.instance
         .signInWithEmailAndPassword(
         email: emailController.text, password: passwordController.text)
@@ -116,5 +136,5 @@ class _LoginState extends State<Login> {
             );
           });
     });
-  }
+  }*/
 }
