@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schoolapp/components/contactList.dart';
 
-class Lists extends StatefulWidget {
-  @override
-  ListsState createState() {
-    return ListsState();
+class ContactList extends StatefulWidget {
+  String listName ;
+
+  ContactList(String name){
+    this.listName = name;
   }
+
+  @override
+  State<StatefulWidget> createState() => new ContactListState(listName);
 }
 
-class ListsState extends State<Lists> {
+class ContactListState extends State<ContactList> {
   String id;
   final db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   String name;
-  String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
+  String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}/family';
+
+  ContactListState(data);
 
   Card buildItem(DocumentSnapshot doc) {
     return Card(
@@ -24,8 +29,12 @@ class ListsState extends State<Lists> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              '${doc.data()['listName']}',
+              '${doc.data()['surname']}' + ' ' + '${doc.data()['name']}',
               style: TextStyle(fontSize: 24),
+            ),
+            Text(
+              '${doc.data()['work']}',
+              style: TextStyle(fontSize: 20),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -37,10 +46,10 @@ class ListsState extends State<Lists> {
                 ),
                 FlatButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ContactList(doc.data()['listName'])),
-                    );
+//                    Navigator.push(
+//                      context,
+//                      MaterialPageRoute(builder: (context) => Login()),
+//                    );
                   },
                   child: Text('Show'),
                 ),
@@ -56,18 +65,17 @@ class ListsState extends State<Lists> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My lists'),
+        title: Text('Contacts'),
       ),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: db.collectionGroup('lists').snapshots(),
+            stream: db.collectionGroup(widget.listName.toLowerCase()).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                    children:
-                    snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                    children: snapshot.data.docs.map((doc) => buildItem(doc)).toList()
                 );
               } else {
                 return SizedBox();
