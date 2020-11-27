@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
+import 'package:schoolapp/services/listService.dart';
 
 class Lists extends StatefulWidget {
   @override
@@ -15,6 +17,8 @@ class ListsState extends State<Lists> {
   final _formKey = GlobalKey<FormState>();
   String name;
   String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
+
+  ListService _listService = ListService();
 
   Card buildItem(DocumentSnapshot doc) {
     return Card(
@@ -62,7 +66,7 @@ class ListsState extends State<Lists> {
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: db.collectionGroup('lists').snapshots(),
+//            stream: db.collectionGroup('lists').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Column(

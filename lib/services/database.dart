@@ -21,5 +21,9 @@ class DatabaseService {
     return await collection.doc(uid).delete();
   }
 
+  //Get user lists
+  Future getListsData() async{
+    return await collection.doc(uid).collection('lists').snapshots();
+  }
 
 }

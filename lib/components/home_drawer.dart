@@ -62,7 +62,7 @@ class HomeDrawer extends StatelessWidget {
               ),
               onTap: () {
                 //Navigator.pushNamed(context, '/list');
-                Navigator.of(context).pushNamed("/list");
+                Navigator.of(context).pushNamed("/lists");
               },
             ),
             ListTile(
