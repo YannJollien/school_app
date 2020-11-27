@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/opening.dart';
+import 'package:schoolapp/services/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeDrawer extends StatelessWidget {
 
   //To log out
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final firestoreInstance = FirebaseFirestore.instance;
+  final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -97,10 +98,15 @@ class HomeDrawer extends StatelessWidget {
               ),
               onTap: () async{
                 //Remove from fp to stop auto logged in
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove('email');
+                //SharedPreferences prefs = await SharedPreferences.getInstance();
+                //prefs.remove('email');
                 //Log out
-                _signOut(context);
+                _auth.signOut();
+                //Go to opening page when logged out
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Opening()),
+                );
               },
             ),
           ],
@@ -108,24 +114,6 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  //Method to logout
-  Future <void> _signOut(BuildContext context) async{
-    await _auth.signOut().then((_){
-      Navigator.of(context).pushNamed("/opening");
-    });
-  }
 
-  /*String getData() {
-    firestoreInstance
-        .collection("users")
-        .where("id", isEqualTo: _auth.currentUser.uid.toString())
-        .get()
-        .then((value) {
-      value.docs.forEach((result) {
-        print(result.data()["name"]);
-        return (result.data()["name"]).toString();
-      });
-    });
-  }*/
 
 }
