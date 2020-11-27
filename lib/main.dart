@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'components/home.dart';
 import 'components/lists.dart';
 import 'components/opening.dart';
@@ -22,7 +23,7 @@ void main() async {
         '/login': (context) => Login(),
         '/register': (context) => Register(),
         '/home': (context) => Home(),
-        '/list': (context) => Lists(),
+        '/lists': (context) => Lists(),
         '/settings': (context) => Settings()
       }
   ));
