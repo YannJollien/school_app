@@ -8,24 +8,22 @@ class ListService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
   //Get the lists
   Stream<QuerySnapshot> getLists() {
     User user =  _auth.currentUser;
     return DatabaseService(uid: user.uid).getListsData();
   }
 
-  //Delete a list
-  Future deleteLists(DocumentSnapshot doc) async{
+  //Update a list
+  Future updateLists(String doc, String listName) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).deleteListsData(doc);
+    await DatabaseService(uid: user.uid).updateListsData(doc, listName);
   }
 
-
-  //Update a list
-  Future updateLists() async{
+  //Delete a list
+  Future deleteLists(String doc) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).updateListsData();
+    await DatabaseService(uid: user.uid).deleteListsData(doc);
   }
 
 }

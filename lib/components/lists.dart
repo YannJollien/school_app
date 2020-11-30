@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
@@ -14,7 +13,6 @@ class Lists extends StatefulWidget {
 class ListsState extends State<Lists> {
   String id;
   final db = FirebaseFirestore.instance;
-  final _formKey = GlobalKey<FormState>();
   String name;
   String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
 
@@ -47,12 +45,14 @@ class ListsState extends State<Lists> {
                     icon: Icon(Icons.delete),
                     color: Colors.blue,
                     onPressed: () {
-                      db
-                          .collection('users')
-                          .doc('134fJsKGo4fD2NEXhmVlPxUBTIh2')
-                          .collection('lists')
-                          .doc(doc.data()['listName'])
-                          .delete();
+                     _listService.deleteLists(doc.id);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.mode_edit),
+                    color: Colors.blue,
+                    onPressed: () {
+                      //_listService.updateLists(doc);
                     },
                   ),
                 ],
@@ -67,6 +67,13 @@ class ListsState extends State<Lists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton (
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
+        onPressed: (){
+
+        },
+      ),
       appBar: AppBar(
         title: Text('My lists'),
       ),
@@ -89,9 +96,5 @@ class ListsState extends State<Lists> {
         ],
       ),
     );
-  }
-
-  void deleteData(DocumentSnapshot doc) async {
-
   }
 }

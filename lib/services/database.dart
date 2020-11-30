@@ -28,13 +28,19 @@ class DatabaseService {
   }
 
   //Update lists for a user
-  Future updateListsData() async{
-    return await collection.doc(uid).collection('lists').snapshots();
+  Future addListsData(String listName) async{
+    return await collection.doc(uid).collection('lists');
+  }
+
+
+  //Update lists for a user
+  Future updateListsData(String doc, String listName) async{
+    return await collection.doc(uid).collection('lists').doc(doc).set({'listName': listName});
   }
 
   //Delete lists for a user
-  Future deleteListsData(DocumentSnapshot doc) async{
-    return await collection.doc(uid).collection('lists').doc().snapshots();
+  Future deleteListsData(String doc) async{
+    return await collection.doc(uid).collection('lists').doc(doc).delete();
   }
 
 }
