@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/services/auth.dart';
+import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/shared/loading.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 //inpiration https://github.com/PeterHdd/Firebase-Flutter-tutorials/blob/master/firebase_authentication_tutorial/lib/email_signup.dart
@@ -15,15 +16,19 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final databaseReference = Firestore.instance;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final AuthService _auth = AuthService();
+  DatabaseService service = DatabaseService();
   String error =" ";
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +100,15 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                   ),
+                  SizedBox(height: 20.0),
+                  RaisedButton(
+                    onPressed: () async{
+                      await service.uploadImage(emailController.text);
+                    },
+                    child: Text(
+                        "Upload image"
+                    ),
+                  ),
                   Padding(
                     padding: EdgeInsets.all(20.0),
                     child: RaisedButton(
@@ -125,13 +139,16 @@ class _RegisterState extends State<Register> {
                       child: Text('Submit'),
                     ),
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 20.0),
                   Text(
                     error,
                     style: TextStyle(color: Colors.red, fontSize: 14.0),
                   ),
                 ]))));
   }
+
+
+
 
   @override
   void dispose() {

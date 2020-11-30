@@ -107,34 +107,5 @@ class _LoginState extends State<Login> {
                 ]))));
   }
 
-  /*void logInToFb() async{
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-        email: emailController.text, password: passwordController.text)
-        .then((result) {
-      isLoading = false;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Home()),
-      );
-    }).catchError((err) {
-      print(err.message);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Error"),
-              content: Text(err.message),
-              actions: [
-                FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
-  }*/
+
 }
