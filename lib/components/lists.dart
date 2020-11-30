@@ -36,7 +36,7 @@ class ListsState extends State<Lists> {
               children: <Widget>[
                 SizedBox(width: 8),
                 FlatButton(
-                  onPressed: () => deleteData(doc),
+                  onPressed: () => _listService.deleteLists(doc),
                   child: Text('Delete'),
                 ),
                 FlatButton(
@@ -66,12 +66,12 @@ class ListsState extends State<Lists> {
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-//            stream: db.collectionGroup('lists').snapshots(),
-            builder: (context, snapshot) {
+            stream: _listService.getLists(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                    children:
-                    snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  children:
+                  snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
                 );
               } else {
                 return SizedBox();
