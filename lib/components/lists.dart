@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
@@ -14,7 +13,6 @@ class Lists extends StatefulWidget {
 class ListsState extends State<Lists> {
   String id;
   final db = FirebaseFirestore.instance;
-  final _formKey = GlobalKey<FormState>();
   String name;
   String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
 
@@ -22,35 +20,45 @@ class ListsState extends State<Lists> {
 
   Card buildItem(DocumentSnapshot doc) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              '${doc.data()['listName']}',
-              style: TextStyle(fontSize: 24),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                SizedBox(width: 8),
-                FlatButton(
-                  onPressed: () => deleteData(doc),
-                  child: Text('Delete'),
-                ),
-                FlatButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ContactList(doc.data()['listName'])),
-                    );
-                  },
-                  child: Text('Show'),
-                ),
-              ],
-            )
-          ],
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ContactList(doc.data()['listName'])),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    '${doc.data()['listName']}',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    color: Colors.blue,
+                    onPressed: () {
+                     _listService.deleteLists(doc.id);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.mode_edit),
+                    color: Colors.blue,
+                    onPressed: () {
+                      //_listService.updateLists(doc);
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -59,6 +67,13 @@ class ListsState extends State<Lists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton (
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
+        onPressed: (){
+
+        },
+      ),
       appBar: AppBar(
         title: Text('My lists'),
       ),
@@ -66,12 +81,12 @@ class ListsState extends State<Lists> {
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-//            stream: db.collectionGroup('lists').snapshots(),
-            builder: (context, snapshot) {
+            stream: _listService.getLists(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                    children:
-                    snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  children:
+                  snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
                 );
               } else {
                 return SizedBox();
@@ -81,9 +96,5 @@ class ListsState extends State<Lists> {
         ],
       ),
     );
-  }
-
-  void deleteData(DocumentSnapshot doc) async {
-
   }
 }

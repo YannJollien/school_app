@@ -1,3 +1,5 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:schoolapp/services/database.dart';
 
@@ -7,9 +9,22 @@ class ListService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  //Delete user
-  Future getLists() async{
-    User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).getListsData();
+  //Get the lists
+  Stream<QuerySnapshot> getLists() {
+    User user =  _auth.currentUser;
+    return DatabaseService(uid: user.uid).getListsData();
   }
+
+  //Update a list
+  Future updateLists(String doc, String listName) async{
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).updateListsData(doc, listName);
+  }
+
+  //Delete a list
+  Future deleteLists(String doc) async{
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).deleteListsData(doc);
+  }
+
 }
