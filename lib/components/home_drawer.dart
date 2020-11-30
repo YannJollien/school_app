@@ -25,12 +25,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   String imageUrl;
   String name;
+  var ref;
 
   @override
   void initState() {
     super.initState();
     //Get the profile image
-    var ref = FirebaseStorage.instance.ref().child("images/${firebaseAuth.currentUser.email}");
+    ref = FirebaseStorage.instance.ref().child("images/${firebaseAuth.currentUser.email}");
     ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
   }
 
@@ -53,7 +54,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         top: 30.0
                       ),
                       child: FadeInImage.assetNetwork(
-                         image: imageUrl,
+                         image: (ref != null ? imageUrl : 'assets/person.png'),
                          placeholder: 'assets/person.png',
                        ),
                       ),

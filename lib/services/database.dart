@@ -34,12 +34,10 @@ class DatabaseService {
       _storage.ref()
           .child("images/$email")
           .putFile(file);
-      //TODO show text that image is loaded
       print("Uploaded");
     }else {
       print("No path recieved");
     }
-
   }
 
   //Delet user from cloud firestore

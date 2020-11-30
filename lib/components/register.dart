@@ -29,6 +29,7 @@ class _RegisterState extends State<Register> {
   TextEditingController passwordController = TextEditingController();
 
   String imageUrl;
+  String text = "No image";
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +105,20 @@ class _RegisterState extends State<Register> {
                   RaisedButton(
                     onPressed: () async{
                       await service.uploadImage(emailController.text);
+                      setState(() {
+                        text = "Image selected";
+                      });
                     },
                     child: Text(
                         "Upload image"
+
+                    ),
+                  ),
+                  Text(
+                      text,
+                    style: TextStyle(
+                        color: (text.contains("selected") ? Colors.green : Colors.black),
+                        fontSize: 20.0
                     ),
                   ),
                   Padding(
