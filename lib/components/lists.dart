@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
@@ -13,6 +14,7 @@ class Lists extends StatefulWidget {
 class ListsState extends State<Lists> {
   String id;
   final db = FirebaseFirestore.instance;
+
   String name;
   String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
 
@@ -46,13 +48,16 @@ class ListsState extends State<Lists> {
                     color: Colors.blue,
                     onPressed: () {
                      _listService.deleteLists(doc.id);
+                     _listService.deleteSubLists(doc.id);
                     },
                   ),
                   IconButton(
                     icon: Icon(Icons.mode_edit),
                     color: Colors.blue,
                     onPressed: () {
-                      //_listService.updateLists(doc);
+                      AlertDialogUpdateList(context).then((value) => setState(() {
+                        _listService.updateLists(doc.id, value);
+                      }));
                     },
                   ),
                 ],
@@ -66,12 +71,19 @@ class ListsState extends State<Lists> {
 
   @override
   Widget build(BuildContext context) {
+    final autoID = db.collection('lists').doc().id;
+
     return Scaffold(
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
         onPressed: (){
-
+          AlertDialogAddList(context).then((value) => setState(() {
+            if(value != null) {
+              _listService.addList(autoID, value);
+              _listService.addCollection(autoID, 'Contact');
+            }
+          }));
         },
       ),
       appBar: AppBar(
@@ -96,5 +108,54 @@ class ListsState extends State<Lists> {
         ],
       ),
     );
+  }
+
+
+  Future<String> AlertDialogAddList(BuildContext context) {
+    TextEditingController customController = new TextEditingController();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: TextField(
+              controller: customController,
+              decoration:
+              new InputDecoration(labelText: 'list name'),
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                elevation: 5.0,
+                child: Text("Add"),
+                onPressed: () {
+                  Navigator.of(context).pop(customController.text.toString());
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<String> AlertDialogUpdateList(BuildContext context) {
+    TextEditingController customController = new TextEditingController();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: TextField(
+              controller: customController,
+              decoration:
+              new InputDecoration(labelText: 'list name'),
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                elevation: 5.0,
+                child: Text("Update"),
+                onPressed: () {
+                  Navigator.of(context).pop(customController.text.toString());
+                },
+              ),
+            ],
+          );
+        });
   }
 }

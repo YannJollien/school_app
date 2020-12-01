@@ -1,9 +1,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseService {
 
   final String uid;
+
 
   DatabaseService({this.uid});
 
@@ -28,19 +30,33 @@ class DatabaseService {
   }
 
   //Update lists for a user
-  Future addListsData(String listName) async{
-    return await collection.doc(uid).collection('lists');
+  Future addListsData(String docID, String listName) async{
+    return await collection.doc(uid).collection('lists').doc(docID).set({'listName': listName});
+  }
+
+  //Update lists for a user
+  Future addCollectionData(String docID, String listName) async{
+    return await collection.doc(uid).collection('lists').doc(docID).collection(listName).add({});
   }
 
 
   //Update lists for a user
   Future updateListsData(String doc, String listName) async{
-    return await collection.doc(uid).collection('lists').doc(doc).set({'listName': listName});
+    return await collection.doc(uid).collection('lists').doc(doc).update({'listName': listName});
   }
 
   //Delete lists for a user
   Future deleteListsData(String doc) async{
     return await collection.doc(uid).collection('lists').doc(doc).delete();
+  }
+
+  //Delete lists for a user
+  Future deleteSubListData(String doc) async{
+    return await collection.doc(uid).collection('lists').doc(doc).collection('Contact').get().then((value) {
+      for (DocumentSnapshot doc in value.docs) {
+        doc.reference.delete();
+      }
+    });
   }
 
 }
