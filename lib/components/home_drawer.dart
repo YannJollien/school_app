@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/opening.dart';
+import 'package:schoolapp/components/register.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 
@@ -23,16 +24,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  String imageUrl;
-  String name;
-  var refImage;
-
-  @override
-  void initState() {
-    super.initState();
-    //Get the profile image
-    //refImage = FirebaseStorage.instance.ref().child("images/${firebaseAuth.currentUser.email}");
-    //refImage.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
+  //Get the image from storage
+  Future<Widget> getImage(BuildContext context, String imageName) async {
+    Image image;
+    await FireStorageService.loadImage(context, imageName).then((value) {
+      image = Image.network(
+        value.toString(),
+        fit: BoxFit.scaleDown
+      );
+    });
+    return image;
   }
 
   @override
@@ -53,6 +54,26 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       margin: EdgeInsets.only(
                         top: 30.0
                       ),
+                      child: FutureBuilder(
+                        future: getImage(context, firebaseAuth.currentUser.email),
+                        builder: (context, snapshot){
+                          if(snapshot.connectionState == ConnectionState.done){
+                            return Container(
+                              width: MediaQuery.of(context).size.width / 1.2,
+                              height: MediaQuery.of(context).size.width / 1.2,
+                              child: snapshot.data,
+                            );
+                          }
+                          if(snapshot.connectionState == ConnectionState.waiting){
+                            return Container(
+                              width: MediaQuery.of(context).size.width / 1.2,
+                              height: MediaQuery.of(context).size.width / 1.2,
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Container();
+                        },
+                      )
                       ),
                     SizedBox(height: 20.0),
                     StreamBuilder<DocumentSnapshot>(
@@ -140,4 +161,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
         )
     );
   }
+}
+
+//Helper class to get the image
+class FireStorageService extends ChangeNotifier {
+  FireStorageService();
+  static Future<dynamic> loadImage(BuildContext context, String email) async {
+    return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
+  }
+
 }
