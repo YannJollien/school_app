@@ -16,18 +16,30 @@ class Settings extends StatelessWidget {
           "Setting"
         ),
       ),
-      body: FlatButton(
-        onPressed: () async {
-          _auth.deleteUser();
-          //Remove from fp to stop auto logged in
-          //SharedPreferences prefs = await SharedPreferences.getInstance();
-          //prefs.remove('email');
-          Navigator.of(context).pushNamed("/opening");
-        },
-        child: Text(
-          "Delete account"
-        ),
-      ),
+      body: Column(
+        children: <Widget>[
+          FlatButton(
+            onPressed: () async {
+              _auth.deleteUser();
+              //Remove from fp to stop auto logged in
+              //SharedPreferences prefs = await SharedPreferences.getInstance();
+              //prefs.remove('email');
+              Navigator.of(context).pushNamed("/opening");
+            },
+            child: Text(
+                "Delete account"
+            ),
+          ),
+          FlatButton(
+            onPressed: () async {
+              Navigator.of(context).pushNamed("/password");
+            },
+            child: Text(
+                "Change password"
+            ),
+          ),
+        ],
+      )
     );
   }
 }
