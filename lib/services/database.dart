@@ -1,11 +1,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class DatabaseService {
 
   final String uid;
-
 
   DatabaseService({this.uid});
 
@@ -17,6 +15,25 @@ class DatabaseService {
     return await collection.doc(uid).set({
       'name' : name,
     });
+  }
+
+  //Insert image
+  Future uploadImage(String email) async{
+    final _storage = FirebaseStorage.instance;
+    final _picker = ImagePicker();
+    PickedFile image;
+
+    image = await _picker.getImage(source: ImageSource.gallery);
+    var file = File(image.path);
+
+    if(image != null){
+      _storage.ref()
+          .child("images/$email")
+          .putFile(file);
+      print("Uploaded");
+    }else {
+      print("No path recieved");
+    }
   }
 
   //Delet user from cloud firestore
@@ -48,15 +65,6 @@ class DatabaseService {
   //Delete lists for a user
   Future deleteListsData(String doc) async{
     return await collection.doc(uid).collection('lists').doc(doc).delete();
-  }
-
-  //Delete lists for a user
-  Future deleteSubListData(String doc) async{
-    return await collection.doc(uid).collection('lists').doc(doc).collection('Contact').get().then((value) {
-      for (DocumentSnapshot doc in value.docs) {
-        doc.reference.delete();
-      }
-    });
   }
 
 }

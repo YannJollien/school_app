@@ -1,14 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/opening.dart';
 import 'package:schoolapp/services/auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:schoolapp/services/database.dart';
 
 
-class HomeDrawer extends StatelessWidget {
+
+class HomeDrawer extends StatefulWidget {
 
   //To log out
+  @override
+  _HomeDrawerState createState() => _HomeDrawerState();
+}
+
+class _HomeDrawerState extends State<HomeDrawer> {
+
   final AuthService _auth = AuthService();
+
+  final DatabaseService service = DatabaseService();
+
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  String imageUrl;
+  String name;
+  var ref;
+
+  @override
+  void initState() {
+    super.initState();
+    //Get the profile image
+    ref = FirebaseStorage.instance.ref().child("images/${firebaseAuth.currentUser.email}");
+    ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +53,33 @@ class HomeDrawer extends StatelessWidget {
                       margin: EdgeInsets.only(
                         top: 30.0
                       ),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            ""
-                          ),
-                          fit: BoxFit.fill
-                        ),
+                      child: FadeInImage.assetNetwork(
+                         image: (ref != null ? imageUrl : 'assets/person.png'),
+                         placeholder: 'assets/person.png',
+                       ),
                       ),
-                    ),
-                    /*StreamBuilder(
-                      stream: firestoreInstance.collection("users").where("id", isEqualTo: _auth.currentUser.uid).snapshots(),
-                      builder: (context, snapshot) {
-                        return (
-                        Text(
-                          snapshot.data.documents[0]["name"]
-                        )
-                        );
+                    SizedBox(height: 20.0),
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: Firestore.instance.collection('users').doc(firebaseAuth.currentUser.uid).snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.hasError)
+                          return new Text('Error: ${snapshot.error}');
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return new Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          default:
+                            return Text(
+                                snapshot.data.get("name").toString(),
+                              style: TextStyle(
+                                fontSize: 25.0
+                              ),
+                            );
+                        }
                       },
-                    )*/
+                    )
                   ],
                 ),
               ),
@@ -61,7 +93,6 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                //Navigator.pushNamed(context, '/list');
                 Navigator.of(context).pushNamed("/lists");
               },
             ),
@@ -113,7 +144,4 @@ class HomeDrawer extends StatelessWidget {
         )
     );
   }
-
-
-
 }
