@@ -77,7 +77,7 @@ class DatabaseService {
 
   //Delete all contacts from a list
   Future deleteSubListsData(String doc) async{
-    return await collectionUser.doc(uid).collection('lists').doc(doc).collection('Contact').get().then((value) {
+    return await collectionUser.doc(uid).collection('lists').doc(doc).collection('contacts').get().then((value) {
       for (DocumentSnapshot ds in value.docs){
         ds.reference.delete();
       }
