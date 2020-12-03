@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
@@ -47,8 +46,7 @@ class ListsState extends State<Lists> {
                     icon: Icon(Icons.delete),
                     color: Colors.blue,
                     onPressed: () {
-                     _listService.deleteLists(doc.id);
-                     _listService.deleteSubLists(doc.id);
+                      AlertDialogDeleteList(context, doc);
                     },
                   ),
                   IconButton(
@@ -56,7 +54,9 @@ class ListsState extends State<Lists> {
                     color: Colors.blue,
                     onPressed: () {
                       AlertDialogUpdateList(context).then((value) => setState(() {
-                        _listService.updateLists(doc.id, value);
+                        if(value!=null) {
+                          _listService.updateLists(doc.id, value);
+                        }
                       }));
                     },
                   ),
@@ -110,7 +110,8 @@ class ListsState extends State<Lists> {
     );
   }
 
-
+  // To add a list an alert dialog is displayed on the screen,
+  // it will ask the user to enter the name of the list he wants to create
   Future<String> AlertDialogAddList(BuildContext context) {
     TextEditingController customController = new TextEditingController();
     return showDialog(
@@ -135,6 +136,9 @@ class ListsState extends State<Lists> {
         });
   }
 
+  // To update a list an alert dialog is displayed on the screen,
+  // it will ask the user to enter a new name for the list, if the user
+  // clicks outside of the alert dialog, the update is cancel.
   Future<String> AlertDialogUpdateList(BuildContext context) {
     TextEditingController customController = new TextEditingController();
     return showDialog(
@@ -157,5 +161,45 @@ class ListsState extends State<Lists> {
             ],
           );
         });
+  }
+
+  // When a user want to delete a list an alert dialog appears to ask him
+  // if he really want to delete his list knowing that all his contact will
+  // be deleted wit the list.
+  AlertDialogDeleteList(BuildContext context, DocumentSnapshot doc) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      color: Colors.blue,
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Delete"),
+      color: Colors.red,
+      onPressed: () {
+        _listService.deleteSubLists(doc.id);
+        _listService.deleteLists(doc.id);
+        Navigator.of(context).pop();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete " + doc.data()['listName']),
+      content: Text(
+          "Are you sure you want to delete this list ? The contacts in this list will be deleted from the applicaiton."),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

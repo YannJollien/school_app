@@ -44,7 +44,7 @@ class ListService {
   //Delete a list
   Future deleteSubLists(String doc) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).deleteSubListData(doc);
+    await DatabaseService(uid: user.uid).deleteSubListsData(doc);
   }
 
 }
