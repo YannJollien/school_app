@@ -165,7 +165,7 @@ class ContactDetailsState extends State<ContactDetails> {
         suffixIcon: IconButton(
           color: Colors.black,
           onPressed: () {
-
+              //Save the notes
           },
           icon: Icon(Icons.save),
         ),
