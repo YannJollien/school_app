@@ -32,19 +32,19 @@ class DatabaseService {
 
   //Get contact list for a user
   Stream<QuerySnapshot> getContactListData(DocumentSnapshot doc) {
-    return collection.doc(uid).collection('lists').doc(doc.id).collection('contacts').snapshots();
+    return collectionUser.doc(uid).collection('lists').doc(doc.id).collection('contacts').snapshots();
   }
 
   //Delete contact in a list
   Future deleteContactData(DocumentSnapshot docList, DocumentSnapshot docContact) async{
-    return await collection.doc(uid).collection('lists').doc(docList.id).collection('contacts')
+    return await collectionUser.doc(uid).collection('lists').doc(docList.id).collection('contacts')
         .doc(docContact.id)
         .delete();
   }
 
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname, String lastname, String phone, String email, String institution) async{
-    return await collection.doc(uid).collection('lists').doc(docList.id).collection('contacts')
+    return await collectionUser.doc(uid).collection('lists').doc(docList.id).collection('contacts')
         .add({
       'firstname': firstname,
       'lastname': lastname,
