@@ -48,6 +48,21 @@ class AuthService {
     }
   }
 
+  void changePassword(String password1, String password2) async{
+    //Create an instance of the current user.
+    User user = _auth.currentUser;
+
+    if(password1 == password2){
+      //Pass in the password to updatePassword.
+      user.updatePassword(password1).then((_){
+        print("Succesfull changed password");
+      }).catchError((error){
+        print("Password can't be changed" + error.toString());
+        //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+      });
+    }
+  }
+
   //Delete user
   Future deleteUser() async{
     User user = await _auth.currentUser;
