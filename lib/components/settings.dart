@@ -17,25 +17,51 @@ class Settings extends StatelessWidget {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          FlatButton(
-            onPressed: () async {
-              _auth.deleteUser();
-              //Remove from fp to stop auto logged in
-              //SharedPreferences prefs = await SharedPreferences.getInstance();
-              //prefs.remove('email');
-              Navigator.of(context).pushNamed("/opening");
-            },
-            child: Text(
-                "Delete account"
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                "Account",
+                style: TextStyle(
+                  color: Colors.cyan[400],
+                  fontSize: 20.0
+                ),
+              ),
             ),
           ),
-          FlatButton(
-            onPressed: () async {
-              Navigator.of(context).pushNamed("/password");
-            },
-            child: Text(
-                "Change password"
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton(
+              onPressed: () async {
+                _auth.deleteUser();
+                //Remove from fp to stop auto logged in
+                //SharedPreferences prefs = await SharedPreferences.getInstance();
+                //prefs.remove('email');
+                Navigator.of(context).pushNamed("/opening");
+              },
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    "Delete account"
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton(
+              onPressed: () async {
+                Navigator.of(context).pushNamed("/password");
+              },
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    "Change password",
+                ),
+              ),
             ),
           ),
         ],

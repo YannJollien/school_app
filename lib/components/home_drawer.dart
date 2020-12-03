@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/components/opening.dart';
-import 'package:schoolapp/components/register.dart';
+import 'package:schoolapp/components/login.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -34,6 +34,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
       );
     });
     return image;
+  }
+
+  //Remove login from shared prefs
+  Future removePref() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove("email");
   }
 
   @override
@@ -145,15 +151,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ),
               ),
               onTap: () async{
-                //Remove from fp to stop auto logged in
-                //SharedPreferences prefs = await SharedPreferences.getInstance();
-                //prefs.remove('email');
                 //Log out
+                removePref();
                 _auth.signOut();
                 //Go to opening page when logged out
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => Opening()),
+                  MaterialPageRoute(builder: (context) => Login()),
                 );
               },
             ),

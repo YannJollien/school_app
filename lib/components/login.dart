@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/register.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/shared/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,6 +82,8 @@ class _LoginState extends State<Login> {
                           setState(() {
                             isLoading = true;
                           });
+                          SharedPreferences preferences = await SharedPreferences.getInstance();
+                          preferences.setString("email", emailController.text);
                           dynamic result = await _auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
                           if(result == null){
                             setState(() {
@@ -97,6 +100,25 @@ class _LoginState extends State<Login> {
                         }
                       },
                       child: Text('Submit'),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child:  FlatButton(
+                      color: Colors.white,
+                      onPressed: () async{
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => Register()),
+                            );
+                        },
+                      child: Text(
+                          'Not registered yet clik here',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 12.0),

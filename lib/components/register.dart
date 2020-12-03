@@ -151,7 +151,7 @@ class _RegisterState extends State<Register> {
                     child: RaisedButton(
                       color: Colors.lightBlue,
                       onPressed: () async{
-                        uploadImage(firebaseAuth.currentUser.email);
+                        uploadImage(emailController.text);
                         downloadImage();
                         if (_formKey.currentState.validate()) {
                           //Show Loading

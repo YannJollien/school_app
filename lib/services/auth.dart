@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:schoolapp/models/user.dart';
 import 'package:schoolapp/services/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
 

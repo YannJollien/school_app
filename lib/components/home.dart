@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/home_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Home extends StatefulWidget {
@@ -8,6 +10,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  String email = "";
+
+  Future getEmail() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      email = preferences.getString("email");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
