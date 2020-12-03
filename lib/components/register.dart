@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/shared/loading.dart';
@@ -17,6 +19,34 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
+  File imageFile;
+  Reference ref;
+  String downloadUrl;
+
+
+  //Get image
+  Future getImage () async {
+    File image;
+    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      imageFile = image;
+    });
+  }
+
+  //Upload image
+  Future uploadImage (String email) async {
+    ref = FirebaseStorage.instance.ref().child("images/$email");
+    ref.putFile(imageFile);
+  }
+
+  //Get image Url
+  Future downloadImage () async {
+    String downloadAddress = await ref.getDownloadURL();
+    setState(() {
+      downloadUrl = downloadAddress;
+    });
+  }
+
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final databaseReference = Firestore.instance;
@@ -28,7 +58,6 @@ class _RegisterState extends State<Register> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  String imageUrl;
   String text = "No image";
 
   @override
@@ -102,23 +131,19 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-                  RaisedButton(
-                    onPressed: () async{
-                      await service.uploadImage(emailController.text);
-                      setState(() {
-                        text = "Image selected";
-                      });
-                    },
-                    child: Text(
-                        "Upload image"
-
-                    ),
-                  ),
-                  Text(
-                      text,
-                    style: TextStyle(
-                        color: (text.contains("selected") ? Colors.green : Colors.black),
-                        fontSize: 20.0
+                  GestureDetector(
+                    onTap: () => getImage(),
+                    child: Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      alignment: Alignment.center,
+                      child: imageFile == null ? Text(
+                        "TAp to add image",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ) : Image.file(imageFile)
                     ),
                   ),
                   Padding(
@@ -126,6 +151,8 @@ class _RegisterState extends State<Register> {
                     child: RaisedButton(
                       color: Colors.lightBlue,
                       onPressed: () async{
+                        uploadImage(firebaseAuth.currentUser.email);
+                        downloadImage();
                         if (_formKey.currentState.validate()) {
                           //Show Loading
                           setState(() {

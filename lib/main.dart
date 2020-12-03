@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'components/change_password.dart';
 import 'components/home.dart';
 import 'components/lists.dart';
 import 'components/opening.dart';
@@ -15,7 +16,7 @@ void main() async {
   //var email = prefs.getString("email");
   //print("Email"+email);
   runApp(MaterialApp(
-      home:Opening(),
+      home: Opening(),
       routes: {
         //'/': (context) => Loading(),
         '/opening': (context) => Opening(),
@@ -23,7 +24,8 @@ void main() async {
         '/register': (context) => Register(),
         '/home': (context) => Home(),
         '/lists': (context) => Lists(),
-        '/settings': (context) => Settings()
+        '/settings': (context) => Settings(),
+        '/password' : (context) => Password()
       }
   ));
 }
