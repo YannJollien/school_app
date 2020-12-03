@@ -1,8 +1,10 @@
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DatabaseService {
@@ -45,6 +47,31 @@ class DatabaseService {
     return await collection.doc(uid).delete();
   }
 
+  //Get contact list for a user
+  Stream<QuerySnapshot> getContactListData(DocumentSnapshot doc) {
+    return collection.doc(uid).collection('lists').doc(doc.id).collection('contacts').snapshots();
+  }
+
+  //Delete contact in a list
+  Future deleteContactData(DocumentSnapshot docList, DocumentSnapshot docContact) async{
+    return await collection.doc(uid).collection('lists').doc(docList.id).collection('contacts')
+        .doc(docContact.id)
+        .delete();
+  }
+
+  //Add contact in a list
+  Future addContactData(DocumentSnapshot docList, String firstname, String lastname, String phone, String email, String institution) async{
+    return await collection.doc(uid).collection('lists').doc(docList.id).collection('contacts')
+        .add({
+      'firstname': firstname,
+      'lastname': lastname,
+      'phone': phone,
+      'email': email,
+      'institution': institution,
+      'notes': ''
+    });
+  }
+
   //Get lists for a user
   Stream<QuerySnapshot> getListsData() {
     return collection.doc(uid).collection('lists').snapshots();
@@ -54,7 +81,6 @@ class DatabaseService {
   Future addListsData(String listName) async{
     return await collection.doc(uid).collection('lists');
   }
-
 
   //Update lists for a user
   Future updateListsData(String doc, String listName) async{

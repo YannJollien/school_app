@@ -13,9 +13,6 @@ class Lists extends StatefulWidget {
 class ListsState extends State<Lists> {
   String id;
   final db = FirebaseFirestore.instance;
-  String name;
-  String collectionName = 'users/{134fJsKGo4fD2NEXhmVlPxUBTIh2}';
-
   ListService _listService = ListService();
 
   Card buildItem(DocumentSnapshot doc) {
@@ -25,7 +22,7 @@ class ListsState extends State<Lists> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ContactList(doc.data()['listName'])),
+                builder: (context) => ContactList(doc)),
           );
         },
         child: Padding(
