@@ -23,12 +23,6 @@ class ListService {
   }
 
   //Update a list
-  Future addCollection(String docId, String listName) async{
-    User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).addCollectionData(docId, listName);
-  }
-
-  //Update a list
   Future updateLists(String doc, String listName) async{
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).updateListsData(doc, listName);

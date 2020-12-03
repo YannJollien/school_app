@@ -81,7 +81,6 @@ class ListsState extends State<Lists> {
           AlertDialogAddList(context).then((value) => setState(() {
             if(value != null) {
               _listService.addList(autoID, value);
-              _listService.addCollection(autoID, 'Contact');
             }
           }));
         },

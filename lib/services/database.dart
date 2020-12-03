@@ -37,11 +37,6 @@ class DatabaseService {
     return await collectionUser.doc(uid).collection('lists').doc(docID).set({'listName': listName});
   }
 
-  //Add the collection "Contact" for a new document created
-  Future addCollectionData(String docID, String listName) async{
-    return await collectionUser.doc(uid).collection('lists').doc(docID).collection(listName).add({});
-  }
-
 
   //Update lists for a user
   Future updateListsData(String doc, String listName) async{
