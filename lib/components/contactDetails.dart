@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ class ContactDetails extends StatefulWidget {
 class ContactDetailsState extends State<ContactDetails> {
   ContactDetailsState(data);
 
-  ContactService _contactService = ContactService();
+  static ContactService _contactService = ContactService();
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +101,18 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+//  //Get the image from storage
+//  Future<Widget> getImage(BuildContext context, String imageName) async {
+//    Image image;
+//    await FireStorageService.loadImage(context, imageName).then((value) {
+//      image = Image.network(
+//          value.toString(),
+//          fit: BoxFit.scaleDown
+//      );
+//    });
+//    return image;
+//  }
+
   Widget detailsSection = Container(
     padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
     child: Row(
@@ -145,29 +158,41 @@ class ContactDetailsState extends State<ContactDetails> {
     ),
   );
 
+  static final notesController = TextEditingController();
   static Widget _buildNotes(String content) {
-    return TextFormField(
-      initialValue: ContactDetails.contactDoc.data()[content],
-      minLines: 1,
-      maxLines: 5,
-//      inputFormatters: [
-//        new LengthLimitingTextInputFormatter(30),
-//      ],
-      decoration: InputDecoration(
-        fillColor: Colors.yellow,
-        filled: true,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.yellow, width: 5.0),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.yellow),
-        ),
-        suffixIcon: IconButton(
-          color: Colors.black,
-          onPressed: () {
-              //Save the notes
-          },
-          icon: Icon(Icons.save),
+    final int notesLength = 100;
+    ContactService _contactService = ContactService();
+    return Container(
+      height: 5 * 24.0,
+      child: TextFormField(
+        controller: notesController..text = ContactDetails.contactDoc.data()[content],
+//        minLines: 1,
+        maxLines: 5,
+        maxLength: notesLength,
+        maxLengthEnforced: true,
+        onChanged: (text) {
+          if(text.length<notesLength){
+            _contactService.addContactNotes(ContactDetails.listDoc, ContactDetails.contactDoc, text);
+          }
+        },
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(10),
+          fillColor: Colors.yellow,
+          filled: true,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.yellow, width: 5.0),
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              _contactService.addContactNotes(ContactDetails.listDoc, ContactDetails.contactDoc, '');
+              notesController.clear();
+            },
+            icon: Icon(Icons.clear),
+            color: Colors.black,
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.yellow),
+          ),
         ),
       ),
     );
@@ -194,4 +219,13 @@ class ContactDetailsState extends State<ContactDetails> {
       ),
     );
   }
+}
+
+//Helper class to get the image
+class FireStorageService extends ChangeNotifier {
+  FireStorageService();
+  static Future<dynamic> loadImage(BuildContext context, String email) async {
+    return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
+  }
+
 }
