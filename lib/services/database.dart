@@ -42,6 +42,15 @@ class DatabaseService {
         .delete();
   }
 
+  //Update notes of a contact
+  Future addContactNotesData(DocumentSnapshot docList, DocumentSnapshot docContact, String notes) async{
+    return await collectionUser.doc(uid).collection('lists').doc(docList.id).collection('contacts')
+        .doc(docContact.id)
+        .update({
+      'notes': notes,
+    });
+  }
+
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname, String lastname, String phone, String email, String institution) async{
     return await collectionUser.doc(uid).collection('lists').doc(docList.id).collection('contacts')

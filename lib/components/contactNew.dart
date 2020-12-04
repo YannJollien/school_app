@@ -1,9 +1,10 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
-
 import 'contactList.dart';
-import 'contactNew.dart';
 
 class ContactNew extends StatefulWidget {
   DocumentSnapshot doc;
@@ -18,11 +19,37 @@ class ContactNew extends StatefulWidget {
 
 class ContactNewState extends State<ContactNew> {
   String id;
-  final db = FirebaseFirestore.instance;
   ContactService _contactService = ContactService();
   final _formKey = GlobalKey<FormState>();
 
   ContactNewState(data);
+
+  File imageFile;
+  Reference ref;
+  String downloadUrl;
+
+  //Get image
+  Future getImage () async {
+    File image;
+    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      imageFile = image;
+    });
+  }
+
+  //Upload image
+  Future uploadImage (String email) async {
+    ref = FirebaseStorage.instance.ref().child("${widget.doc.id.toString()}/$email");
+    ref.putFile(imageFile);
+  }
+
+  //Get image Url
+  Future downloadImage () async {
+    String downloadAddress = await ref.getDownloadURL();
+    setState(() {
+      downloadUrl = downloadAddress;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +72,8 @@ class ContactNewState extends State<ContactNew> {
                       phoneController.text,
                       emailController.text,
                       institutionController.text);
+                  uploadImage(firstNameController.text+lastNameController.text);
+                  downloadImage();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -63,11 +92,26 @@ class ContactNewState extends State<ContactNew> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                IconButton(
-                  icon: Icon(Icons.add_photo_alternate),
-                  iconSize: 125,
-                  color: Colors.black,
-                  onPressed: () {},
+//                IconButton(
+//                  icon: Icon(Icons.add_photo_alternate),
+//                  iconSize: 125,
+//                  color: Colors.black,
+//                  onPressed: () {},
+//                ),
+                GestureDetector(
+                  onTap: () => getImage(),
+                  child: Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      alignment: Alignment.center,
+                      child: imageFile == null ? Text(
+                        "TAp to add image",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ) : Image.file(imageFile)
+                  ),
                 ),
                 _buildFirstName(),
                 _buildLastName(),
