@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/game_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/change_password.dart';
@@ -23,7 +24,8 @@ void main() async {
         '/home': (context) => Home(),
         '/lists': (context) => Lists(),
         '/settings': (context) => Settings(),
-        '/password' : (context) => Password()
+        '/password' : (context) => Password(),
+        '/gamescreen' : (context) => GameScreen()
       }
   ));
 }

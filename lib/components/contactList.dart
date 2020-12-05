@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactDetails.dart';
+import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 import 'contactNew.dart';
@@ -29,7 +30,17 @@ class ContactListState extends State<ContactList> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Contacts'),
-        actions: [
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.sports_esports),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => GameScreen()),
+              );
+            },
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
