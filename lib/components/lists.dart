@@ -71,6 +71,7 @@ class ListsState extends State<Lists> {
     final autoID = db.collection('lists').doc().id;
 
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,

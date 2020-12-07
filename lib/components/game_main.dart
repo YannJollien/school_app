@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'game/game_training.dart';
+
 class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -13,6 +15,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(
           "Game"
@@ -102,7 +105,12 @@ class _GameScreenState extends State<GameScreen> {
               width: 200,
               child: FlatButton(
                 color: Colors.lightBlue,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => GameTraining()),
+                  );
+                },
                 child: Text(
                   "Training"
                 ),
