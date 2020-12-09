@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:tcard/tcard.dart';
 
@@ -18,15 +19,13 @@ List <Widget> _getGameCard(){
   for(int i = 0 ; i < _indexList ; i++ ){
     cardList.add(
         Container(
-          height: 120.0,
-          width: 120.0,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
                   cards[i].imageNew),
-              fit: BoxFit.fill,
+              fit: BoxFit.fitWidth,
             ),
-            shape: BoxShape.circle,
+            shape: BoxShape.rectangle,
           ),
         )
     );
@@ -34,11 +33,11 @@ List <Widget> _getGameCard(){
   return cardList;
 }
 
-void test(String inputName, String toTest){
+bool test(String inputName, String toTest){
   if(inputName == toTest){
-    print("ok");
+   return true;
   } else {
-    print("Not ok");
+    return false;
   }
 }
 
@@ -54,6 +53,15 @@ class _GameTrainingState extends State<GameTraining> {
   int _index = 0;
   String answer = " ";
 
+  int progress = 0;
+  double percent = 0;
+
+  String progressText= "0%";
+
+  //Liste pour les fausses réponses
+  List<GameCard> wrongAnswers = new List<GameCard>();
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,11 +69,12 @@ class _GameTrainingState extends State<GameTraining> {
         title: Text("Training mode"),
       ),
       backgroundColor: Colors.grey[300],
-      body: Center(
-        child: SingleChildScrollView(
+      body:
+        SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 10.0,),
               AbsorbPointer(
                 absorbing: true,
                 child: TCard(
@@ -74,6 +83,9 @@ class _GameTrainingState extends State<GameTraining> {
                   controller: _controller,
                   onEnd: () {
                       print("End! at $_index");
+                      for(int i = 0 ; i < wrongAnswers.length ; i++){
+                        print(wrongAnswers[i].nameNew);
+                      }
                       setState(() {
                         _indexList = cards.length;
                       });
@@ -89,42 +101,64 @@ class _GameTrainingState extends State<GameTraining> {
               ),
               SizedBox(height: 20.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 0, left: 30),
-                        child: TextFormField(
-                          controller: answerController,
-                          obscureText: false,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Answer',
+                  children: [
+                    Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 0, left: 30),
+                          child: TextFormField(
+                            controller: answerController,
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Answer',
+                            ),
                           ),
                         ),
-                      ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 30.0),
-                    child: IconButton(
-                        icon: Icon(Icons.done, size: 40.0, color: Colors.green),
-                        onPressed: () {
-                          setState(() {
-                            answer = answerController.text;
-                          });
-                          print("From field" + answerController.text);
-                          print("from cards" +cards[_index].nameNew);
-                          test(answer, cards[_index].nameNew);
-                          _controller.forward();
-                          answerController.text = "";
-                        }
                     ),
-                  ),
-                ],
-              )
+                    Padding(
+                      padding: EdgeInsets.only(right: 30.0),
+                      child: IconButton(
+                          icon: Icon(Icons.done, size: 40.0, color: Colors.green),
+                          onPressed: () {
+                            setState(() {
+                              answer = answerController.text;
+                              progress = progress+1;
+                              //Codé en dur !!! Il faut remplacer le 4 par la taille de la liste
+                              _indexList = 4;
+                              percent = (100/_indexList*progress).toDouble()/100;
+                              progressText = (100/_indexList*progress).toString();
+                            });
+                            print("From field" + answerController.text);
+                            print("from cards" +cards[_index].nameNew);
+                            test(answer, cards[_index].nameNew);
+                            //Ajouter dans la liste des "faux"
+                            if(test(answer, cards[_index].nameNew)==false){
+                              wrongAnswers.add(GameCard(cards[_index].imageNew, cards[_index].nameNew));
+                            }
+                            _controller.forward();
+                            answerController.text = "";
+                          }
+                      ),
+                    ),
+                  ],
+                ),
+              SizedBox(height: 20.0),
+                 Padding(
+                   padding: EdgeInsets.only(left: 20.0, right: 10.0),
+                     child: LinearPercentIndicator(
+                          width: 360.0,
+                          lineHeight: 20.0,
+                          percent: percent,
+                          center: Text(
+                            progressText
+                          ),
+                          linearStrokeCap: LinearStrokeCap.butt,
+                          backgroundColor: Colors.grey,
+                          progressColor: Colors.cyan,
+                        ),
+                   ),
             ],
           ),
-        ),
       )
     );
   }
