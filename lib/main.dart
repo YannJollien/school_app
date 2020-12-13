@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/game/game_trianing_resume.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,7 +32,8 @@ void main() async {
         '/settings': (context) => Settings(),
         '/password' : (context) => Password(),
         '/gamescreen' : (context) => GameScreen(),
-        '/gametraining' : (context) => GameTraining()
+        '/gametraining' : (context) => GameTraining(),
+        '/gametrainingres' : (context) => GameTrainingResume()
       }
   ));
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/game/game_card.dart';
+import 'package:schoolapp/components/game/game_trianing_resume.dart';
 import 'package:tcard/tcard.dart';
 
 List<GameCard> cards = new List();
@@ -41,9 +42,17 @@ bool test(String inputName, String toTest){
   }
 }
 
+//Liste pour les fausses réponses
+List<GameCard> wrongAnswers = new List<GameCard>();
+
 class GameTraining extends StatefulWidget {
   @override
   _GameTrainingState createState() => _GameTrainingState();
+
+   List<GameCard> getList(){
+    return wrongAnswers;
+  }
+
 }
 
 class _GameTrainingState extends State<GameTraining> {
@@ -58,8 +67,7 @@ class _GameTrainingState extends State<GameTraining> {
 
   String progressText= "0%";
 
-  //Liste pour les fausses réponses
-  List<GameCard> wrongAnswers = new List<GameCard>();
+
 
 
   @override
@@ -86,6 +94,10 @@ class _GameTrainingState extends State<GameTraining> {
                       for(int i = 0 ; i < wrongAnswers.length ; i++){
                         print(wrongAnswers[i].nameNew);
                       }
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => GameTrainingResume()),
+                      );
                       setState(() {
                         _indexList = cards.length;
                       });
