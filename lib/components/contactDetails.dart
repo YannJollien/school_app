@@ -1,7 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:schoolapp/components/contactList.dart';
 import 'package:schoolapp/services/contactService.dart';
 
@@ -136,14 +135,6 @@ class ContactDetailsState extends State<ContactDetails> {
               _label('Lastname'),
               _content('lastname'),
               SizedBox(height: 20),
-              //PHONE
-              _label('Phone'),
-              _content('phone'),
-              SizedBox(height: 20),
-              //EMAIL
-              _label('Email'),
-              _content('email'),
-              SizedBox(height: 20),
               //INSTITUTION
               _label('Institution'),
               _content('institution'),
@@ -158,6 +149,19 @@ class ContactDetailsState extends State<ContactDetails> {
     ),
   );
 
+  //LABEL WIDGET
+  static Widget _label(String labelName) {
+    return Container(
+      child: Text(
+        labelName,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   static final notesController = TextEditingController();
   static Widget _buildNotes(String content) {
     final int notesLength = 100;
@@ -165,14 +169,15 @@ class ContactDetailsState extends State<ContactDetails> {
     return Container(
       height: 5 * 24.0,
       child: TextFormField(
-        controller: notesController..text = ContactDetails.contactDoc.data()[content],
+        controller: notesController
+          ..text = ContactDetails.contactDoc.data()[content],
 //        minLines: 1,
         maxLines: 5,
         maxLength: notesLength,
         maxLengthEnforced: true,
         onChanged: (text) {
-          if(text.length<notesLength){
-            _contactService.addContactNotes(ContactDetails.listDoc, ContactDetails.contactDoc, text);
+          if (text.length < notesLength) {
+            _contactService.addContactNotes(ContactDetails.contactDoc, text);
           }
         },
         decoration: InputDecoration(
@@ -184,7 +189,7 @@ class ContactDetailsState extends State<ContactDetails> {
           ),
           suffixIcon: IconButton(
             onPressed: () {
-              _contactService.addContactNotes(ContactDetails.listDoc, ContactDetails.contactDoc, '');
+              _contactService.addContactNotes(ContactDetails.contactDoc, '');
               notesController.clear();
             },
             icon: Icon(Icons.clear),
@@ -198,34 +203,40 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  static Widget _label(String labelName) {
-    return Container(
-      child: Text(
-        labelName,
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+  //CONTENT WIDGET
+  static Widget _content(String content){
+    return FutureBuilder(
+        future: getContactData(content),
+        initialData: "Loading text..",
+        builder: (BuildContext context, AsyncSnapshot<String> text) {
+          return new SingleChildScrollView(
+              child: new Text(
+                text.data,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey[500],
+                ),
+              ));
+        });
   }
 
-  static Widget _content(String content) {
-    return Text(
-      ContactDetails.contactDoc.data()[content],
-      style: TextStyle(
-        fontSize: 20,
-        color: Colors.grey[500],
-      ),
-    );
+  //GET CONTACT DATA
+  static Future<String> getContactData(String content) async {
+    Future<DocumentSnapshot> contactDetails =
+        _contactService.getContactDetails(ContactDetails.contactDoc);
+    String data = "";
+    await contactDetails.then((carSnapshot) => {
+      data = carSnapshot.data()[content],
+        });
+    return await new Future(() => data);
   }
 }
 
 //Helper class to get the image
 class FireStorageService extends ChangeNotifier {
   FireStorageService();
+
   static Future<dynamic> loadImage(BuildContext context, String email) async {
     return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
   }
-
 }
