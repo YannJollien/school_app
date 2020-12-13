@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/services/contactService.dart';
+import 'package:schoolapp/services/listService.dart';
 
 import 'contactNew.dart';
 
@@ -20,14 +21,17 @@ class ContactList extends StatefulWidget {
 class ContactListState extends State<ContactList> {
   String id;
   ContactService _contactService = ContactService();
+  ListService _listService = ListService();
 
   ContactListState(data);
+
+//  List<String> values = List.from(widget.listDoc.data()['contacts']);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacts'),
+        title: Text(widget.listDoc.data()["listName"]),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.sports_esports),
@@ -131,23 +135,24 @@ class ContactListState extends State<ContactList> {
     );
   }
 
-  Future<List<String>> getArrayList() async {
-    Future<DocumentSnapshot> listArray =
-    _contactService.getContactArrayFromList(widget.listDoc);
-    List<String> data = [];
-    await listArray.then((carSnapshot) => {
-      data = carSnapshot.data()['contacts'],
-    });
-    return await new Future(() => data);
-  }
-
   Card buildItem(DocumentSnapshot contactDoc) {
 //    print("LIST ID " + widget.listDoc.id);
 //    print(widget.listDoc.data()['contacts']);
 
-    List<String> values = List.from(widget.listDoc.data()['contacts']);
-//    List<String> values = getArrayList();
-    if(values.contains(contactDoc.id)){
+    List<String> values = [];
+
+//    print("id " + widget.listDoc.id);
+//    Stream<DocumentSnapshot> t = _listService.getList(widget.listDoc);
+//    t.forEach((element) {
+//      print('ARRAY IN LIVE');
+//      print(element.data()['contacts']);
+//      values = List.from(element.data()['contacts']);
+//    });
+
+    values = List.from(widget.listDoc.data()['contacts']);
+    print("VALUES : ");
+    print(values);
+    if (values.contains(contactDoc.id)) {
       return Card(
         child: InkWell(
           onTap: () {

@@ -17,8 +17,8 @@ class ListsState extends State<Lists> {
   ListService _listService = ListService();
 
   Card buildItem(DocumentSnapshot doc) {
-    debugPrint('${doc.data()['listName']}');
-    debugPrint('${doc.data()['contacts']}');
+//    debugPrint('${doc.data()['listName']}');
+//    debugPrint('${doc.data()['contacts']}');
     return Card(
       child: InkWell(
         onTap: () {

@@ -25,8 +25,9 @@ class DatabaseService {
     return await collectionUser.doc(uid).delete();
   }
 
-  Future<DocumentSnapshot> getContactDetailsData(DocumentSnapshot doc) async {
-    return await collectionContacts.doc(doc.id).get();
+  //Get contact list
+  Stream<DocumentSnapshot> getContactDetailsData(DocumentSnapshot doc) {
+    return collectionContacts.doc(doc.id).snapshots();
   }
 
   //Delete contact in a list
@@ -115,10 +116,6 @@ class DatabaseService {
     return docsList;
   }
 
-  Future<DocumentSnapshot> getContactArrayFromListData(DocumentSnapshot doc) async {
-    return await collectionUser.doc(uid).collection('lists').doc(doc.id).get();
-  }
-
   //Get contact list
   Stream<QuerySnapshot> getListContactsData() {
     return collectionContacts.snapshots();
@@ -127,6 +124,11 @@ class DatabaseService {
   //Get lists for a user
   Stream<QuerySnapshot> getListsData() {
     return collectionUser.doc(uid).collection('lists').snapshots();
+  }
+
+  //Get one list for a user
+  Stream<DocumentSnapshot> getListData(DocumentSnapshot doc) {
+    return collectionUser.doc(uid).collection('lists').doc(doc.id).snapshots();
   }
 
   //Add a list for a user

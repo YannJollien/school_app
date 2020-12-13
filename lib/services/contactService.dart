@@ -33,14 +33,9 @@ class ContactService {
     await DatabaseService(uid: user.uid).addContactData(docList, firstname, lastname, phone, email, institution);
   }
 
-  Future<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) async {
-    User user = await _auth.currentUser;
+  Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {
+    User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactDetailsData(doc);
-  }
-
-  Future<DocumentSnapshot> getContactArrayFromList(DocumentSnapshot doc) async {
-    User user = await _auth.currentUser;
-    return DatabaseService(uid: user.uid).getContactArrayFromListData(doc);
   }
 
   //Get the lists

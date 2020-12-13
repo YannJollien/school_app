@@ -205,30 +205,19 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //CONTENT WIDGET
   static Widget _content(String content){
-    return FutureBuilder(
-        future: getContactData(content),
-        initialData: "Loading text..",
-        builder: (BuildContext context, AsyncSnapshot<String> text) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder: (BuildContext context,
+            AsyncSnapshot<DocumentSnapshot> snapshot) {
           return new SingleChildScrollView(
               child: new Text(
-                text.data,
+                snapshot.data[content],
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey[500],
                 ),
               ));
         });
-  }
-
-  //GET CONTACT DATA
-  static Future<String> getContactData(String content) async {
-    Future<DocumentSnapshot> contactDetails =
-        _contactService.getContactDetails(ContactDetails.contactDoc);
-    String data = "";
-    await contactDetails.then((carSnapshot) => {
-      data = carSnapshot.data()[content],
-        });
-    return await new Future(() => data);
   }
 }
 
