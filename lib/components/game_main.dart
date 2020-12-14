@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'game/game_training.dart';
+
 class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -10,9 +12,14 @@ class _GameScreenState extends State<GameScreen> {
   String numberChose;
   String gameMode;
 
+  bool textDropDownVisible = false;
+
+  bool textGameModeVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(
           "Game"
@@ -40,7 +47,7 @@ class _GameScreenState extends State<GameScreen> {
                   padding: EdgeInsets.all(20.0),
                   child: Center(
                     child: Text(
-                        "Chose the number of contact"
+                        "Chose the number of contact",
                     ),
                   ),
                 ),
@@ -60,10 +67,19 @@ class _GameScreenState extends State<GameScreen> {
                 )
               ],
             ),
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.only(top: 10.0)
+          ),
+          Visibility(
+            visible: textDropDownVisible,
+            child: Text(
+                "Please select number of contact",
+                style: TextStyle(
+                    color: Colors.red,
+                ),
+              ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: 30.0),
             child: Text(
               "Game mode: ",
               style: TextStyle(
@@ -96,29 +112,73 @@ class _GameScreenState extends State<GameScreen> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 200.0),
-            child: SizedBox(
-              width: 200,
-              child: FlatButton(
-                color: Colors.lightBlue,
-                onPressed: () {},
-                child: Text(
-                  "Training"
-                ),
+          Visibility(
+            visible: textGameModeVisible,
+            child: Text(
+              "Please select game mode",
+              style: TextStyle(
+                color: Colors.red,
               ),
             ),
           ),
-          SizedBox(
-            width: 200,
-            child: FlatButton(
-              onPressed: () {},
-              color: Colors.lightBlue,
-              child: Text(
-                  "Test my knowledge"
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 30.0),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        SizedBox(
+                          width: 200,
+                          child: FlatButton(
+                            color: Colors.lightBlue,
+                            onPressed: () {
+                              if(numberChose == null){
+                                setState(() {
+                                  textDropDownVisible = true;
+                                });
+                              } if (gameMode == null){
+                                setState(() {
+                                  textGameModeVisible = true;
+                                });
+                              }
+                              else {
+                                //Reset visibility texts
+                                setState(() {
+                                  textDropDownVisible = false;
+                                  textGameModeVisible = false;
+                                });
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => GameTraining()),
+                                );
+                              }
+                            },
+                            child: Text(
+                                "Training"
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 200,
+                          child: FlatButton(
+                            onPressed: () {},
+                            color: Colors.lightBlue,
+                            child: Text(
+                                "Test my knowledge"
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          )
         ],
       ),
     );

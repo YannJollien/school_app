@@ -24,6 +24,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return isLoading ? Loading() : Scaffold(
+      backgroundColor: Colors.grey[300],
         appBar: AppBar(title: Text("Login")),
         body: Form(
             key: _formKey,

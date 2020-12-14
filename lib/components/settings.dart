@@ -10,6 +10,7 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(
           "Setting"
@@ -39,7 +40,7 @@ class Settings extends StatelessWidget {
                 //Remove from fp to stop auto logged in
                 //SharedPreferences prefs = await SharedPreferences.getInstance();
                 //prefs.remove('email');
-                Navigator.of(context).pushNamed("/opening");
+                Navigator.of(context).pushNamed("/login");
               },
               child: Align(
                 alignment: Alignment.topLeft,

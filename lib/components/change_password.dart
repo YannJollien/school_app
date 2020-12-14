@@ -16,6 +16,7 @@ class _PasswordState extends State<Password> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
         appBar: AppBar(title: Text("Sign Up")),
         body: Form(
             key: _formKey,

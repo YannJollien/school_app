@@ -30,10 +30,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.cyan,
       ),
       drawer: HomeDrawer(),
       body: Container(
-        color: Colors.lightBlue[200],
+        color: Colors.grey[300],
       ),
     );
   }

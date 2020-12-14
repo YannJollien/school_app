@@ -28,6 +28,7 @@ class ContactListState extends State<ContactList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(widget.listDoc.data()["listName"] + " list"),
         leading: GestureDetector(
