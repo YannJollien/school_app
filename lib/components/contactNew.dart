@@ -116,6 +116,7 @@ class ContactNewState extends State<ContactNew> {
                 _buildInstitution(),
                 SizedBox(height: 30),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildImportButton(context),
                     _buildFromExistingContacts(context)
@@ -159,23 +160,25 @@ class ContactNewState extends State<ContactNew> {
   }
 
   Widget _buildImportButton(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       IconButton(
         icon: Icon(Icons.save_alt),
         iconSize: 50,
-        color: Colors.black,
+        color: Colors.blue,
         onPressed: () {},
       ),
     ]);
   }
 
   Widget _buildFromExistingContacts(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       IconButton(
         icon: Icon(Icons.list),
         iconSize: 50,
-        color: Colors.black,
-        onPressed: () {},
+        color: Colors.blue,
+        onPressed: () {
+
+        },
       ),
     ]);
   }

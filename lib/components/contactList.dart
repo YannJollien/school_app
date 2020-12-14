@@ -102,14 +102,13 @@ class ContactListState extends State<ContactList> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
 //      title: Text(),
-      content: Text(
-          "Are you sure you want to delete "
-          + contactDoc.data()['firstname']
-          + " "
-          + contactDoc.data()['lastname']
-          + " from the "
-          + widget.listDoc.data()['listName']
-          + " list ?"),
+      content: Text("Are you sure you want to delete " +
+          contactDoc.data()['firstname'] +
+          " " +
+          contactDoc.data()['lastname'] +
+          " from the " +
+          widget.listDoc.data()['listName'] +
+          " list ?"),
       actions: [
         cancelButton,
         continueButton,
@@ -141,7 +140,7 @@ class ContactListState extends State<ContactList> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Icon(
                     Icons.account_box,
@@ -154,6 +153,7 @@ class ContactListState extends State<ContactList> {
                     style: TextStyle(fontSize: 24),
                   ),
                   SizedBox(width: 8),
+                  Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
                     color: Colors.blue,
@@ -162,7 +162,7 @@ class ContactListState extends State<ContactList> {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
