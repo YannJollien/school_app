@@ -14,12 +14,6 @@ class ListService {
     return DatabaseService(uid: user.uid).getListsData();
   }
 
-  //Get the lists
-  Stream<DocumentSnapshot> getList(DocumentSnapshot doc) {
-    User user =  _auth.currentUser;
-    return DatabaseService(uid: user.uid).getListData(doc);
-  }
-
   //Update a list
   Future addList(String docId, String listName) async{
     User user = await _auth.currentUser;

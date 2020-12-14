@@ -55,7 +55,7 @@ class ContactNewState extends State<ContactNew> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New contact'),
+        title: Text('Add a contact'),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10),
@@ -69,8 +69,6 @@ class ContactNewState extends State<ContactNew> {
                       widget.doc,
                       firstNameController.text,
                       lastNameController.text,
-                      phoneController.text,
-                      emailController.text,
                       institutionController.text);
                   uploadImage(firstNameController.text+lastNameController.text);
                   downloadImage();
@@ -108,18 +106,21 @@ class ContactNewState extends State<ContactNew> {
                       ),
                       alignment: Alignment.center,
                       child: imageFile == null ? Text(
-                        "TAp to add image",
+                        "Tap to add image",
                         style: TextStyle(color: Colors.grey[400]),
                       ) : Image.file(imageFile)
                   ),
                 ),
                 _buildFirstName(),
                 _buildLastName(),
-                _buildPhone(),
-                _buildEmail(),
                 _buildInstitution(),
                 SizedBox(height: 30),
-                _buildImportButton(context),
+                Row(
+                  children: [
+                    _buildImportButton(context),
+                    _buildFromExistingContacts(context)
+                  ],
+                ),
               ],
             ),
           ),
@@ -148,24 +149,6 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
-  var phoneController = TextEditingController();
-  Widget _buildPhone() {
-    return TextFormField(
-      controller: phoneController,
-      style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-      decoration: _buildInputDecoration("Phone", Icons.call, phoneController),
-    );
-  }
-
-  var emailController = TextEditingController();
-  Widget _buildEmail() {
-    return TextFormField(
-      controller: emailController,
-      style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-      decoration: _buildInputDecoration("Email", Icons.email, emailController),
-    );
-  }
-
   var institutionController = TextEditingController();
   Widget _buildInstitution() {
     return TextFormField(
@@ -179,6 +162,17 @@ class ContactNewState extends State<ContactNew> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       IconButton(
         icon: Icon(Icons.save_alt),
+        iconSize: 50,
+        color: Colors.black,
+        onPressed: () {},
+      ),
+    ]);
+  }
+
+  Widget _buildFromExistingContacts(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      IconButton(
+        icon: Icon(Icons.list),
         iconSize: 50,
         color: Colors.black,
         onPressed: () {},

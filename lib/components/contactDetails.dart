@@ -34,7 +34,7 @@ class ContactDetailsState extends State<ContactDetails> {
                 icon: Icon(Icons.delete),
                 color: Colors.red,
                 onPressed: () {
-                  showAlertDialog(context);
+                  showAlertDialogOnDelete(context);
                 },
               ),
             ),
@@ -51,13 +51,13 @@ class ContactDetailsState extends State<ContactDetails> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              detailsSection,
+              detailsSection(context),
             ],
           ),
         ));
   }
 
-  showAlertDialog(BuildContext context) {
+  showAlertDialogOnDelete(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
@@ -81,11 +81,14 @@ class ContactDetailsState extends State<ContactDetails> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Delete " +
+//      title: Text('Delete contact from the list'),
+      content: Text("Are you sure you want to delete " +
           ContactDetails.contactDoc.data()['firstname'] +
           " " +
-          ContactDetails.contactDoc.data()['lastname']),
-      content: Text("Are you sure you want to delete this contact ?"),
+          ContactDetails.contactDoc.data()['lastname'] +
+          " from the " +
+          ContactDetails.listDoc.data()['listName'] +
+          " list ?"),
       actions: [
         cancelButton,
         continueButton,
@@ -112,7 +115,8 @@ class ContactDetailsState extends State<ContactDetails> {
 //    return image;
 //  }
 
-  Widget detailsSection = Container(
+  Widget detailsSection(BuildContext context) {
+    return Container(
     padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
     child: Row(
       children: [
@@ -141,13 +145,14 @@ class ContactDetailsState extends State<ContactDetails> {
               SizedBox(height: 20),
               //NOTES
               _label('Notes'),
-              _buildNotes('notes')
+              _buildNotes('notes', context)
             ],
           ),
         ),
       ],
     ),
   );
+  }
 
   //LABEL WIDGET
   static Widget _label(String labelName) {
@@ -163,7 +168,8 @@ class ContactDetailsState extends State<ContactDetails> {
   }
 
   static final notesController = TextEditingController();
-  static Widget _buildNotes(String content) {
+
+  static Widget _buildNotes(String content, BuildContext context) {
     final int notesLength = 100;
     ContactService _contactService = ContactService();
     return Container(
@@ -189,8 +195,7 @@ class ContactDetailsState extends State<ContactDetails> {
           ),
           suffixIcon: IconButton(
             onPressed: () {
-              _contactService.addContactNotes(ContactDetails.contactDoc, '');
-              notesController.clear();
+              showAlertDialogNotes(context);
             },
             icon: Icon(Icons.clear),
             color: Colors.black,
@@ -203,20 +208,60 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  static showAlertDialogNotes(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      color: Colors.blue,
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Delete"),
+      color: Colors.red,
+      onPressed: () {
+        _contactService.addContactNotes(ContactDetails.contactDoc, '');
+        notesController.clear();
+        Navigator.of(context).pop();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+//      title: Text('Delete contact from the list'),
+      content: Text("Are you sure you want to delete all the notes taken for " +
+          ContactDetails.contactDoc.data()['firstname'] +
+          " " +
+          ContactDetails.contactDoc.data()['lastname'] +
+          " ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   //CONTENT WIDGET
-  static Widget _content(String content){
+  static Widget _content(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
-        builder: (BuildContext context,
-            AsyncSnapshot<DocumentSnapshot> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           return new SingleChildScrollView(
               child: new Text(
-                snapshot.data[content],
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey[500],
-                ),
-              ));
+            snapshot.data[content],
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey[500],
+            ),
+          ));
         });
   }
 }

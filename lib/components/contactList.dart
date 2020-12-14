@@ -25,13 +25,11 @@ class ContactListState extends State<ContactList> {
 
   ContactListState(data);
 
-//  List<String> values = List.from(widget.listDoc.data()['contacts']);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.listDoc.data()["listName"]),
+        title: Text(widget.listDoc.data()["listName"] + " list"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.sports_esports),
@@ -56,21 +54,8 @@ class ContactListState extends State<ContactList> {
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
-//          FutureBuilder<List<QueryDocumentSnapshot>>(
-//            future: _contactService.getContactList(widget.listDoc),
-//            builder: (BuildContext context,
-//                AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
-//              if (snapshot.hasData) {
-//                return Column(
-//                  children: snapshot.data.map((doc) => buildItem(doc)).toList(),
-//                );
-//              } else {
-//                return SizedBox();
-//              }
-//            },
-//          )
           StreamBuilder<QuerySnapshot>(
-            stream: _contactService.getListContacts(),
+            stream: _contactService.getContactsList(widget.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
@@ -116,11 +101,15 @@ class ContactListState extends State<ContactList> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Delete " +
-          contactDoc.data()['firstname'] +
-          " " +
-          contactDoc.data()['lastname']),
-      content: Text("Are you sure you want to delete this contact ?"),
+//      title: Text(),
+      content: Text(
+          "Are you sure you want to delete "
+          + contactDoc.data()['firstname']
+          + " "
+          + contactDoc.data()['lastname']
+          + " from the "
+          + widget.listDoc.data()['listName']
+          + " list ?"),
       actions: [
         cancelButton,
         continueButton,
@@ -136,68 +125,48 @@ class ContactListState extends State<ContactList> {
   }
 
   Card buildItem(DocumentSnapshot contactDoc) {
-//    print("LIST ID " + widget.listDoc.id);
-//    print(widget.listDoc.data()['contacts']);
-
-    List<String> values = [];
-
-//    print("id " + widget.listDoc.id);
-//    Stream<DocumentSnapshot> t = _listService.getList(widget.listDoc);
-//    t.forEach((element) {
-//      print('ARRAY IN LIVE');
-//      print(element.data()['contacts']);
-//      values = List.from(element.data()['contacts']);
-//    });
-
-    values = List.from(widget.listDoc.data()['contacts']);
-    print("VALUES : ");
-    print(values);
-    if (values.contains(contactDoc.id)) {
-      return Card(
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ContactDetails(widget.listDoc, contactDoc)),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Icon(
-                      Icons.account_box,
-                      size: 50,
-                    ),
-                    Text(
-                      '${contactDoc.data()['firstname']}' +
-                          ' ' +
-                          '${contactDoc.data()['lastname']}',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Colors.blue,
-                      onPressed: () {
-                        showAlertDialog(context, contactDoc);
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ContactDetails(widget.listDoc, contactDoc)),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Icon(
+                    Icons.account_box,
+                    size: 50,
+                  ),
+                  Text(
+                    '${contactDoc.data()['firstname']}' +
+                        ' ' +
+                        '${contactDoc.data()['lastname']}',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    color: Colors.blue,
+                    onPressed: () {
+                      showAlertDialog(context, contactDoc);
+                    },
+                  ),
+                ],
+              )
+            ],
           ),
         ),
-      );
-    }
-
-    return Card();
+      ),
+    );
   }
 }
