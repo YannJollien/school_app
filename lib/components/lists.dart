@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactList.dart';
+import 'package:schoolapp/components/home.dart';
 import 'package:schoolapp/services/listService.dart';
 
 class Lists extends StatefulWidget {
@@ -85,6 +86,17 @@ class ListsState extends State<Lists> {
       ),
       appBar: AppBar(
         title: Text('My lists'),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Home()),
+            );
+          },
+          child: Icon(
+            Icons.arrow_back,  // add custom icons also
+          ),
+        ),
       ),
       body: ListView(
         padding: EdgeInsets.all(8),

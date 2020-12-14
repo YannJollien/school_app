@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
+import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'package:schoolapp/services/listService.dart';
 
@@ -29,6 +30,17 @@ class ContactListState extends State<ContactList> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.listDoc.data()["listName"] + " list"),
+        leading: GestureDetector(
+          onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lists()),
+                );
+          },
+          child: Icon(
+            Icons.arrow_back,  // add custom icons also
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.sports_esports),
