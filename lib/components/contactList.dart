@@ -21,7 +21,6 @@ class ContactList extends StatefulWidget {
 class ContactListState extends State<ContactList> {
   String id;
   ContactService _contactService = ContactService();
-  ListService _listService = ListService();
 
   ContactListState(data);
 

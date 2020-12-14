@@ -23,7 +23,7 @@ class ContactService {
   //Add a list
   Future addContact(DocumentSnapshot docList, String firstname, String lastname, String institution) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).addContactData(docList, firstname, lastname, institution);
+    return await DatabaseService(uid: user.uid).addContactData(docList, firstname, lastname, institution);
   }
 
   Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {

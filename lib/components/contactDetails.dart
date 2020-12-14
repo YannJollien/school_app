@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class ContactDetailsState extends State<ContactDetails> {
   ContactDetailsState(data);
 
   static ContactService _contactService = ContactService();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -103,55 +105,73 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-//  //Get the image from storage
-//  Future<Widget> getImage(BuildContext context, String imageName) async {
-//    Image image;
-//    await FireStorageService.loadImage(context, imageName).then((value) {
-//      image = Image.network(
-//          value.toString(),
-//          fit: BoxFit.scaleDown
-//      );
-//    });
-//    return image;
-//  }
+  //Get the image from storage
+  Future<Widget> getImage(
+      BuildContext context, String imageName, String docId) async {
+    Image image;
+    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
+    });
+    return image;
+  }
 
   Widget detailsSection(BuildContext context) {
     return Container(
-    padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
-    child: Row(
-      children: [
-        Expanded(
-          /*1*/
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Icon(
-                  Icons.account_box,
-                  size: 150,
-                ),
-              ),
-              //FIRSTNAME
-              _label('Firstname'),
-              _content('firstname'),
-              SizedBox(height: 20),
-              //LASTNAME
-              _label('Lastname'),
-              _content('lastname'),
-              SizedBox(height: 20),
-              //INSTITUTION
-              _label('Institution'),
-              _content('institution'),
-              SizedBox(height: 20),
-              //NOTES
-              _label('Notes'),
-              _buildNotes('notes', context)
-            ],
+      padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
+      child: Row(
+        children: [
+          Expanded(
+            /*1*/
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  ClipOval(
+                    child: FutureBuilder(
+                      future: getImage(context, firebaseAuth.currentUser.email,
+                          ContactDetails.contactDoc.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            height: MediaQuery.of(context).size.width / 1.5,
+                            child: snapshot.data,
+                          );
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            height: MediaQuery.of(context).size.width / 1.2,
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ),
+                ]),
+                //FIRSTNAME
+                _label('Firstname'),
+                _content('firstname'),
+                SizedBox(height: 20),
+                //LASTNAME
+                _label('Lastname'),
+                _content('lastname'),
+                SizedBox(height: 20),
+                //INSTITUTION
+                _label('Institution'),
+                _content('institution'),
+                SizedBox(height: 20),
+                //NOTES
+                _label('Notes'),
+                _buildNotes('notes', context)
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
   }
 
   //LABEL WIDGET
@@ -270,7 +290,10 @@ class ContactDetailsState extends State<ContactDetails> {
 class FireStorageService extends ChangeNotifier {
   FireStorageService();
 
-  static Future<dynamic> loadImage(BuildContext context, String email) async {
-    return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
+  static Future<dynamic> loadImage(
+      BuildContext context, String email, String docId) async {
+    return await FirebaseStorage.instance
+        .ref("contacts/$email/$docId")
+        .getDownloadURL();
   }
 }

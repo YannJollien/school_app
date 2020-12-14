@@ -22,7 +22,11 @@ class DatabaseService {
 
   //Get contact list
   Stream<DocumentSnapshot> getContactDetailsData(DocumentSnapshot doc) {
-    return collectionUser.doc(uid).collection('contacts').doc(doc.id).snapshots();
+    return collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(doc.id)
+        .snapshots();
   }
 
   //Delete contact in a list
@@ -32,12 +36,18 @@ class DatabaseService {
         .doc(uid)
         .collection('contacts')
         .doc(docContact.id)
-        .update({'lists': FieldValue.arrayRemove([docList.id])});
+        .update({
+      'lists': FieldValue.arrayRemove([docList.id])
+    });
   }
 
   //Update notes of a contact
   Future addContactNotesData(DocumentSnapshot docContact, String notes) async {
-    return await collectionUser.doc(uid).collection('contacts').doc(docContact.id).update({
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(docContact.id)
+        .update({
       'notes': notes,
     });
   }
@@ -45,21 +55,25 @@ class DatabaseService {
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
-    return await collectionUser
-        .doc(uid)
-        .collection('contacts')
-        .add({
+    DocumentReference docRef =
+        await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
       'lastname': lastname,
       'institution': institution,
       'notes': '',
       'lists': [docList.id]
     });
+
+    return docRef.id;
   }
 
   //Get contact list
   Stream<QuerySnapshot> getContactsListData(DocumentSnapshot listDoc) {
-    return collectionUser.doc(uid).collection('contacts').where('lists', arrayContains: listDoc.id).snapshots();
+    return collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .where('lists', arrayContains: listDoc.id)
+        .snapshots();
   }
 
   //Get lists for a user

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class ContactNewState extends State<ContactNew> {
   String id;
   ContactService _contactService = ContactService();
   final _formKey = GlobalKey<FormState>();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   ContactNewState(data);
 
@@ -38,8 +40,8 @@ class ContactNewState extends State<ContactNew> {
   }
 
   //Upload image
-  Future uploadImage (String email) async {
-    ref = FirebaseStorage.instance.ref().child("${widget.doc.id.toString()}/$email");
+  Future uploadImage (String email, String docId) async {
+    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     ref.putFile(imageFile);
   }
 
@@ -65,12 +67,12 @@ class ContactNewState extends State<ContactNew> {
               iconSize: 30,
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  _contactService.addContact(
+                  var temp = _contactService.addContact(
                       widget.doc,
                       firstNameController.text,
                       lastNameController.text,
                       institutionController.text);
-                  uploadImage(firstNameController.text+lastNameController.text);
+                  temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
                   downloadImage();
                   Navigator.push(
                     context,
@@ -90,12 +92,6 @@ class ContactNewState extends State<ContactNew> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-//                IconButton(
-//                  icon: Icon(Icons.add_photo_alternate),
-//                  iconSize: 125,
-//                  color: Colors.black,
-//                  onPressed: () {},
-//                ),
                 GestureDetector(
                   onTap: () => getImage(),
                   child: Container(
