@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/services/contactService.dart';
+import 'package:schoolapp/services/listService.dart';
 
 import 'contactNew.dart';
 
@@ -19,9 +20,7 @@ class ContactList extends StatefulWidget {
 
 class ContactListState extends State<ContactList> {
   String id;
-  final db = FirebaseFirestore.instance;
   ContactService _contactService = ContactService();
-  final _formKey = GlobalKey<FormState>();
 
   ContactListState(data);
 
@@ -29,7 +28,7 @@ class ContactListState extends State<ContactList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacts'),
+        title: Text(widget.listDoc.data()["listName"] + " list"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.sports_esports),
@@ -55,7 +54,7 @@ class ContactListState extends State<ContactList> {
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: _contactService.getContactList(widget.listDoc),
+            stream: _contactService.getContactsList(widget.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
@@ -101,9 +100,14 @@ class ContactListState extends State<ContactList> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Delete " + contactDoc.data()['firstname'] + " " + contactDoc.data()['lastname']),
-      content: Text(
-          "Are you sure you want to delete this contact ?"),
+//      title: Text(),
+      content: Text("Are you sure you want to delete " +
+          contactDoc.data()['firstname'] +
+          " " +
+          contactDoc.data()['lastname'] +
+          " from the " +
+          widget.listDoc.data()['listName'] +
+          " list ?"),
       actions: [
         cancelButton,
         continueButton,
@@ -135,7 +139,7 @@ class ContactListState extends State<ContactList> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Icon(
                     Icons.account_box,
@@ -148,6 +152,7 @@ class ContactListState extends State<ContactList> {
                     style: TextStyle(fontSize: 24),
                   ),
                   SizedBox(width: 8),
+                  Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
                     color: Colors.blue,
@@ -156,7 +161,7 @@ class ContactListState extends State<ContactList> {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

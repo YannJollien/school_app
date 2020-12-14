@@ -39,6 +39,7 @@ class ListsState extends State<Lists> {
                     style: TextStyle(fontSize: 24),
                   ),
                   SizedBox(width: 8),
+                  Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
                     color: Colors.blue,

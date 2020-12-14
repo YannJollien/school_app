@@ -14,7 +14,6 @@ class ListService {
     return DatabaseService(uid: user.uid).getListsData();
   }
 
-
   //Update a list
   Future addList(String docId, String listName) async{
     User user = await _auth.currentUser;
