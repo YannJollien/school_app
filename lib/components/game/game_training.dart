@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -7,23 +10,46 @@ import 'package:tcard/tcard.dart';
 
 List<GameCard> cards = new List();
 int _indexList;
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User user = auth.currentUser;
+
+String downloadUrl;
+Reference ref;
+
+//Get image Url
+Future <String> downloadImage (String email, String docId) async{
+  ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
+  return await ref.getDownloadURL();
+}
 
 List <Widget> _getGameCard(){
-  cards.add(GameCard('assets/boy1.jpg', "Jean"));
-  cards.add(GameCard('assets/boy2.jpg', "Johan"));
-  cards.add(GameCard('assets/girl1.jpg', "Tania"));
-  cards.add(GameCard('assets/girl2.jpg', "Johanna"));
+
+  final contactsRef = Firestore.instance.collection('users').document(user.uid).collection("contacts");
+
+  contactsRef.getDocuments().then((snapshot) {
+    snapshot.documents.forEach((doc) {
+      cards.add(GameCard(doc.documentID,doc.data()['firstname']));
+    });
+  });
+
+  for(int i = 0 ; i < cards.length; i++){
+    print("NAMES"+cards[i].nameNew);
+  }
 
   _indexList = cards.length;
 
   List<Widget> cardList = new List();
   for(int i = 0 ; i < _indexList ; i++ ){
+    downloadImage(user.email,cards[i].imageNew).then((value) => {
+      downloadUrl = value
+    });
     cardList.add(
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(
-                  cards[i].imageNew),
+              image: NetworkImage(
+                  downloadUrl
+              ),
               fit: BoxFit.fitWidth,
             ),
             shape: BoxShape.rectangle,
@@ -41,6 +67,9 @@ bool test(String inputName, String toTest){
     return false;
   }
 }
+
+
+
 
 //Liste pour les fausses réponses
 List<GameCard> wrongAnswers = new List<GameCard>();
@@ -66,8 +95,6 @@ class _GameTrainingState extends State<GameTraining> {
   double percent = 0;
 
   String progressText= "0%";
-
-
 
 
   @override

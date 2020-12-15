@@ -4,7 +4,6 @@ import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'package:schoolapp/services/listService.dart';
 
 import 'contactNew.dart';
 
