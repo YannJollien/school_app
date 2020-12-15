@@ -5,17 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'contactList.dart';
+import 'contactsFromList.dart';
+import 'contactsAllList.dart';
 
 class ContactNew extends StatefulWidget {
-  DocumentSnapshot doc;
+  DocumentSnapshot listDoc;
 
   ContactNew(DocumentSnapshot doc) {
-    this.doc = doc;
+    this.listDoc = doc;
   }
 
   @override
-  State<StatefulWidget> createState() => new ContactNewState(doc);
+  State<StatefulWidget> createState() => new ContactNewState(listDoc);
 }
 
 class ContactNewState extends State<ContactNew> {
@@ -68,7 +69,7 @@ class ContactNewState extends State<ContactNew> {
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   var temp = _contactService.addContact(
-                      widget.doc,
+                      widget.listDoc,
                       firstNameController.text,
                       lastNameController.text,
                       institutionController.text);
@@ -77,7 +78,7 @@ class ContactNewState extends State<ContactNew> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ContactList(widget.doc)),
+                        builder: (context) => ContactList(widget.listDoc)),
                   );
                 }
               },
@@ -173,7 +174,11 @@ class ContactNewState extends State<ContactNew> {
         iconSize: 50,
         color: Colors.blue,
         onPressed: () {
-
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ContactsList(widget.listDoc)),
+          );
         },
       ),
     ]);

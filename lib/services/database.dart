@@ -29,6 +29,15 @@ class DatabaseService {
         .snapshots();
   }
 
+  //Update lists for a user
+  Future updateContactData(DocumentSnapshot docList, DocumentSnapshot docContact) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(docContact.id)
+        .update({'lists': [docList.id]});
+  }
+
   //Delete contact in a list
   Future deleteContactData(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
@@ -63,17 +72,33 @@ class DatabaseService {
       'notes': '',
       'lists': [docList.id]
     });
-
     return docRef.id;
   }
 
-  //Get contact list
-  Stream<QuerySnapshot> getContactsListData(DocumentSnapshot listDoc) {
+  //Get all contacts
+  Stream<QuerySnapshot> getAllContactsData() {
+    return collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .snapshots();
+  }
+
+  //Get contact from a list
+  Stream<QuerySnapshot> getContactsFromListData(DocumentSnapshot listDoc) {
     return collectionUser
         .doc(uid)
         .collection('contacts')
         .where('lists', arrayContains: listDoc.id)
         .snapshots();
+  }
+
+  //Update contact
+  Future updateListsData(String doc, String listName) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(doc)
+        .update({'listName': listName});
   }
 
   //Get lists for a user
@@ -88,15 +113,6 @@ class DatabaseService {
         .collection('lists')
         .doc(docID)
         .set({'listName': listName});
-  }
-
-  //Update lists for a user
-  Future updateListsData(String doc, String listName) async {
-    return await collectionUser
-        .doc(uid)
-        .collection('lists')
-        .doc(doc)
-        .update({'listName': listName});
   }
 
   //Delete lists for a user

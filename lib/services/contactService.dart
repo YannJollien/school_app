@@ -8,6 +8,12 @@ class ContactService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //Update a contact
+  Future updateContact(DocumentSnapshot docList, DocumentSnapshot docContact) async{
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).updateContactData(docList, docContact);
+  }
+
   //Delete a contact
   Future deleteContact(DocumentSnapshot docList, DocumentSnapshot docContact) async{
     User user = await _auth.currentUser;
@@ -31,9 +37,15 @@ class ContactService {
     return DatabaseService(uid: user.uid).getContactDetailsData(doc);
   }
 
-  //Get the lists
-  Stream<QuerySnapshot> getContactsList(DocumentSnapshot listDoc) {
+  //Get the all contacts
+  Stream<QuerySnapshot> getAllContacts() {
     User user =  _auth.currentUser;
-    return DatabaseService(uid: user.uid).getContactsListData(listDoc);
+    return DatabaseService(uid: user.uid).getAllContactsData();
+  }
+
+  //Get the lists
+  Stream<QuerySnapshot> getContactsFromList(DocumentSnapshot listDoc) {
+    User user =  _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactsFromListData(listDoc);
   }
 }
