@@ -14,6 +14,12 @@ class ListService {
     return DatabaseService(uid: user.uid).getListsData();
   }
 
+  //Get document to check the name of a list
+  Future<int> getDocument(String newListName) async{
+    User user = await _auth.currentUser;
+    return await DatabaseService(uid: user.uid).getDocumentData(newListName);
+  }
+
   //Update a list
   Future addList(String docId, String listName) async{
     User user = await _auth.currentUser;
