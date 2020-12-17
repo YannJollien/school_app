@@ -7,7 +7,7 @@ class DatabaseService {
 
   //Collection reference user
   final CollectionReference collectionUser =
-      FirebaseFirestore.instance.collection("users");
+  FirebaseFirestore.instance.collection("users");
 
   Future updateUserData(String name) async {
     return await collectionUser.doc(uid).set({
@@ -30,7 +30,8 @@ class DatabaseService {
   }
 
   //Update lists for a user
-  Future updateContactData(DocumentSnapshot docList, DocumentSnapshot docContact) async {
+  Future updateContactListsData(DocumentSnapshot docList,
+      DocumentSnapshot docContact) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -39,8 +40,8 @@ class DatabaseService {
   }
 
   //Delete contact in a list
-  Future deleteContactData(
-      DocumentSnapshot docList, DocumentSnapshot docContact) async {
+  Future deleteContactData(DocumentSnapshot docList,
+      DocumentSnapshot docContact) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -51,7 +52,8 @@ class DatabaseService {
   }
 
   //Update notes of a contact
-  Future addContactNotesData(DocumentSnapshot docContact, String notes) async {
+  Future updateContactNotesData(DocumentSnapshot docContact,
+      String notes) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -61,11 +63,26 @@ class DatabaseService {
     });
   }
 
+  //Update details of a contact
+  Future updateContactDetailsData(DocumentSnapshot docContact, String firstname,
+      String lastname, String institution, String notes) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(docContact.id)
+        .update({
+      'firstname': firstname,
+      'lastname': lastname,
+      'institution': institution,
+      'notes': notes
+    });
+  }
+
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
     DocumentReference docRef =
-        await collectionUser.doc(uid).collection('contacts').add({
+    await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
       'lastname': lastname,
       'institution': institution,
@@ -103,11 +120,12 @@ class DatabaseService {
 
   //Get document from the collection lists
   Future<int> getDocumentData(String newListName) async {
-    final QuerySnapshot result = await collectionUser.doc(uid).collection('lists')
+    final QuerySnapshot result = await collectionUser.doc(uid).collection(
+        'lists')
         .where('listName', isEqualTo: newListName)
         .limit(1)
         .get();
-    final  List<DocumentSnapshot> documents = result.docs;
+    final List<DocumentSnapshot> documents = result.docs;
     return documents.length;
   }
 

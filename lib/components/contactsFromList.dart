@@ -128,7 +128,7 @@ class ContactListState extends State<ContactList> {
   showAlertDialog(BuildContext context, DocumentSnapshot contactDoc) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
