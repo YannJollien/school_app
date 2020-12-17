@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'game/game_test_knowledge.dart';
 import 'game/game_training.dart';
 
 class GameScreen extends StatefulWidget {
@@ -166,7 +167,28 @@ class _GameScreenState extends State<GameScreen> {
                         SizedBox(
                           width: 200,
                           child: FlatButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if(numberChose == null){
+                                setState(() {
+                                  textDropDownVisible = true;
+                                });
+                              } if (gameMode == null){
+                                setState(() {
+                                  textGameModeVisible = true;
+                                });
+                              }
+                              else {
+                                //Reset visibility texts
+                                setState(() {
+                                  textDropDownVisible = false;
+                                  textGameModeVisible = false;
+                                });
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => GameTestKnowledge()),
+                                );
+                              }
+                            },
                             color: Colors.lightBlue,
                             child: Text(
                                 "Test my knowledge"
