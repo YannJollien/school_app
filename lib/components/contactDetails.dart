@@ -51,7 +51,12 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.save),
                           color: Colors.white,
                           onPressed: () {
-
+                            _contactService.updateContactDetails(
+                                ContactDetails.contactDoc,
+                                firstnameController.text,
+                                lastNameController.text,
+                                institutionController.text,
+                                notesController.text);
                             setState(() {
                               editMode = !editMode;
                             });
@@ -180,7 +185,11 @@ class ContactDetailsState extends State<ContactDetails> {
                 SizedBox(height: 20),
                 //NOTES
                 _label('Notes'),
-                _buildNotes('notes', context)
+                Container(
+                    child: (editMode)
+                        ? _buildNotesNotEditable('notes', context)
+                        : _buildLiveUpdateNotes('notes', context)),
+//                _buildNotes('notes', context)
               ],
             ),
           ),
@@ -197,47 +206,6 @@ class ContactDetailsState extends State<ContactDetails> {
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  static final notesController = TextEditingController();
-
-  static Widget _buildNotes(String content, BuildContext context) {
-    final int notesLength = 100;
-    ContactService _contactService = ContactService();
-    return Container(
-      height: 5 * 24.0,
-      child: TextFormField(
-        controller: notesController
-          ..text = ContactDetails.contactDoc.data()[content],
-//        minLines: 1,
-        maxLines: 5,
-        maxLength: notesLength,
-        maxLengthEnforced: true,
-        onChanged: (text) {
-          if (text.length < notesLength) {
-            _contactService.updateContactNotes(ContactDetails.contactDoc, text);
-          }
-        },
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(10),
-          fillColor: Colors.yellow,
-          filled: true,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow, width: 5.0),
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              showAlertDialogNotes(context);
-            },
-            icon: Icon(Icons.clear),
-            color: Colors.black,
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow),
-          ),
         ),
       ),
     );
@@ -289,6 +257,91 @@ class ContactDetailsState extends State<ContactDetails> {
         color: Colors.black, fontFamily: 'RadikalLight', fontSize: 20);
   }
 
+  static final notesController = TextEditingController();
+
+  static Widget _buildLiveUpdateNotes(String content, BuildContext context) {
+    final int notesLength = 100;
+    ContactService _contactService = ContactService();
+
+    //PAS UN STREAM BUILDER MAIS UN GET SINON UPDATE ET STREAM SE CROISENT
+    StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          // ignore: missing_return, missing_return
+          notesController.text = snapshot.data[content];
+        });
+
+    return Container(
+      height: 5 * 24.0,
+      child: TextFormField(
+        controller: notesController..text = notesController.text,
+        maxLines: 5,
+        maxLength: notesLength,
+        maxLengthEnforced: true,
+        onChanged: (text) {
+          if (text.length < notesLength) {
+            _contactService.updateContactNotes(ContactDetails.contactDoc, text);
+          }
+        },
+        decoration: _buildUpdateNotesDecoration(context),
+      ),
+    );
+  }
+
+  static Widget _buildNotesNotEditable(String content, BuildContext context) {
+    final int notesLength = 100;
+
+    return Container(
+      height: 5 * 24.0,
+      child: TextFormField(
+        controller: notesController..text = notesController.text,
+        maxLines: 5,
+        maxLength: notesLength,
+        maxLengthEnforced: true,
+        style: TextStyle(
+            color: Colors.grey, fontFamily: 'RadikalLight', fontSize: 16),
+        decoration: _buildNotesDecoration(),
+      ),
+    );
+  }
+
+  static InputDecoration _buildNotesDecoration() {
+    return InputDecoration(
+      enabled: false,
+      contentPadding: EdgeInsets.all(10),
+      fillColor: Colors.yellow,
+      filled: true,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow, width: 5.0),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow),
+      ),
+    );
+  }
+
+  static InputDecoration _buildUpdateNotesDecoration(BuildContext context) {
+    return InputDecoration(
+      contentPadding: EdgeInsets.all(10),
+      fillColor: Colors.yellow,
+      filled: true,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow, width: 5.0),
+      ),
+      suffixIcon: IconButton(
+        onPressed: () {
+          showAlertDialogNotes(context);
+        },
+        icon: Icon(Icons.clear),
+        color: Colors.black,
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow),
+      ),
+    );
+  }
+
   //FIRSTNAME EDITABLE CONTENT WIDGET
   static var firstnameController = TextEditingController();
 
@@ -304,7 +357,7 @@ class ContactDetailsState extends State<ContactDetails> {
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
               style: _contentTextStyle(),
-              decoration: _buildInputDecoration(snapshot.data[content], firstnameController),
+              decoration: _buildInputDecoration(firstnameController),
             ),
           );
         });
@@ -325,7 +378,7 @@ class ContactDetailsState extends State<ContactDetails> {
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
               style: _contentTextStyle(),
-              decoration: _buildInputDecoration(snapshot.data[content], lastNameController),
+              decoration: _buildInputDecoration(lastNameController),
             ),
           );
         });
@@ -346,7 +399,7 @@ class ContactDetailsState extends State<ContactDetails> {
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
               style: _contentTextStyle(),
-              decoration: _buildInputDecoration(snapshot.data[content], institutionController),
+              decoration: _buildInputDecoration(institutionController),
             ),
           );
         });
@@ -375,7 +428,7 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //Build the textformfield decoration
   static InputDecoration _buildInputDecoration(
-      String hint, TextEditingController controller) {
+      TextEditingController controller) {
     return InputDecoration(
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)),
