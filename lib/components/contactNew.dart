@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'contactList.dart';
+import 'contactsFromList.dart';
 
 class ContactNew extends StatefulWidget {
-  DocumentSnapshot doc;
+  DocumentSnapshot listDoc;
 
   ContactNew(DocumentSnapshot doc) {
-    this.doc = doc;
+    this.listDoc = doc;
   }
 
   @override
-  State<StatefulWidget> createState() => new ContactNewState(doc);
+  State<StatefulWidget> createState() => new ContactNewState(listDoc);
 }
 
 class ContactNewState extends State<ContactNew> {
@@ -59,32 +59,6 @@ class ContactNewState extends State<ContactNew> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text('Add a contact'),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Icon(Icons.save),
-              color: Colors.white,
-              iconSize: 30,
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  var temp = _contactService.addContact(
-                      widget.doc,
-                      firstNameController.text,
-                      lastNameController.text,
-                      institutionController.text);
-                  temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
-                  downloadImage();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ContactList(widget.doc)),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -112,13 +86,7 @@ class ContactNewState extends State<ContactNew> {
                 _buildLastName(),
                 _buildInstitution(),
                 SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildImportButton(context),
-                    _buildFromExistingContacts(context)
-                  ],
-                ),
+                _buildImportButton(context),
               ],
             ),
           ),
@@ -140,6 +108,7 @@ class ContactNewState extends State<ContactNew> {
   var lastNameController = TextEditingController();
   Widget _buildLastName() {
     return TextFormField(
+//      enabled: false,
       controller: lastNameController,
       validator: (value) => value.isEmpty ? "Last name cannot be empty" : null,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
@@ -159,22 +128,24 @@ class ContactNewState extends State<ContactNew> {
   Widget _buildImportButton(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       IconButton(
-        icon: Icon(Icons.save_alt),
-        iconSize: 50,
-        color: Colors.blue,
-        onPressed: () {},
-      ),
-    ]);
-  }
-
-  Widget _buildFromExistingContacts(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      IconButton(
-        icon: Icon(Icons.list),
+        icon: Icon(Icons.save),
         iconSize: 50,
         color: Colors.blue,
         onPressed: () {
-
+          if (_formKey.currentState.validate()) {
+            var temp = _contactService.addContact(
+                widget.listDoc,
+                firstNameController.text,
+                lastNameController.text,
+                institutionController.text);
+            temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
+            downloadImage();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ContactList(widget.listDoc)),
+            );
+          }
         },
       ),
     ]);

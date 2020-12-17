@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schoolapp/components/contactList.dart';
+import 'package:schoolapp/components/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 class ContactDetails extends StatefulWidget {
@@ -21,6 +21,8 @@ class ContactDetails extends StatefulWidget {
 class ContactDetailsState extends State<ContactDetails> {
   ContactDetailsState(data);
 
+  bool editMode = false;
+
   static ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
@@ -35,7 +37,7 @@ class ContactDetailsState extends State<ContactDetails> {
               padding: EdgeInsets.only(right: 0),
               child: IconButton(
                 icon: Icon(Icons.delete),
-                color: Colors.red,
+                color: Colors.white,
                 onPressed: () {
                   showAlertDialogOnDelete(context);
                 },
@@ -43,11 +45,26 @@ class ContactDetailsState extends State<ContactDetails> {
             ),
             Padding(
               padding: EdgeInsets.only(right: 10),
-              child: IconButton(
-                icon: Icon(Icons.edit),
-                color: Colors.white,
-                onPressed: () {},
-              ),
+              child: Container(
+                  child: (editMode)
+                      ? IconButton(
+                          icon: Icon(Icons.save),
+                          color: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              editMode = !editMode;
+                            });
+                          },
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.edit),
+                          color: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              editMode = !editMode;
+                            });
+                          },
+                        )),
             ),
           ],
         ),
@@ -106,16 +123,6 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  //Get the image from storage
-  Future<Widget> getImage(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
-  }
-
   Widget detailsSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
@@ -127,42 +134,48 @@ class ContactDetailsState extends State<ContactDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  ClipOval(
-                    child: FutureBuilder(
-                      future: getImage(context, firebaseAuth.currentUser.email,
-                          ContactDetails.contactDoc.id),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width / 1.5,
-                            height: MediaQuery.of(context).size.width / 1.5,
-                            child: snapshot.data,
-                          );
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width / 1.2,
-                            height: MediaQuery.of(context).size.width / 1.2,
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
+                  FutureBuilder(
+                    future: getImage(context, firebaseAuth.currentUser.email,
+                        ContactDetails.contactDoc.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 1.8,
+                          height: MediaQuery.of(context).size.width / 1.8,
+                          child: snapshot.data,
+                        );
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 1.8,
+                          height: MediaQuery.of(context).size.width / 1.8,
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return Container();
+                    },
                   ),
                 ]),
                 //FIRSTNAME
                 _label('Firstname'),
-                _content('firstname'),
+                Container(
+                    child: (editMode)
+                        ? _firstnameEditable('firstname')
+                        : _contentNotEditable('firstname')),
                 SizedBox(height: 20),
                 //LASTNAME
                 _label('Lastname'),
-                _content('lastname'),
+                Container(
+                    child: (editMode)
+                        ? _lastnameEditable('lastname')
+                        : _contentNotEditable('lastname')),
                 SizedBox(height: 20),
                 //INSTITUTION
                 _label('Institution'),
-                _content('institution'),
+                Container(
+                    child: (editMode)
+                        ? _institutionEditable('institution')
+                        : _contentNotEditable('institution')),
                 SizedBox(height: 20),
                 //NOTES
                 _label('Notes'),
@@ -269,21 +282,103 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  //CONTENT WIDGET
-  static Widget _content(String content) {
+  //FIRSTNAME EDITABLE CONTENT WIDGET
+  static var firstnameController = TextEditingController();
+
+  static Widget _firstnameEditable(String content) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          firstnameController.text = snapshot.data[content];
+          return new SingleChildScrollView(
+            child: new TextFormField(
+              controller: firstnameController,
+              validator: (value) =>
+                  value.isEmpty ? "Last name cannot be empty" : null,
+              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              decoration: new InputDecoration(
+                hintText: snapshot.data[content],
+              ),
+            ),
+          );
+        });
+  }
+
+  //LASTNAME EDITABLE CONTENT WIDGET
+  static var lastNameController = TextEditingController();
+
+  static Widget _lastnameEditable(String content) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          lastNameController.text = snapshot.data[content];
+          return new SingleChildScrollView(
+            child: new TextFormField(
+              controller: lastNameController,
+              validator: (value) =>
+                  value.isEmpty ? "Last name cannot be empty" : null,
+              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              decoration: new InputDecoration(
+                hintText: snapshot.data[content],
+              ),
+            ),
+          );
+        });
+  }
+
+  //INSTITUTION EDITABLE CONTENT WIDGET
+  static var institutionController = TextEditingController();
+
+  static Widget _institutionEditable(String content) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          institutionController.text = snapshot.data[content];
+          return new SingleChildScrollView(
+            child: new TextFormField(
+              controller: institutionController,
+              validator: (value) =>
+                  value.isEmpty ? "Last name cannot be empty" : null,
+              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              decoration: new InputDecoration(
+                hintText: snapshot.data[content],
+              ),
+            ),
+          );
+        });
+  }
+
+  //NONE EDITABLE CONTENT WIDGET
+  static Widget _contentNotEditable(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           return new SingleChildScrollView(
-              child: new Text(
-            snapshot.data[content],
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey[500],
+            child: new TextFormField(
+              enabled: false,
+              validator: (value) =>
+                  value.isEmpty ? "This field cannot be empty" : null,
+              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              decoration: new InputDecoration(
+                hintText: snapshot.data[content],
+              ),
             ),
-          ));
+          );
         });
+  }
+
+  //Get the image from storage
+  Future<Widget> getImage(
+      BuildContext context, String imageName, String docId) async {
+    Image image;
+    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
+    });
+    return image;
   }
 }
 

@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 import 'contactNew.dart';
+import 'contactsAllList.dart';
 
 class ContactList extends StatefulWidget {
   DocumentSnapshot listDoc;
@@ -21,24 +25,24 @@ class ContactList extends StatefulWidget {
 class ContactListState extends State<ContactList> {
   String id;
   ContactService _contactService = ContactService();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   ContactListState(data);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(widget.listDoc.data()["listName"] + " list"),
         leading: GestureDetector(
           onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Lists()),
-                );
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Lists()),
+            );
           },
           child: Icon(
-            Icons.arrow_back,  // add custom icons also
+            Icons.arrow_back, // add custom icons also
           ),
         ),
         actions: <Widget>[
@@ -52,21 +56,21 @@ class ContactListState extends State<ContactList> {
               );
             },
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: IconButton(
-              icon: Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ),
+//          Padding(
+//            padding: EdgeInsets.symmetric(horizontal: 16),
+//            child: IconButton(
+//              icon: Icon(Icons.search),
+//              color: Colors.white,
+//              onPressed: () {},
+//            ),
+//          ),
         ],
       ),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: _contactService.getContactsList(widget.listDoc),
+            stream: _contactService.getContactsFromList(widget.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
@@ -81,14 +85,41 @@ class ContactListState extends State<ContactList> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ContactNew(widget.listDoc)),
-          );
-        },
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.save_alt),
+              backgroundColor: Colors.red,
+              label: 'Import',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('FIRST CHILD')
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            backgroundColor: Colors.blue,
+            label: 'Add',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactsList(widget.listDoc)),
+              );
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.fiber_new_outlined),
+            backgroundColor: Colors.green,
+            label: 'New',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactNew(widget.listDoc)),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -151,12 +182,29 @@ class ContactListState extends State<ContactList> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-//                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Icon(
-                    Icons.account_box,
-                    size: 50,
+                  FutureBuilder(
+                    future: getImage(
+                        context, firebaseAuth.currentUser.email, contactDoc.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 8,
+                          height: MediaQuery.of(context).size.width / 8,
+                          child: snapshot.data,
+                        );
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 8,
+                          height: MediaQuery.of(context).size.width / 8,
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return Container();
+                    },
                   ),
+                  SizedBox(width: 10),
                   Text(
                     '${contactDoc.data()['firstname']}' +
                         ' ' +
@@ -179,5 +227,27 @@ class ContactListState extends State<ContactList> {
         ),
       ),
     );
+  }
+
+  //Get the image from storage
+  Future<Widget> getImage(
+      BuildContext context, String imageName, String docId) async {
+    Image image;
+    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
+    });
+    return image;
+  }
+}
+
+//Helper class to get the image
+class FireStorageService extends ChangeNotifier {
+  FireStorageService();
+
+  static Future<dynamic> loadImage(
+      BuildContext context, String email, String docId) async {
+    return await FirebaseStorage.instance
+        .ref("contacts/$email/$docId")
+        .getDownloadURL();
   }
 }
