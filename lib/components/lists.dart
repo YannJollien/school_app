@@ -78,7 +78,7 @@ class ListsState extends State<Lists> {
     final autoID = db.collection('lists').doc().id;
 
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[100],
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
         backgroundColor: Colors.cyan,
@@ -199,7 +199,7 @@ class ListsState extends State<Lists> {
   AlertDialogDeleteList(BuildContext context, DocumentSnapshot doc) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();

@@ -51,6 +51,17 @@ class DatabaseService {
   }
 
   //Update notes of a contact
+  Future updateContactNotesData(DocumentSnapshot docContact, String notes) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(docContact.id)
+        .update({
+      'notes': notes,
+    });
+  }
+
+  //Update notes of a contact
   Future addContactNotesData(DocumentSnapshot docContact, String notes) async {
     return await collectionUser
         .doc(uid)

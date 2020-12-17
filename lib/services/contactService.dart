@@ -20,9 +20,9 @@ class ContactService {
   }
 
   //Add a contact notes
-  Future addContactNotes(DocumentSnapshot docContact, String notes) async{
+  Future updateContactNotes(DocumentSnapshot docContact, String notes) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).addContactNotesData(docContact, notes);
+    await DatabaseService(uid: user.uid).updateContactNotesData(docContact, notes);
   }
 
   //Add a list

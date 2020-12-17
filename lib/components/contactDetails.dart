@@ -81,7 +81,7 @@ class ContactDetailsState extends State<ContactDetails> {
   showAlertDialogOnDelete(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
@@ -218,7 +218,7 @@ class ContactDetailsState extends State<ContactDetails> {
         maxLengthEnforced: true,
         onChanged: (text) {
           if (text.length < notesLength) {
-            _contactService.addContactNotes(ContactDetails.contactDoc, text);
+            _contactService.updateContactNotes(ContactDetails.contactDoc, text);
           }
         },
         decoration: InputDecoration(
@@ -246,7 +246,7 @@ class ContactDetailsState extends State<ContactDetails> {
   static showAlertDialogNotes(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
@@ -256,7 +256,7 @@ class ContactDetailsState extends State<ContactDetails> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.addContactNotes(ContactDetails.contactDoc, '');
+        _contactService.updateContactNotes(ContactDetails.contactDoc, '');
         notesController.clear();
         Navigator.of(context).pop();
       },
