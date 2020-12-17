@@ -263,13 +263,11 @@ class ContactDetailsState extends State<ContactDetails> {
     final int notesLength = 100;
     ContactService _contactService = ContactService();
 
-    //PAS UN STREAM BUILDER MAIS UN GET SINON UPDATE ET STREAM SE CROISENT
     StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          // ignore: missing_return, missing_return
-          notesController.text = snapshot.data[content];
+          return notesController.text = snapshot.data[content];
         });
 
     return Container(
