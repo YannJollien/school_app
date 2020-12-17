@@ -50,7 +50,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(20.0),
-              color: Colors.lightBlue,
+              color: Colors.cyan,
               child: Center(
                 child: Column(
                   children: <Widget>[

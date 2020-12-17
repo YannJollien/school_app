@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/services/database.dart';
 import 'database.dart';
 
@@ -48,4 +47,5 @@ class ContactService {
     User user =  _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactsFromListData(listDoc);
   }
+
 }

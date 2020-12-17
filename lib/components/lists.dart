@@ -52,9 +52,14 @@ class ListsState extends State<Lists> {
                     icon: Icon(Icons.mode_edit),
                     color: Colors.blue,
                     onPressed: () {
-                      AlertDialogUpdateList(context).then((value) => setState(() {
+                      AlertDialogUpdateList(context).then((value) => setState(() async {
+                        final checkName = await _listService.getDocument(value);
                         if(value!=null) {
-                          _listService.updateLists(doc.id, value);
+                          if(checkName == 0) {
+                            _listService.updateLists(doc.id, value);
+                          }else{
+                            AlertListName(context);
+                          }
                         }
                       }));
                     },
@@ -73,13 +78,19 @@ class ListsState extends State<Lists> {
     final autoID = db.collection('lists').doc().id;
 
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
         onPressed: (){
-          AlertDialogAddList(context).then((value) => setState(() {
+          AlertDialogAddList(context).then((value) => setState(() async {
+            final checkName = await _listService.getDocument(value);
             if(value != null) {
-              _listService.addList(autoID, value);
+              if(checkName == 0) {
+                _listService.addList(autoID, value);
+              }else{
+                AlertListName(context);
+              }
             }
           }));
         },
@@ -121,7 +132,8 @@ class ListsState extends State<Lists> {
 
   // To add a list an alert dialog is displayed on the screen,
   // it will ask the user to enter the name of the list he wants to create
-  Future<String> AlertDialogAddList(BuildContext context) {
+  Future<String> AlertDialogAddList(BuildContext context) async{
+
     TextEditingController customController = new TextEditingController();
     return showDialog(
         context: context,
@@ -138,6 +150,10 @@ class ListsState extends State<Lists> {
                 child: Text("Add"),
                 onPressed: () {
                   Navigator.of(context).pop(customController.text.toString());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Lists()),
+                  );
                 },
               ),
             ],
@@ -145,10 +161,11 @@ class ListsState extends State<Lists> {
         });
   }
 
+
   // To update a list an alert dialog is displayed on the screen,
   // it will ask the user to enter a new name for the list, if the user
   // clicks outside of the alert dialog, the update is cancel.
-  Future<String> AlertDialogUpdateList(BuildContext context) {
+  Future<String> AlertDialogUpdateList(BuildContext context) { //checkName ICI!!!!!!!!!!!!!!!
     TextEditingController customController = new TextEditingController();
     return showDialog(
         context: context,
@@ -165,6 +182,10 @@ class ListsState extends State<Lists> {
                 child: Text("Update"),
                 onPressed: () {
                   Navigator.of(context).pop(customController.text.toString());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Lists()),
+                  );
                 },
               ),
             ],
@@ -201,6 +222,35 @@ class ListsState extends State<Lists> {
       actions: [
         cancelButton,
         continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  //When a user try to enter a list name that is already asigned to one of the
+  //existing list, an alert message appear telling him that the name already
+  //exist and that he should put another name
+  AlertListName(BuildContext context) {
+    // set up the buttons
+    Widget OkButton = FlatButton(
+      child: Text("Ok"),
+      color: Colors.blue,
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      content: Text(
+          "A list with the same name already exist! Please, choose another name."),
+      actions: [
+        OkButton,
       ],
     );
     // show the dialog

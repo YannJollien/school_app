@@ -99,6 +99,15 @@ class DatabaseService {
         .collection('contacts')
         .doc(doc)
         .update({'listName': listName});
+
+  //Get document from the collection lists
+  Future<int> getDocumentData(String newListName) async {
+    final QuerySnapshot result = await collectionUser.doc(uid).collection('lists')
+        .where('listName', isEqualTo: newListName)
+        .limit(1)
+        .get();
+    final  List<DocumentSnapshot> documents = result.docs;
+    return documents.length;
   }
 
   //Get lists for a user

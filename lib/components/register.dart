@@ -62,6 +62,7 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return isLoading ? Loading() :  Scaffold(
+      backgroundColor: Colors.grey[300],
         appBar: AppBar(title: Text("Sign Up")),
         body: Form(
             key: _formKey,

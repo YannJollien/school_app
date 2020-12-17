@@ -29,6 +29,7 @@ class ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Contact details'),
           actions: [
