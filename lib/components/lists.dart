@@ -43,14 +43,14 @@ class ListsState extends State<Lists> {
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
-                    color: Colors.blue,
+                    color: Colors.cyan,
                     onPressed: () {
                       AlertDialogDeleteList(context, doc);
                     },
                   ),
                   IconButton(
                     icon: Icon(Icons.mode_edit),
-                    color: Colors.blue,
+                    color: Colors.cyan,
                     onPressed: () {
                       AlertDialogUpdateList(context).then((value) => setState(() async {
                         final checkName = await _listService.getDocument(value);
@@ -78,10 +78,10 @@ class ListsState extends State<Lists> {
     final autoID = db.collection('lists').doc().id;
 
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[100],
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.cyan,
         onPressed: (){
           AlertDialogAddList(context).then((value) => setState(() async {
             final checkName = await _listService.getDocument(value);
@@ -200,8 +200,8 @@ class ListsState extends State<Lists> {
   AlertDialogDeleteList(BuildContext context, DocumentSnapshot doc) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      color: Colors.blue,
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -241,7 +241,7 @@ class ListsState extends State<Lists> {
     // set up the buttons
     Widget OkButton = FlatButton(
       child: Text("Ok"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },

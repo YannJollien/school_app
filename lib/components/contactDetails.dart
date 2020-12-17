@@ -29,7 +29,7 @@ class ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Contact details'),
           actions: [
@@ -51,6 +51,12 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.save),
                           color: Colors.white,
                           onPressed: () {
+                            _contactService.updateContactDetails(
+                                ContactDetails.contactDoc,
+                                firstnameController.text,
+                                lastNameController.text,
+                                institutionController.text,
+                                notesController.text);
                             setState(() {
                               editMode = !editMode;
                             });
@@ -80,8 +86,8 @@ class ContactDetailsState extends State<ContactDetails> {
   showAlertDialogOnDelete(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      color: Colors.blue,
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -179,7 +185,11 @@ class ContactDetailsState extends State<ContactDetails> {
                 SizedBox(height: 20),
                 //NOTES
                 _label('Notes'),
-                _buildNotes('notes', context)
+                Container(
+                    child: (editMode)
+                        ? _buildNotesNotEditable('notes', context)
+                        : _buildLiveUpdateNotes('notes', context)),
+//                _buildNotes('notes', context)
               ],
             ),
           ),
@@ -201,52 +211,11 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  static final notesController = TextEditingController();
-
-  static Widget _buildNotes(String content, BuildContext context) {
-    final int notesLength = 100;
-    ContactService _contactService = ContactService();
-    return Container(
-      height: 5 * 24.0,
-      child: TextFormField(
-        controller: notesController
-          ..text = ContactDetails.contactDoc.data()[content],
-//        minLines: 1,
-        maxLines: 5,
-        maxLength: notesLength,
-        maxLengthEnforced: true,
-        onChanged: (text) {
-          if (text.length < notesLength) {
-            _contactService.addContactNotes(ContactDetails.contactDoc, text);
-          }
-        },
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(10),
-          fillColor: Colors.yellow,
-          filled: true,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow, width: 5.0),
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              showAlertDialogNotes(context);
-            },
-            icon: Icon(Icons.clear),
-            color: Colors.black,
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow),
-          ),
-        ),
-      ),
-    );
-  }
-
   static showAlertDialogNotes(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      color: Colors.blue,
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -255,7 +224,7 @@ class ContactDetailsState extends State<ContactDetails> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.addContactNotes(ContactDetails.contactDoc, '');
+        _contactService.updateContactNotes(ContactDetails.contactDoc, '');
         notesController.clear();
         Navigator.of(context).pop();
       },
@@ -282,6 +251,95 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Text style for the editable content
+  static TextStyle _contentTextStyle() {
+    return TextStyle(
+        color: Colors.black, fontFamily: 'RadikalLight', fontSize: 20);
+  }
+
+  static final notesController = TextEditingController();
+
+  static Widget _buildLiveUpdateNotes(String content, BuildContext context) {
+    final int notesLength = 100;
+    ContactService _contactService = ContactService();
+
+    StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          return notesController.text = snapshot.data[content];
+        });
+
+    return Container(
+      height: 5 * 24.0,
+      child: TextFormField(
+        controller: notesController..text = notesController.text,
+        maxLines: 5,
+        maxLength: notesLength,
+        maxLengthEnforced: true,
+        onChanged: (text) {
+          if (text.length < notesLength) {
+            _contactService.updateContactNotes(ContactDetails.contactDoc, text);
+          }
+        },
+        decoration: _buildUpdateNotesDecoration(context),
+      ),
+    );
+  }
+
+  static Widget _buildNotesNotEditable(String content, BuildContext context) {
+    final int notesLength = 100;
+
+    return Container(
+      height: 5 * 24.0,
+      child: TextFormField(
+        controller: notesController..text = notesController.text,
+        maxLines: 5,
+        maxLength: notesLength,
+        maxLengthEnforced: true,
+        style: TextStyle(
+            color: Colors.grey, fontFamily: 'RadikalLight', fontSize: 16),
+        decoration: _buildNotesDecoration(),
+      ),
+    );
+  }
+
+  static InputDecoration _buildNotesDecoration() {
+    return InputDecoration(
+      enabled: false,
+      contentPadding: EdgeInsets.all(10),
+      fillColor: Colors.yellow,
+      filled: true,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow, width: 5.0),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow),
+      ),
+    );
+  }
+
+  static InputDecoration _buildUpdateNotesDecoration(BuildContext context) {
+    return InputDecoration(
+      contentPadding: EdgeInsets.all(10),
+      fillColor: Colors.yellow,
+      filled: true,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow, width: 5.0),
+      ),
+      suffixIcon: IconButton(
+        onPressed: () {
+          showAlertDialogNotes(context);
+        },
+        icon: Icon(Icons.clear),
+        color: Colors.black,
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.yellow),
+      ),
+    );
+  }
+
   //FIRSTNAME EDITABLE CONTENT WIDGET
   static var firstnameController = TextEditingController();
 
@@ -296,10 +354,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: firstnameController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(firstnameController),
             ),
           );
         });
@@ -319,10 +375,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: lastNameController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(lastNameController),
             ),
           );
         });
@@ -342,10 +396,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: institutionController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(institutionController),
             ),
           );
         });
@@ -362,13 +414,34 @@ class ContactDetailsState extends State<ContactDetails> {
               enabled: false,
               validator: (value) =>
                   value.isEmpty ? "This field cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              style: TextStyle(
+                  color: Colors.grey, fontFamily: 'RadikalLight', fontSize: 20),
               decoration: new InputDecoration(
                 hintText: snapshot.data[content],
               ),
             ),
           );
         });
+  }
+
+  //Build the textformfield decoration
+  static InputDecoration _buildInputDecoration(
+      TextEditingController controller) {
+    return InputDecoration(
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)),
+        hintStyle: TextStyle(color: Colors.grey),
+        errorStyle: TextStyle(color: Colors.blue),
+        errorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+        suffixIcon: IconButton(
+          onPressed: () {
+            controller.clear();
+          },
+          icon: Icon(Icons.clear),
+        ),
+        focusedErrorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)));
   }
 
   //Get the image from storage
