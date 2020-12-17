@@ -5,8 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'package:schoolapp/components/game/game_trianing_resume.dart';
 import 'package:tcard/tcard.dart';
+
+import 'game_trianing_resume.dart';
 
 List<GameCard> cards = new List();
 int _indexList;
@@ -62,7 +63,7 @@ List <Widget> _getGameCard(){
 
 bool test(String inputName, String toTest){
   if(inputName == toTest){
-   return true;
+    return true;
   } else {
     return false;
   }
@@ -75,10 +76,13 @@ bool test(String inputName, String toTest){
 List<GameCard> wrongAnswers = new List<GameCard>();
 
 class GameTraining extends StatefulWidget {
+  final String numberChose;
+  GameTraining(this.numberChose, {Key key}) : super(key: key);
+
   @override
   _GameTrainingState createState() => _GameTrainingState();
 
-   List<GameCard> getList(){
+  List<GameCard> getList(){
     return wrongAnswers;
   }
 
@@ -100,11 +104,11 @@ class _GameTrainingState extends State<GameTraining> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Training mode"),
-      ),
-      backgroundColor: Colors.grey[300],
-      body:
+        appBar: AppBar(
+          title: Text("Training mode"),
+        ),
+        backgroundColor: Colors.grey[300],
+        body:
         SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,21 +117,21 @@ class _GameTrainingState extends State<GameTraining> {
               AbsorbPointer(
                 absorbing: true,
                 child: TCard(
-                    cards: _getGameCard(),
+                  cards: _getGameCard(),
                   size: Size(350, 450),
                   controller: _controller,
                   onEnd: () {
-                      print("End! at $_index");
-                      for(int i = 0 ; i < wrongAnswers.length ; i++){
-                        print(wrongAnswers[i].nameNew);
-                      }
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => GameTrainingResume()),
-                      );
-                      setState(() {
-                        _indexList = cards.length;
-                      });
+                    print("End! at $_index");
+                    for(int i = 0 ; i < wrongAnswers.length ; i++){
+                      print(wrongAnswers[i].nameNew);
+                    }
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => GameTrainingResume()),
+                    );
+                    setState(() {
+                      _indexList = cards.length;
+                    });
                   },
                   onForward: (index, info){
                     _index = index;
@@ -140,65 +144,65 @@ class _GameTrainingState extends State<GameTraining> {
               ),
               SizedBox(height: 20.0),
               Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 0, left: 30),
-                          child: TextFormField(
-                            controller: answerController,
-                            obscureText: false,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Answer',
-                            ),
-                          ),
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 0, left: 30),
+                      child: TextFormField(
+                        controller: answerController,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Answer',
                         ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 30.0),
-                      child: IconButton(
-                          icon: Icon(Icons.done, size: 40.0, color: Colors.green),
-                          onPressed: () {
-                            setState(() {
-                              answer = answerController.text;
-                              progress = progress+1;
-                              //Codé en dur !!! Il faut remplacer le 4 par la taille de la liste
-                              _indexList = 4;
-                              percent = (100/_indexList*progress).toDouble()/100;
-                              progressText = (100/_indexList*progress).toString();
-                            });
-                            print("From field" + answerController.text);
-                            print("from cards" +cards[_index].nameNew);
-                            test(answer, cards[_index].nameNew);
-                            //Ajouter dans la liste des "faux"
-                            if(test(answer, cards[_index].nameNew)==false){
-                              wrongAnswers.add(GameCard(cards[_index].imageNew, cards[_index].nameNew));
-                            }
-                            _controller.forward();
-                            answerController.text = "";
-                          }
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 30.0),
+                    child: IconButton(
+                        icon: Icon(Icons.done, size: 40.0, color: Colors.green),
+                        onPressed: () {
+                          setState(() {
+                            answer = answerController.text;
+                            progress = progress+1;
+                            //Codé en dur !!! Il faut remplacer le 4 par la taille de la liste
+                            _indexList = int.parse(widget.numberChose)-1;
+                            percent = (100/_indexList*progress).toDouble()/100;
+                            progressText = (100/_indexList*progress).toString();
+                          });
+                          print("From field" + answerController.text);
+                          print("from cards" +cards[_index].nameNew);
+                          test(answer, cards[_index].nameNew);
+                          //Ajouter dans la liste des "faux"
+                          if(test(answer, cards[_index].nameNew)==false){
+                            wrongAnswers.add(GameCard(cards[_index].imageNew, cards[_index].nameNew));
+                          }
+                          _controller.forward();
+                          answerController.text = "";
+                        }
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 20.0),
-                 Padding(
-                   padding: EdgeInsets.only(left: 20.0, right: 10.0),
-                     child: LinearPercentIndicator(
-                          width: 360.0,
-                          lineHeight: 20.0,
-                          percent: percent,
-                          center: Text(
-                            progressText
-                          ),
-                          linearStrokeCap: LinearStrokeCap.butt,
-                          backgroundColor: Colors.grey,
-                          progressColor: Colors.cyan,
-                        ),
-                   ),
+              Padding(
+                padding: EdgeInsets.only(left: 20.0, right: 10.0),
+                child: LinearPercentIndicator(
+                  width: 360.0,
+                  lineHeight: 20.0,
+                  percent: percent,
+                  center: Text(
+                      progressText
+                  ),
+                  linearStrokeCap: LinearStrokeCap.butt,
+                  backgroundColor: Colors.grey,
+                  progressColor: Colors.cyan,
+                ),
+              ),
             ],
           ),
-      )
+        )
     );
   }
 

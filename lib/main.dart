@@ -34,9 +34,9 @@ void main() async {
         '/settings': (context) => Settings(),
         '/password' : (context) => Password(),
         '/gamescreen' : (context) => GameScreen(),
-        '/gametraining' : (context) => GameTraining(),
+        '/gametraining' : (context) => GameTraining('0'),
         '/gametrainingres' : (context) => GameTrainingResume(),
-        '/gametestknowledge' : (context) => GameTestKnowledge(),
+        '/gametestknowledge' : (context) => GameTestKnowledge('0'),
         '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(),
 
       }

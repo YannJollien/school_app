@@ -96,7 +96,8 @@ class ListsState extends State<Lists> {
         },
       ),
       appBar: AppBar(
-        title: Text('My lists'),
+        title: Text(
+            'My lists'),
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(

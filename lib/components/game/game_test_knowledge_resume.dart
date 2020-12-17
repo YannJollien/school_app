@@ -2,15 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_training.dart';
 
+import 'game_test_knowledge.dart';
+
 
 class GameTestKnowledgeResume extends StatefulWidget {
+
   @override
   _GameTestKnowledgeResumeState createState() => _GameTestKnowledgeResumeState();
 }
 
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
-  GameTraining gameTraining = new GameTraining();
+
+  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge('0');
 
 
   @override
@@ -34,17 +38,17 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
           ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: gameTraining.getList().length,
+              itemCount: gameTestKnowledge.getList().length,
               itemBuilder: (context, index){
                 return Card(
                   child: ListTile(
                     //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
                     onTap: () {},
                     title: Text(
-                      gameTraining.getList()[index].nameNew,
+                      gameTestKnowledge.getList()[index].nameNew,
                     ),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage( gameTraining.getList()[index].imageNew),
+                      backgroundImage: AssetImage( gameTestKnowledge.getList()[index].imageNew),
                     ),
                   ),
                 );

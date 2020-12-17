@@ -99,6 +99,17 @@ class DatabaseService {
         .collection('contacts')
         .doc(doc)
         .update({'listName': listName});
+  }
+
+  //Update the score of the game for each list
+  //Update contact
+  Future updateScoreData(String doc, String newScore) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(doc)
+        .update({'score': newScore});
+  }
 
   //Get document from the collection lists
   Future<int> getDocumentData(String newListName) async {
@@ -121,7 +132,10 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({'listName': listName});
+        .set({
+        'listName': listName,
+        'score' : '0'
+        });
   }
 
   //Delete lists for a user
