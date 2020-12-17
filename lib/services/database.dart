@@ -20,7 +20,7 @@ class DatabaseService {
     return await collectionUser.doc(uid).delete();
   }
 
-  //Get contact list
+  //Get contact details
   Stream<DocumentSnapshot> getContactDetailsData(DocumentSnapshot doc) {
     return collectionUser
         .doc(uid)

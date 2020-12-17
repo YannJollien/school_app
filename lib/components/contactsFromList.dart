@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'package:schoolapp/services/listService.dart';
 
 import 'contactNew.dart';
+import 'contactsAllList.dart';
 
 class ContactList extends StatefulWidget {
   DocumentSnapshot listDoc;
@@ -55,14 +56,14 @@ class ContactListState extends State<ContactList> {
               );
             },
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: IconButton(
-              icon: Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ),
+//          Padding(
+//            padding: EdgeInsets.symmetric(horizontal: 16),
+//            child: IconButton(
+//              icon: Icon(Icons.search),
+//              color: Colors.white,
+//              onPressed: () {},
+//            ),
+//          ),
         ],
       ),
       body: ListView(
@@ -84,14 +85,41 @@ class ContactListState extends State<ContactList> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ContactNew(widget.listDoc)),
-          );
-        },
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.save_alt),
+              backgroundColor: Colors.red,
+              label: 'Import',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('FIRST CHILD')
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            backgroundColor: Colors.blue,
+            label: 'Add',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactsList(widget.listDoc)),
+              );
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.fiber_new_outlined),
+            backgroundColor: Colors.green,
+            label: 'New',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactNew(widget.listDoc)),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -156,8 +184,8 @@ class ContactListState extends State<ContactList> {
               Row(
                 children: <Widget>[
                   FutureBuilder(
-                    future: getImage(context, firebaseAuth.currentUser.email,
-                        contactDoc.id),
+                    future: getImage(
+                        context, firebaseAuth.currentUser.email, contactDoc.id),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return Container(

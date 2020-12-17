@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'contactsFromList.dart';
-import 'contactsAllList.dart';
 
 class ContactNew extends StatefulWidget {
   DocumentSnapshot listDoc;
@@ -59,32 +58,6 @@ class ContactNewState extends State<ContactNew> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a contact'),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Icon(Icons.save),
-              color: Colors.white,
-              iconSize: 30,
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  var temp = _contactService.addContact(
-                      widget.listDoc,
-                      firstNameController.text,
-                      lastNameController.text,
-                      institutionController.text);
-                  temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
-                  downloadImage();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ContactList(widget.listDoc)),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -112,13 +85,7 @@ class ContactNewState extends State<ContactNew> {
                 _buildLastName(),
                 _buildInstitution(),
                 SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildImportButton(context),
-                    _buildFromExistingContacts(context)
-                  ],
-                ),
+                _buildImportButton(context),
               ],
             ),
           ),
@@ -140,6 +107,7 @@ class ContactNewState extends State<ContactNew> {
   var lastNameController = TextEditingController();
   Widget _buildLastName() {
     return TextFormField(
+//      enabled: false,
       controller: lastNameController,
       validator: (value) => value.isEmpty ? "Last name cannot be empty" : null,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
@@ -159,26 +127,24 @@ class ContactNewState extends State<ContactNew> {
   Widget _buildImportButton(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       IconButton(
-        icon: Icon(Icons.save_alt),
-        iconSize: 50,
-        color: Colors.blue,
-        onPressed: () {},
-      ),
-    ]);
-  }
-
-  Widget _buildFromExistingContacts(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      IconButton(
-        icon: Icon(Icons.list),
+        icon: Icon(Icons.save),
         iconSize: 50,
         color: Colors.blue,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ContactsList(widget.listDoc)),
-          );
+          if (_formKey.currentState.validate()) {
+            var temp = _contactService.addContact(
+                widget.listDoc,
+                firstNameController.text,
+                lastNameController.text,
+                institutionController.text);
+            temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
+            downloadImage();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ContactList(widget.listDoc)),
+            );
+          }
         },
       ),
     ]);
