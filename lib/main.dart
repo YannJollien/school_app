@@ -5,6 +5,8 @@ import 'package:schoolapp/components/game_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/change_password.dart';
+import 'components/game/game_test_knowledge.dart';
+import 'components/game/game_test_knowledge_resume.dart';
 import 'components/game/game_training.dart';
 import 'components/home.dart';
 import 'components/lists.dart';
@@ -33,7 +35,10 @@ void main() async {
         '/password' : (context) => Password(),
         '/gamescreen' : (context) => GameScreen(),
         '/gametraining' : (context) => GameTraining(),
-        '/gametrainingres' : (context) => GameTrainingResume()
+        '/gametrainingres' : (context) => GameTrainingResume(),
+        '/gametestknowledge' : (context) => GameTestKnowledge(),
+        '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(),
+
       }
   ));
 }
