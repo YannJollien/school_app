@@ -53,7 +53,7 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
                 DropdownButton<String>(
-                  items: <String>['1', '5', '9', '10'].map((String value) {
+                  items: <String>['1', '3', '5', '7', '9', '10'].map((String value) {
                     return new DropdownMenuItem<String>(
                       value: value,
                       child: new Text(value),
@@ -155,7 +155,7 @@ class _GameScreenState extends State<GameScreen> {
                                 });
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => GameTraining()),
+                                  MaterialPageRoute(builder: (context) => GameTraining(numberChose)),
                                 );
                               }
                             },
@@ -185,7 +185,7 @@ class _GameScreenState extends State<GameScreen> {
                                 });
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => GameTestKnowledge()),
+                                  MaterialPageRoute(builder: (context) => GameTestKnowledge(numberChose)),
                                 );
                               }
                             },
