@@ -99,6 +99,7 @@ class DatabaseService {
         .collection('contacts')
         .doc(doc)
         .update({'listName': listName});
+  }
 
   //Get document from the collection lists
   Future<int> getDocumentData(String newListName) async {
