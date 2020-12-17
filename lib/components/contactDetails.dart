@@ -29,7 +29,7 @@ class ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Contact details'),
           actions: [
@@ -51,6 +51,7 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.save),
                           color: Colors.white,
                           onPressed: () {
+
                             setState(() {
                               editMode = !editMode;
                             });
@@ -81,7 +82,7 @@ class ContactDetailsState extends State<ContactDetails> {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -246,7 +247,7 @@ class ContactDetailsState extends State<ContactDetails> {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -282,6 +283,12 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Text style for the editable content
+  static TextStyle _contentTextStyle() {
+    return TextStyle(
+        color: Colors.black, fontFamily: 'RadikalLight', fontSize: 20);
+  }
+
   //FIRSTNAME EDITABLE CONTENT WIDGET
   static var firstnameController = TextEditingController();
 
@@ -296,10 +303,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: firstnameController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(snapshot.data[content], firstnameController),
             ),
           );
         });
@@ -319,10 +324,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: lastNameController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(snapshot.data[content], lastNameController),
             ),
           );
         });
@@ -342,10 +345,8 @@ class ContactDetailsState extends State<ContactDetails> {
               controller: institutionController,
               validator: (value) =>
                   value.isEmpty ? "Last name cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-              decoration: new InputDecoration(
-                hintText: snapshot.data[content],
-              ),
+              style: _contentTextStyle(),
+              decoration: _buildInputDecoration(snapshot.data[content], institutionController),
             ),
           );
         });
@@ -362,13 +363,34 @@ class ContactDetailsState extends State<ContactDetails> {
               enabled: false,
               validator: (value) =>
                   value.isEmpty ? "This field cannot be empty" : null,
-              style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
+              style: TextStyle(
+                  color: Colors.grey, fontFamily: 'RadikalLight', fontSize: 20),
               decoration: new InputDecoration(
                 hintText: snapshot.data[content],
               ),
             ),
           );
         });
+  }
+
+  //Build the textformfield decoration
+  static InputDecoration _buildInputDecoration(
+      String hint, TextEditingController controller) {
+    return InputDecoration(
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)),
+        hintStyle: TextStyle(color: Colors.grey),
+        errorStyle: TextStyle(color: Colors.blue),
+        errorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+        suffixIcon: IconButton(
+          onPressed: () {
+            controller.clear();
+          },
+          icon: Icon(Icons.clear),
+        ),
+        focusedErrorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)));
   }
 
   //Get the image from storage

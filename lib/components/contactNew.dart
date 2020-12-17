@@ -56,7 +56,7 @@ class ContactNewState extends State<ContactNew> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Add a contact'),
       ),
@@ -130,7 +130,7 @@ class ContactNewState extends State<ContactNew> {
       IconButton(
         icon: Icon(Icons.save),
         iconSize: 50,
-        color: Colors.blue,
+        color: Colors.cyan,
         onPressed: () {
           if (_formKey.currentState.validate()) {
             var temp = _contactService.addContact(
@@ -160,9 +160,9 @@ class ContactNewState extends State<ContactNew> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         hintStyle: TextStyle(color: Colors.grey),
         icon: Icon(icons),
-        errorStyle: TextStyle(color: Colors.blue),
+        errorStyle: TextStyle(color: Colors.cyan),
         errorBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)),
         suffixIcon: IconButton(
           onPressed: () {
             controller.clear();
@@ -170,6 +170,6 @@ class ContactNewState extends State<ContactNew> {
           icon: Icon(Icons.clear),
         ),
         focusedErrorBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)));
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)));
   }
 }

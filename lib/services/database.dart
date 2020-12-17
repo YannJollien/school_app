@@ -15,7 +15,7 @@ class DatabaseService {
     });
   }
 
-  //Delet user from cloud firestore
+  //Delete user from cloud firestore
   Future deleteUserData() async {
     return await collectionUser.doc(uid).delete();
   }

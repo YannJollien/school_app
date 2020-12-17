@@ -86,6 +86,7 @@ class ContactListState extends State<ContactList> {
         ],
       ),
       floatingActionButton: SpeedDial(
+        backgroundColor: Colors.cyan,
         animatedIcon: AnimatedIcons.menu_close,
         children: [
           SpeedDialChild(
@@ -128,7 +129,7 @@ class ContactListState extends State<ContactList> {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -215,7 +216,7 @@ class ContactListState extends State<ContactList> {
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
-                    color: Colors.blue,
+                    color: Colors.cyan,
                     onPressed: () {
                       showAlertDialog(context, contactDoc);
                     },

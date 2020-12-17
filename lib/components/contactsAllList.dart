@@ -114,7 +114,7 @@ class ContactsListState extends State<ContactsList> {
     }else{
       return IconButton(
         icon: Icon(Icons.playlist_add_sharp),
-        color: Colors.blue,
+        color: Colors.cyan,
         onPressed: () {
           _contactService.updateContact(widget.listDoc, contactDoc);
         },

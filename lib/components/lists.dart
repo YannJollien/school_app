@@ -43,14 +43,14 @@ class ListsState extends State<Lists> {
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.delete),
-                    color: Colors.blue,
+                    color: Colors.cyan,
                     onPressed: () {
                       AlertDialogDeleteList(context, doc);
                     },
                   ),
                   IconButton(
                     icon: Icon(Icons.mode_edit),
-                    color: Colors.blue,
+                    color: Colors.cyan,
                     onPressed: () {
                       AlertDialogUpdateList(context).then((value) => setState(() async {
                         final checkName = await _listService.getDocument(value);
@@ -81,7 +81,7 @@ class ListsState extends State<Lists> {
       backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton (
         child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.cyan,
         onPressed: (){
           AlertDialogAddList(context).then((value) => setState(() async {
             final checkName = await _listService.getDocument(value);
@@ -200,7 +200,7 @@ class ListsState extends State<Lists> {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -240,7 +240,7 @@ class ListsState extends State<Lists> {
     // set up the buttons
     Widget OkButton = FlatButton(
       child: Text("Ok"),
-      color: Colors.blue,
+      color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
       },
