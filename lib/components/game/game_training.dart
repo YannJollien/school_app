@@ -10,6 +10,8 @@ import 'package:tcard/tcard.dart';
 import 'game_trianing_resume.dart';
 
 List<GameCard> cards = new List();
+List<String> imagesUrl = List<String>();
+List<String> names = List<String>();
 int _indexList;
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;
@@ -29,27 +31,33 @@ List <Widget> _getGameCard(){
 
   contactsRef.getDocuments().then((snapshot) {
     snapshot.documents.forEach((doc) {
-      cards.add(GameCard(doc.documentID,doc.data()['firstname']));
+      names.add(doc.data()['firstname']);
+      downloadImage(user.email, doc.id).then((value) => {
+        imagesUrl.add(value)
+      });
     });
   });
 
-  for(int i = 0 ; i < cards.length; i++){
+  for(int i = 0 ; i < names.length; i++){
+    cards.add(GameCard(imagesUrl[i], names[i]));
+  }
+
+  for(int i = 0 ; i < names.length; i++){
     print("NAMES"+cards[i].nameNew);
   }
 
-  _indexList = cards.length;
+  print("LENGTH"+cards.length.toString());
+
+  _indexList = 2;
 
   List<Widget> cardList = new List();
   for(int i = 0 ; i < _indexList ; i++ ){
-    downloadImage(user.email,cards[i].imageNew).then((value) => {
-      downloadUrl = value
-    });
     cardList.add(
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                  downloadUrl
+                  imagesUrl[i]
               ),
               fit: BoxFit.fitWidth,
             ),
@@ -68,8 +76,6 @@ bool test(String inputName, String toTest){
     return false;
   }
 }
-
-
 
 
 //Liste pour les fausses réponses
