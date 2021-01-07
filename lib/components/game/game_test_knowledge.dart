@@ -32,11 +32,15 @@ List <Widget> _getGameCard(int numberOfContacts){
   List<Widget> cardList = new List();
 
   //Fetch name of contacts
-  contactsRef
-      .get()
-      .then((snapshot) {
-        snapshot.docs.forEach((doc) {
-        cards.add(GameCard(doc.id, doc.data()['firstname']));
+//   contactsRef
+//       .get()
+//       .then((snapshot) {
+//         snapshot.docs.forEach((doc) {
+//         cards.add(GameCard(doc.id, doc.data()['firstname']));
+
+  contactsRef.getDocuments().then((snapshot) {
+    snapshot.documents.forEach((doc) {
+      cards.add(GameCard(doc.documentID,doc.data()['firstname']));
     });
   });
 

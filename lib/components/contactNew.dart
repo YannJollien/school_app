@@ -29,9 +29,10 @@ class ContactNewState extends State<ContactNew> {
   File imageFile;
   Reference ref;
   String downloadUrl;
+  bool imageAdded = true;
 
   //Get image
-  Future getImage () async {
+  Future getImage() async {
     File image;
     image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -40,13 +41,13 @@ class ContactNewState extends State<ContactNew> {
   }
 
   //Upload image
-  Future uploadImage (String email, String docId) async {
+  Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     ref.putFile(imageFile);
   }
 
   //Get image Url
-  Future downloadImage () async {
+  Future downloadImage() async {
     String downloadAddress = await ref.getDownloadURL();
     setState(() {
       downloadUrl = downloadAddress;
@@ -73,15 +74,16 @@ class ContactNewState extends State<ContactNew> {
                       height: 250,
                       decoration: BoxDecoration(
                           color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10)
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                       alignment: Alignment.center,
-                      child: imageFile == null ? Text(
-                        "Tap to add image",
-                        style: TextStyle(color: Colors.grey[400]),
-                      ) : Image.file(imageFile)
-                  ),
+                      child: imageFile == null
+                          ? Text(
+                              "Tap to add profile picture",
+                              style: TextStyle(color: Colors.grey[400]),
+                            )
+                          : Image.file(imageFile)),
                 ),
+                imageAdded == false ? Text("Profile picture cannot be empty", style: TextStyle(color: Colors.cyan, fontSize: 12)) : Text(""),
                 _buildFirstName(),
                 _buildLastName(),
                 _buildInstitution(),
@@ -96,32 +98,38 @@ class ContactNewState extends State<ContactNew> {
   }
 
   var firstNameController = TextEditingController();
+
   Widget _buildFirstName() {
     return TextFormField(
       controller: firstNameController,
       validator: (value) => value.isEmpty ? "First name cannot be empty" : null,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-      decoration: _buildInputDecoration("First name *", Icons.person, firstNameController),
+      decoration: _buildInputDecoration(
+          "First name *", Icons.person, firstNameController),
     );
   }
 
   var lastNameController = TextEditingController();
+
   Widget _buildLastName() {
     return TextFormField(
 //      enabled: false,
       controller: lastNameController,
       validator: (value) => value.isEmpty ? "Last name cannot be empty" : null,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-      decoration: _buildInputDecoration("Last name *", Icons.person, lastNameController),
+      decoration: _buildInputDecoration(
+          "Last name *", Icons.person, lastNameController),
     );
   }
 
   var institutionController = TextEditingController();
+
   Widget _buildInstitution() {
     return TextFormField(
       controller: institutionController,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
-      decoration: _buildInputDecoration("Institution", Icons.apartment, institutionController),
+      decoration: _buildInputDecoration(
+          "Institution", Icons.apartment, institutionController),
     );
   }
 
@@ -132,13 +140,19 @@ class ContactNewState extends State<ContactNew> {
         iconSize: 50,
         color: Colors.cyan,
         onPressed: () {
-          if (_formKey.currentState.validate()) {
+          if (imageFile == null) {
+            setState(() {
+              imageAdded = false;
+            });
+          }
+          if (_formKey.currentState.validate() && imageFile != null) {
             var temp = _contactService.addContact(
                 widget.listDoc,
                 firstNameController.text,
                 lastNameController.text,
                 institutionController.text);
-            temp.then((value) => uploadImage(firebaseAuth.currentUser.email, value.toString()));
+            temp.then((value) =>
+                uploadImage(firebaseAuth.currentUser.email, value.toString()));
             downloadImage();
             Navigator.push(
               context,
@@ -152,7 +166,8 @@ class ContactNewState extends State<ContactNew> {
   }
 
   //Icon according to the textfield
-  InputDecoration _buildInputDecoration(String hint, IconData icons, TextEditingController controller) {
+  InputDecoration _buildInputDecoration(
+      String hint, IconData icons, TextEditingController controller) {
     return InputDecoration(
         hintText: hint,
         labelText: hint,
