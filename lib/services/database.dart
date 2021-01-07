@@ -113,7 +113,7 @@ class DatabaseService {
   Future updateListsData(String doc, String listName) async {
     return await collectionUser
         .doc(uid)
-        .collection('contacts')
+        .collection('lists')
         .doc(doc)
         .update({'listName': listName});
   }
