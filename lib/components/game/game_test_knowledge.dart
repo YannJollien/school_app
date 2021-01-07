@@ -61,22 +61,6 @@ List <Widget> _getGameCard(int numberOfContacts){
         )
     );
 
-    //Put all the cards in a list
-    /*
-    cardList.add(
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  downloadUrl
-              ),
-              fit: BoxFit.fitWidth,
-            ),
-            shape: BoxShape.rectangle,
-          ),
-        )
-    );
-     */
   }
   return cardList;
 }
