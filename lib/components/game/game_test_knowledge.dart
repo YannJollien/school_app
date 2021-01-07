@@ -10,12 +10,9 @@ import 'package:tcard/tcard.dart';
 import 'game_test_knowledge_resume.dart';
 
 List<GameCard> cards = new List();
-  int _indexList;
   final FirebaseAuth auth = FirebaseAuth.instance;
   final User user = auth.currentUser;
   ListService _listService = ListService();
-
-
 
   String downloadUrl;
   Reference ref;
@@ -31,25 +28,22 @@ List<GameCard> wrongAnswers = new List<GameCard>();
 //Get all the contact from a list and put them into a list
 List <Widget> _getGameCard(int numberOfContacts){
 
-  final contactsRef = Firestore.instance.collection('users').document(user.uid).collection("contacts");
+  final contactsRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("contacts");
+  List<Widget> cardList = new List();
 
-  contactsRef.getDocuments().then((snapshot) {
-    snapshot.documents.forEach((doc) {
-      cards.add(GameCard(doc.documentID,doc.data()['firstname']));
+  //Fetch name of contacts
+  contactsRef
+      .get()
+      .then((snapshot) {
+        snapshot.docs.forEach((doc) {
+        cards.add(GameCard(doc.id, doc.data()['firstname']));
     });
   });
 
-  for(int i = 0 ; i < numberOfContacts; i++){
-    print("NAMES"+cards[i].nameNew);
-  }
 
-  _indexList = cards.length;
-
-  //Put all the cards in a list
-  List<Widget> cardList = new List();
-
-  for(int i = 0 ; i < _indexList ; i++ ){
-    downloadImage(user.email,cards[i].imageNew).then((value) => {
+  //Fetch images of contacts
+  for(int i = 0 ; i < numberOfContacts; i++ ){
+    downloadImage(user.email, cards[i].imageNew).then((value) => {
       downloadUrl = value
     });
 
@@ -66,6 +60,23 @@ List <Widget> _getGameCard(int numberOfContacts){
           ),
         )
     );
+
+    //Put all the cards in a list
+    /*
+    cardList.add(
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(
+                  downloadUrl
+              ),
+              fit: BoxFit.fitWidth,
+            ),
+            shape: BoxShape.rectangle,
+          ),
+        )
+    );
+     */
   }
   return cardList;
 }
@@ -104,11 +115,10 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
   int progress = 0;
   double percent = 0;
-  int numberOfContact = 2;
 
   String progressText= "0%";
 
-  int _score = 0;
+  double _score = 0;
 
 
   @override
@@ -127,16 +137,16 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
               AbsorbPointer(
                 absorbing: true,
                 child: TCard(
-                  cards: _getGameCard(numberOfContact),
+                  cards: _getGameCard(int.parse(widget.numberChose)),
                   size: Size(350, 450),
                   controller: _controller,
                   onEnd: () {
                     print("End! at $_index");
                     for (int i = 0; i < wrongAnswers.length; i++) {
-                      print(wrongAnswers[i].nameNew);
+                      print("MY WRONG ANSWERS!!! : " + wrongAnswers[i].nameNew);
                     }
                     //Update the score according to the wrong answers
-                    _score = (numberOfContact-wrongAnswers.length)~/100;
+                    _score = ((int.parse(widget.numberChose) - wrongAnswers.length) / 100) ;
                     _listService.updateScore("8OezymiqI4nuZbmuhiMX", _score.toString() + "%");
                     Navigator.pushReplacement(
                       context,
@@ -144,7 +154,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                           builder: (context) => GameTestKnowledgeResume()),
                     );
                     setState(() {
-                      _indexList = cards.length;
+                      int.parse(widget.numberChose);
                     });
                   },
                   onForward: (index, info) {
@@ -180,15 +190,15 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                           setState(() {
                             answer = answerController.text;
                             progress = progress + 1;
-                            //Codé en dur !!! Il faut remplacer le 4 par la taille de la liste
-                            _indexList = int.parse(widget.numberChose)-1;
-                            percent = (100 / _indexList * progress).toDouble() /
-                                100;
-                            progressText = (100 / _indexList * progress)
+                            percent = (100 / int.parse(widget.numberChose) * progress).toDouble() / 100;
+
+
+                            print("percent: " + percent.toString());
+                            print("progress : " + progress.toString());
+
+                            progressText = (100 / int.parse(widget.numberChose) * progress)
                                 .toString();
                           });
-                          print("From field" + answerController.text);
-                          print("from cards" + cards[_index].nameNew);
                           test(answer, cards[_index].nameNew);
                           //Ajouter dans la liste des "faux"
                           if (test(answer, cards[_index].nameNew) == false) {

@@ -123,14 +123,14 @@ class ContactsListState extends State<ContactsList> {
   }
 
   //Get the image from storage
-  Future<Widget> getImage(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
-  }
+Future<Widget> getImage(
+    BuildContext context, String imageName, String docId) async {
+  Image image;
+  await FireStorageService.loadImage(context, imageName, docId).then((value) {
+    image = Image.network(value.toString(), fit: BoxFit.scaleDown);
+  });
+  return image;
+}
 }
 
 //Helper class to get the image
