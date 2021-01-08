@@ -7,6 +7,8 @@ import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'contacts.dart';
+
 
 
 class HomeDrawer extends StatefulWidget {
@@ -120,6 +122,22 @@ class _HomeDrawerState extends State<HomeDrawer> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.assignment_ind),
+              title: Text(
+                "Contact",
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+              onTap: () {
+//                Navigator.of(context).pushNamed("/contacts");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Contacts()),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.info),
               title: Text(
                 "About us",
@@ -138,7 +156,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ),
               ),
               onTap: () {
-                //Navigator.pushNamed(context, '/list');
                 Navigator.of(context).pushNamed("/settings");
               },
             ),

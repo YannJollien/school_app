@@ -21,13 +21,6 @@ class ContactsListState extends State<ContactsList> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   ContactsListState(data);
 
-  Map<String, bool> values = {
-    'foo': true,
-    'bar': false,
-    't': false,
-    'basr': false,
-  };
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -86,7 +79,22 @@ class ContactsListState extends State<ContactsList> {
                     },
                   ),
                   SizedBox(width: 10),
-                  Text(
+                  //TEST FOR THE NAME/SURNAME LENGTH
+                  ({contactDoc.data()['firstname']}.toString().length +
+                      {contactDoc.data()['lastname']}
+                          .toString()
+                          .length >
+                      22)
+                      ? Text(
+                    '${contactDoc.data()['firstname']}' +
+                        ' ' +
+                        '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
+                          contactDoc.data()['firstname']
+                        }.toString().length + 1)}' +
+                        '...',
+                    style: TextStyle(fontSize: 24),
+                  )
+                      : Text(
                     '${contactDoc.data()['firstname']}' +
                         ' ' +
                         '${contactDoc.data()['lastname']}',

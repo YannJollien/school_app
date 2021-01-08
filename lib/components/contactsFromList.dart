@@ -7,27 +7,26 @@ import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
-
 import 'contactNew.dart';
 import 'contactsAllList.dart';
 
-class ContactList extends StatefulWidget {
+class ContactFromList extends StatefulWidget {
   DocumentSnapshot listDoc;
 
-  ContactList(DocumentSnapshot doc) {
+  ContactFromList(DocumentSnapshot doc) {
     this.listDoc = doc;
   }
 
   @override
-  State<StatefulWidget> createState() => new ContactListState(listDoc);
+  State<StatefulWidget> createState() => new ContactFromListState(listDoc);
 }
 
-class ContactListState extends State<ContactList> {
+class ContactFromListState extends State<ContactFromList> {
   String id;
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  ContactListState(data);
+  ContactFromListState(data);
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +74,48 @@ class ContactListState extends State<ContactList> {
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                  children:
-                      snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  children: snapshot.data.docs
+                      .map((doc) => Dismissible(
+                            key: Key(doc.id),
+                            onDismissed: (direction) {},
+                            confirmDismiss: (DismissDirection direction) async {
+                              return await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Confirm"),
+                                    content: const Text(
+                                        "Are you sure you want to delete "),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        color: Colors.cyan,
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: const Text("Cancel",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                      FlatButton(
+                                          color: Colors.red,
+                                          onPressed: () {
+                                            _contactService
+                                                .deleteContactFromList(
+                                                    widget.listDoc, doc);
+                                            Navigator.of(context).pop(true);
+                                          },
+                                          child: const Text("Delete",
+                                              style: TextStyle(
+                                                  color: Colors.white))),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            // Show a red background as the item is swiped away.
+                            background: Container(color: Colors.red),
+                            child: buildItem(doc),
+                          ))
+                      .toList(),
                 );
               } else {
                 return SizedBox();
@@ -94,8 +133,7 @@ class ContactListState extends State<ContactList> {
               backgroundColor: Colors.red,
               label: 'Import',
               labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('FIRST CHILD')
-          ),
+              onTap: () => print('FIRST CHILD')),
           SpeedDialChild(
             child: Icon(Icons.add),
             backgroundColor: Colors.blue,
@@ -104,7 +142,8 @@ class ContactListState extends State<ContactList> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ContactsList(widget.listDoc)),
+                MaterialPageRoute(
+                    builder: (context) => ContactsList(widget.listDoc)),
               );
             },
           ),
@@ -116,7 +155,8 @@ class ContactListState extends State<ContactList> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ContactNew(widget.listDoc)),
+                MaterialPageRoute(
+                    builder: (context) => ContactNew(widget.listDoc)),
               );
             },
           ),
@@ -132,19 +172,21 @@ class ContactListState extends State<ContactList> {
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
+        // Navigator.pushReplacement(context,
+        //     MaterialPageRoute(builder: (BuildContext context) => super.widget));
       },
     );
     Widget continueButton = FlatButton(
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.deleteContact(widget.listDoc, contactDoc);
+        _contactService.deleteContactFromList(widget.listDoc, contactDoc);
         Navigator.of(context).pop();
       },
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-//      title: Text(),
+      title: const Text("Confirm"),
       content: Text("Are you sure you want to delete " +
           contactDoc.data()['firstname'] +
           " " +
@@ -184,34 +226,54 @@ class ContactListState extends State<ContactList> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  FutureBuilder(
-                    future: getImage(
-                        context, firebaseAuth.currentUser.email, contactDoc.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: snapshot.data,
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return Container();
-                    },
+                  Image.network(
+                    contactDoc.data()['image'],
+                    width: MediaQuery.of(context).size.width / 8,
+                    height: MediaQuery.of(context).size.width / 8,
                   ),
+                  // FutureBuilder(
+                  //   future: getImage(
+                  //       context, firebaseAuth.currentUser.email, contactDoc.id),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.done) {
+                  //       return Container(
+                  //         width: MediaQuery.of(context).size.width / 8,
+                  //         height: MediaQuery.of(context).size.width / 8,
+                  //         child: snapshot.data,
+                  //       );
+                  //     }
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return Container(
+                  //         width: MediaQuery.of(context).size.width / 8,
+                  //         height: MediaQuery.of(context).size.width / 8,
+                  //         child: CircularProgressIndicator(),
+                  //       );
+                  //     }
+                  //     return Container();
+                  //   },
+                  // ),
                   SizedBox(width: 10),
-                  Text(
-                    '${contactDoc.data()['firstname']}' +
-                        ' ' +
-                        '${contactDoc.data()['lastname']}',
-                    style: TextStyle(fontSize: 24),
-                  ),
+                  //TEST FOR THE NAME/SURNAME LENGTH
+                  ({contactDoc.data()['firstname']}.toString().length +
+                              {contactDoc.data()['lastname']}
+                                  .toString()
+                                  .length >
+                          22)
+                      ? Text(
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
+                                    contactDoc.data()['firstname']
+                                  }.toString().length + 1)}' +
+                              '...',
+                          style: TextStyle(fontSize: 24),
+                        )
+                      : Text(
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname']}',
+                          style: TextStyle(fontSize: 24),
+                        ),
                   SizedBox(width: 8),
                   Spacer(),
                   IconButton(

@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'contactsFromList.dart';
 
@@ -30,6 +31,7 @@ class ContactNewState extends State<ContactNew> {
   Reference ref;
   String downloadUrl;
   bool imageAdded = true;
+  UploadTask up ;
 
   //Get image
   Future getImage() async {
@@ -43,7 +45,7 @@ class ContactNewState extends State<ContactNew> {
   //Upload image
   Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    ref.putFile(imageFile);
+    up = ref.putFile(imageFile);
   }
 
   //Get image Url
@@ -83,7 +85,10 @@ class ContactNewState extends State<ContactNew> {
                             )
                           : Image.file(imageFile)),
                 ),
-                imageAdded == false ? Text("Profile picture cannot be empty", style: TextStyle(color: Colors.cyan, fontSize: 12)) : Text(""),
+                imageAdded == false
+                    ? Text("Profile picture cannot be empty",
+                        style: TextStyle(color: Colors.cyan, fontSize: 12))
+                    : Text(""),
                 _buildFirstName(),
                 _buildLastName(),
                 _buildInstitution(),
@@ -151,13 +156,16 @@ class ContactNewState extends State<ContactNew> {
                 firstNameController.text,
                 lastNameController.text,
                 institutionController.text);
-            temp.then((value) =>
-                uploadImage(firebaseAuth.currentUser.email, value.toString()));
-            downloadImage();
+            temp.then((value) {
+              uploadImage(firebaseAuth.currentUser.email, value.id);
+              up.whenComplete(() => _contactService.addImageLink(value.id));
+            });
+            // downloadImage();
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ContactList(widget.listDoc)),
+                  // builder: (context) => ContactDetails(widget.listDoc, t)),
+                  builder: (context) => ContactFromList(widget.listDoc)),
             );
           }
         },

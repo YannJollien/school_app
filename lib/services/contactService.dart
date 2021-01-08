@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/services/database.dart';
 import 'database.dart';
 
@@ -13,11 +14,17 @@ class ContactService {
     await DatabaseService(uid: user.uid).updateContactListsData(docList, docContact);
   }
 
-  //Delete a contact
-  Future deleteContact(
+  //Delete a contact from a list
+  Future deleteContactFromList(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).deleteContactData(docList, docContact);
+    await DatabaseService(uid: user.uid).deleteContactFromListData(docList, docContact);
+  }
+
+  //Delete contact definitively
+  Future deleteContact(DocumentSnapshot docContact) async {
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).deleteContactData(docContact);
   }
 
   //Update a contact notes
@@ -34,12 +41,18 @@ class ContactService {
         .updateContactDetailsData(docContact, firstname, lastname, institution, notes);
   }
 
-  //Add a list
+  //Add a contact
   Future addContact(DocumentSnapshot docList, String firstname, String lastname,
       String institution) async {
     User user = await _auth.currentUser;
     return await DatabaseService(uid: user.uid)
         .addContactData(docList, firstname, lastname, institution);
+  }
+
+  Future addImageLink(String id) async {
+    User user = await _auth.currentUser;
+    return await DatabaseService(uid: user.uid)
+        .addImageLinkData(id);
   }
 
   Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {
