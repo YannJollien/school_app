@@ -109,11 +109,11 @@ class ContactFromListState extends State<ContactFromList> {
                 return Column(
                   children: snapshot.data.docs.map(
                     (doc) {
-                      String unionLastFirstName = doc.data()['firstname'] + doc.data()['lastname'];
+                      String unionLastFirstName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
                       return (doc
                                   .data()['lists']
                                   .contains(ContactFromList.listDoc.id) &&
-                          unionLastFirstName.contains(search))
+                          unionLastFirstName.contains(search.toLowerCase()))
                           ? Dismissible(
                               key: Key(doc.id),
                               onDismissed: (direction) {},
@@ -194,7 +194,7 @@ class ContactFromListState extends State<ContactFromList> {
           SpeedDialChild(
             child: Icon(Icons.add),
             backgroundColor: Colors.blue,
-            label: 'Add',
+            label: 'Add from existing',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () {
               Navigator.push(
@@ -208,7 +208,7 @@ class ContactFromListState extends State<ContactFromList> {
           SpeedDialChild(
             child: Icon(Icons.fiber_new_outlined),
             backgroundColor: Colors.green,
-            label: 'New',
+            label: 'New/Import',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () {
               Navigator.push(

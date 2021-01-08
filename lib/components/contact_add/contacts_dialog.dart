@@ -1,6 +1,8 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 
+/// Retrived on https://github.com/robertodevs/contactpicker and adapted by Aurélien May
+
 /// selection dialog used for selection of the country code
 class SelectionDialogContacts extends StatefulWidget {
   final List<Contact> elements;
