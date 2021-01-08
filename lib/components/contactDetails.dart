@@ -55,10 +55,24 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.save),
                           color: Colors.white,
                           onPressed: () {
-                            uploadImage(firebaseAuth.currentUser.email,
-                                ContactDetails.contactDoc.id);
-                            up.whenComplete(() => _contactService
-                                .addImageLink(ContactDetails.contactDoc.id));
+                            setState(() {
+                              contactWasEdited = !contactWasEdited ;
+                            });
+                            if (imageWasEdited) {
+                              uploadImage(firebaseAuth.currentUser.email,
+                                  ContactDetails.contactDoc.id);
+                              up.whenComplete(() {
+                                _contactService
+                                    .addImageLink(ContactDetails.contactDoc.id);
+                                setState(() {
+                                  contactWasEdited = !contactWasEdited ;
+                                });
+                              });
+                            }else{
+                              setState(() {
+                                contactWasEdited = !contactWasEdited ;
+                              });
+                            }
                             _contactService.updateContactDetails(
                                 ContactDetails.contactDoc,
                                 firstnameController.text,
@@ -328,7 +342,9 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  static Widget imageLoader(String content) {
+  static bool contactWasEdited = false;
+
+  Widget imageLoader(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
@@ -338,23 +354,31 @@ class ContactDetailsState extends State<ContactDetails> {
               child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FutureBuilder(
-                  future: Future.delayed(Duration(milliseconds: 1000)),
-                  builder: (c, s) => s.connectionState == ConnectionState.done
-                      ? Image.network(
-                          snapshot.data[content],
-                          width: MediaQuery.of(context).size.width / 1.8,
-                          height: MediaQuery.of(context).size.width / 1.8,
-                        )
-                      : Container(
-                          width: MediaQuery.of(context).size.width / 1.8,
-                          height: MediaQuery.of(context).size.width / 1.8,
-                          child: CircularProgressIndicator(),
-                        )),
+              (contactWasEdited)
+                  ? FutureBuilder(
+                      builder: (c, s) => s.connectionState ==
+                              ConnectionState.done
+                          ? Image.network(
+                              snapshot.data[content],
+                              width: MediaQuery.of(context).size.width / 1.8,
+                              height: MediaQuery.of(context).size.width / 1.8,
+                            )
+                          : Container(
+                              width: MediaQuery.of(context).size.width / 1.8,
+                              height: MediaQuery.of(context).size.width / 1.8,
+                              child: CircularProgressIndicator(),
+                            ))
+                  : Image.network(
+                      snapshot.data[content],
+                      width: MediaQuery.of(context).size.width / 1.8,
+                      height: MediaQuery.of(context).size.width / 1.8,
+                    ),
             ],
           ));
         });
   }
+
+  bool imageWasEdited = false;
 
   Widget imageLoaderEditable(String content) {
     return StreamBuilder(
@@ -369,7 +393,10 @@ class ContactDetailsState extends State<ContactDetails> {
                 width: MediaQuery.of(context).size.width / 1.8,
                 height: MediaQuery.of(context).size.width / 1.8,
                 child: new GestureDetector(
-                  onTap: () => getImageFromGallery(),
+                  onTap: () {
+                    getImageFromGallery();
+                    imageWasEdited = true;
+                  },
                   child: Container(
                       height: 250,
                       decoration: BoxDecoration(
