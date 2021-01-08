@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/components/game/game_training.dart';
-
 import 'game_test_knowledge.dart';
 
 
