@@ -9,17 +9,17 @@ import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
 import 'game_test_knowledge_resume.dart';
 
-List<GameCard> cards = new List();
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final User user = auth.currentUser;
-  ListService _listService = ListService();
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User user = auth.currentUser;
+ListService _listService = ListService();
 
-  String downloadUrl;
-  Reference ref;
+List<GameCard> cards = new List();
+List<String> names = List<String>();
+List<String> imagesUrl = List<String>();
 
 //Get image Url
 Future <String> downloadImage (String email, String docId) async{
-  ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
+  Reference ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
   return await ref.getDownloadURL();
 }
 
@@ -32,31 +32,25 @@ List <Widget> _getGameCard(int numberOfContacts){
   List<Widget> cardList = new List();
 
   //Fetch name of contacts
-//   contactsRef
-//       .get()
-//       .then((snapshot) {
-//         snapshot.docs.forEach((doc) {
-//         cards.add(GameCard(doc.id, doc.data()['firstname']));
-
   contactsRef.getDocuments().then((snapshot) {
     snapshot.documents.forEach((doc) {
-      cards.add(GameCard(doc.documentID,doc.data()['firstname']));
+      names.add(doc.data()['firstname']);
+      downloadImage(user.email, doc.id).then((value) => {
+        imagesUrl.add(value)
+      });
     });
   });
 
 
-  //Fetch images of contacts
-  for(int i = 0 ; i < numberOfContacts; i++ ){
-    downloadImage(user.email, cards[i].imageNew).then((value) => {
-      downloadUrl = value
-    });
 
+  //Fetch images of contacts
+  for(int i = 0 ; i < numberOfContacts ; i++ ){
     cardList.add(
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                  downloadUrl
+                  imagesUrl[i]
               ),
               fit: BoxFit.fitWidth,
             ),
@@ -64,7 +58,6 @@ List <Widget> _getGameCard(int numberOfContacts){
           ),
         )
     );
-
   }
   return cardList;
 }
@@ -87,6 +80,7 @@ class GameTestKnowledge extends StatefulWidget {
   final String numberChose;
   GameTestKnowledge(this.numberChose, {Key key}) : super(key: key);
 
+
   @override
   _GameTestKnowledge createState() => _GameTestKnowledge();
 
@@ -107,6 +101,8 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   String progressText= "0%";
 
   double _score = 0;
+
+
 
 
   @override
