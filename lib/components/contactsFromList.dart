@@ -11,10 +11,10 @@ import 'contactNew.dart';
 import 'contactsAllList.dart';
 
 class ContactFromList extends StatefulWidget {
-  DocumentSnapshot listDoc;
+  static DocumentSnapshot listDoc;
 
   ContactFromList(DocumentSnapshot doc) {
-    this.listDoc = doc;
+    ContactFromList.listDoc = doc;
   }
 
   @override
@@ -28,11 +28,16 @@ class ContactFromListState extends State<ContactFromList> {
 
   ContactFromListState(data);
 
+  bool searchActive = false;
+  String search = "";
+
+  Widget _appBarTitle = new Text(ContactFromList.listDoc.data()["listName"] + " list", style: TextStyle(color: Colors.white));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.listDoc.data()["listName"] + " list"),
+        title: _appBarTitle,
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -55,27 +60,49 @@ class ContactFromListState extends State<ContactFromList> {
               );
             },
           ),
-//          Padding(
-//            padding: EdgeInsets.symmetric(horizontal: 16),
-//            child: IconButton(
-//              icon: Icon(Icons.search),
-//              color: Colors.white,
-//              onPressed: () {},
-//            ),
-//          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  searchActive = !searchActive;
+                  if (searchActive) {
+                    this._appBarTitle = new TextField(
+                      onChanged: (text){
+                        setState(() {
+                          search = text ;
+                        });
+                      },
+                      decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                          // prefixIcon: new Icon(Icons.search, color: Colors.white,),
+                          hintText: 'Search...'),
+                    );
+                  } else {
+                    search = "";
+                    this._appBarTitle =
+                        new Text(ContactFromList.listDoc.data()["listName"] + " list", style: TextStyle(color: Colors.white));
+                  }
+                });
+              },
+            ),
+          ),
         ],
       ),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: _contactService.getContactsFromList(widget.listDoc),
+            stream: _contactService.getContactsFromList(ContactFromList.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs
-                      .map((doc) => Dismissible(
+                      .map((doc) => (doc.data()['lists'].contains(ContactFromList.listDoc.id) && doc.data()['firstname'].contains(search) || doc.data()['lastname'].contains(search)) ? Dismissible(
                             key: Key(doc.id),
                             onDismissed: (direction) {},
                             confirmDismiss: (DismissDirection direction) async {
@@ -84,8 +111,14 @@ class ContactFromListState extends State<ContactFromList> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("Confirm"),
-                                    content: const Text(
-                                        "Are you sure you want to delete "),
+                                    content: Text(
+                                        "Are you sure you want to delete " +
+                                            doc.data()['firstname'] +
+                                            " " +
+                                            doc.data()['lastname'] +
+                                            " from the " +
+                                            ContactFromList.listDoc.data()['listName'] +
+                                            " list ?"),
                                     actions: <Widget>[
                                       FlatButton(
                                         color: Colors.cyan,
@@ -100,7 +133,7 @@ class ContactFromListState extends State<ContactFromList> {
                                           onPressed: () {
                                             _contactService
                                                 .deleteContactFromList(
-                                                    widget.listDoc, doc);
+                                                ContactFromList.listDoc, doc);
                                             Navigator.of(context).pop(true);
                                           },
                                           child: const Text("Delete",
@@ -114,7 +147,9 @@ class ContactFromListState extends State<ContactFromList> {
                             // Show a red background as the item is swiped away.
                             background: Container(color: Colors.red),
                             child: buildItem(doc),
-                          ))
+                          )
+                  : Row(),
+                  )
                       .toList(),
                 );
               } else {
@@ -143,7 +178,7 @@ class ContactFromListState extends State<ContactFromList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ContactsList(widget.listDoc)),
+                    builder: (context) => ContactsList(ContactFromList.listDoc)),
               );
             },
           ),
@@ -156,7 +191,7 @@ class ContactFromListState extends State<ContactFromList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ContactNew(widget.listDoc)),
+                    builder: (context) => ContactNew(ContactFromList.listDoc)),
               );
             },
           ),
@@ -180,7 +215,7 @@ class ContactFromListState extends State<ContactFromList> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.deleteContactFromList(widget.listDoc, contactDoc);
+        _contactService.deleteContactFromList(ContactFromList.listDoc, contactDoc);
         Navigator.of(context).pop();
       },
     );
@@ -192,7 +227,7 @@ class ContactFromListState extends State<ContactFromList> {
           " " +
           contactDoc.data()['lastname'] +
           " from the " +
-          widget.listDoc.data()['listName'] +
+          ContactFromList.listDoc.data()['listName'] +
           " list ?"),
       actions: [
         cancelButton,
@@ -216,7 +251,7 @@ class ContactFromListState extends State<ContactFromList> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ContactDetails(widget.listDoc, contactDoc)),
+                    ContactDetails(ContactFromList.listDoc, contactDoc)),
           );
         },
         child: Padding(

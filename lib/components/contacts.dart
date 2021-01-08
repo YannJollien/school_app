@@ -4,6 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/services/contactService.dart';
 
+import 'contactDetails.dart';
+import 'contactsFromList.dart';
+
 class Contacts extends StatefulWidget {
   @override
   ContactsState createState() {
@@ -44,6 +47,14 @@ class ContactsState extends State<Contacts> {
   Card buildItem(DocumentSnapshot contactDoc) {
     return Card(
       child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ContactDetails(ContactFromList.listDoc, contactDoc)),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

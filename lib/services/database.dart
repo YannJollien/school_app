@@ -33,12 +33,8 @@ class DatabaseService {
   }
 
   Future<String> getContactNotesData(DocumentSnapshot doc) async {
-    DocumentSnapshot ds = await collectionUser
-        .doc(uid)
-        .collection('contacts')
-        .doc(doc.id)
-        .get();
-
+    DocumentSnapshot ds =
+        await collectionUser.doc(uid).collection('contacts').doc(doc.id).get();
     return ds.data()['notes'];
   }
 
@@ -50,7 +46,7 @@ class DatabaseService {
         .collection('contacts')
         .doc(docContact.id)
         .update({
-      'lists': [docList.id]
+      'lists': FieldValue.arrayUnion([docList.id])
     });
   }
 
@@ -103,10 +99,12 @@ class DatabaseService {
   }
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   //Get the image from storage
   Future<String> getImageFromFirestore(String docId) async {
-    String t ;
-    await FireStorageService.loadImage(firebaseAuth.currentUser.email, docId).then((value) {
+    String t;
+    await FireStorageService.loadImage(firebaseAuth.currentUser.email, docId)
+        .then((value) {
       t = value.toString();
     });
     return t;
@@ -114,11 +112,7 @@ class DatabaseService {
 
   //Update details of a contact
   Future addImageLinkData(String id) async {
-    return await collectionUser
-        .doc(uid)
-        .collection('contacts')
-        .doc(id)
-        .update({
+    return await collectionUser.doc(uid).collection('contacts').doc(id).update({
       'image': await getImageFromFirestore(id),
     });
   }
@@ -140,7 +134,7 @@ class DatabaseService {
 
   //Get all contacts
   Stream<QuerySnapshot> getAllContactsData() {
-    return collectionUser.doc(uid).collection('contacts').snapshots();
+    return collectionUser.doc(uid).collection('contacts').orderBy('firstname').snapshots();
   }
 
   //Get contact from a list
@@ -148,7 +142,8 @@ class DatabaseService {
     return collectionUser
         .doc(uid)
         .collection('contacts')
-        .where('lists', arrayContains: listDoc.id)
+        .orderBy('firstname')
+        // .where('lists', arrayContains: listDoc.id)
         .snapshots();
   }
 
@@ -184,7 +179,7 @@ class DatabaseService {
 
   //Get lists for a user
   Stream<QuerySnapshot> getListsData() {
-    return collectionUser.doc(uid).collection('lists').snapshots();
+    return collectionUser.doc(uid).collection('lists').orderBy('listName', descending: false).snapshots();
   }
 
   //Add a list for a user
@@ -215,18 +210,17 @@ class DatabaseService {
       }
     });
   }
-
 }
 
 class FireStorageService extends ChangeNotifier {
   FireStorageService();
 
-  static Future<dynamic> loadImage(
-      String email, String docId) async {
-
-    print('LOAD IMAGE ' + await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL().toString());
+  static Future<dynamic> loadImage(String email, String docId) async {
+    print('LOAD IMAGE ' +
+        await FirebaseStorage.instance
+            .ref("contacts/$email/$docId")
+            .getDownloadURL()
+            .toString());
 
     return await FirebaseStorage.instance
         .ref("contacts/$email/$docId")
