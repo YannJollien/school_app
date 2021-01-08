@@ -113,7 +113,7 @@ class ContactFromListState extends State<ContactFromList> {
                             },
                             // Show a red background as the item is swiped away.
                             background: Container(color: Colors.red),
-                            child: buildItem(doc, snapshot),
+                            child: buildItem(doc),
                           ))
                       .toList(),
                 );
@@ -208,7 +208,7 @@ class ContactFromListState extends State<ContactFromList> {
     );
   }
 
-  Card buildItem(DocumentSnapshot contactDoc, AsyncSnapshot<QuerySnapshot> snapshot) {
+  Card buildItem(DocumentSnapshot contactDoc) {
     return Card(
       child: InkWell(
         onTap: () {
@@ -226,17 +226,11 @@ class ContactFromListState extends State<ContactFromList> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  (snapshot.connectionState == ConnectionState.done)
-                      ? Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: CircularProgressIndicator(),
-                        )
-                      : Image.network(
-                          contactDoc.data()['image'],
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                        ),
+                  Image.network(
+                    contactDoc.data()['image'],
+                    width: MediaQuery.of(context).size.width / 8,
+                    height: MediaQuery.of(context).size.width / 8,
+                  ),
                   // FutureBuilder(
                   //   future: getImage(
                   //       context, firebaseAuth.currentUser.email, contactDoc.id),
