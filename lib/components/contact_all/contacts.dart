@@ -4,8 +4,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/services/contactService.dart';
 
-import 'contactDetails.dart';
-import 'contactsFromList.dart';
+import '../contact_details/contactDetails.dart';
+import '../contact_list/contactsFromList.dart';
 
 class Contacts extends StatefulWidget {
   @override
@@ -106,11 +106,9 @@ class ContactsState extends State<Contacts> {
                                   FlatButton(
                                       color: Colors.red,
                                       onPressed: () {
-                                        _contactService
-                                            .deleteContactFromList(
-                                            ContactFromList.listDoc,
-                                            doc);
-                                        Navigator.of(context).pop(true);
+                                        _contactService.deleteContact(doc);
+                                        deleteImage(firebaseAuth.currentUser.email, doc.id);
+                                        Navigator.of(context).pop();
                                       },
                                       child: const Text("Delete",
                                           style: TextStyle(

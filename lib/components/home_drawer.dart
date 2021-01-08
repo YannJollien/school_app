@@ -7,7 +7,7 @@ import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'contacts.dart';
+import 'contact_all/contacts.dart';
 
 
 

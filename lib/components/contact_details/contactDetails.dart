@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schoolapp/components/contactsFromList.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
