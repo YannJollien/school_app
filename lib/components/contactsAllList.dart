@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/contactDetails.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 class ContactsList extends StatefulWidget {
@@ -19,12 +20,54 @@ class ContactsList extends StatefulWidget {
 class ContactsListState extends State<ContactsList> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   ContactsListState(data);
+
+  bool searchActive = false;
+  String search = "";
+  Widget _appBarTitle =
+      new Text("All contacts", style: TextStyle(color: Colors.white));
+  FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text('All contacts')),
+      appBar: new AppBar(
+        title: _appBarTitle,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  searchActive = !searchActive;
+                  if (searchActive) {
+                    this._appBarTitle = new TextField(
+                      focusNode: myFocusNode,
+                      onChanged: (text) {
+                        setState(() {
+                          search = text;
+                        });
+                      },
+                      decoration: new InputDecoration(
+                          // border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                          hintText: 'Search...'),
+                    );
+                  } else {
+                    search = "";
+                    this._appBarTitle = new Text('All contacts',
+                        style: TextStyle(color: Colors.white));
+                  }
+                });
+                myFocusNode.requestFocus();
+              },
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
@@ -34,8 +77,11 @@ class ContactsListState extends State<ContactsList> {
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                  children:
-                  snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  children: snapshot.data.docs.map((doc) {
+                    String unionLastFirstName =
+                        doc.data()['firstname'] + doc.data()['lastname'];
+                    return (unionLastFirstName.contains(search)) ? buildItem(doc) : Row();
+                  }).toList(),
                 );
               } else {
                 return SizedBox();
@@ -58,8 +104,8 @@ class ContactsListState extends State<ContactsList> {
               Row(
                 children: <Widget>[
                   FutureBuilder(
-                    future: getImage(context, firebaseAuth.currentUser.email,
-                        contactDoc.id),
+                    future: getImage(
+                        context, firebaseAuth.currentUser.email, contactDoc.id),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return Container(
@@ -81,25 +127,25 @@ class ContactsListState extends State<ContactsList> {
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH
                   ({contactDoc.data()['firstname']}.toString().length +
-                      {contactDoc.data()['lastname']}
-                          .toString()
-                          .length >
-                      22)
+                              {contactDoc.data()['lastname']}
+                                  .toString()
+                                  .length >
+                          22)
                       ? Text(
-                    '${contactDoc.data()['firstname']}' +
-                        ' ' +
-                        '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
-                          contactDoc.data()['firstname']
-                        }.toString().length + 1)}' +
-                        '...',
-                    style: TextStyle(fontSize: 24),
-                  )
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
+                                    contactDoc.data()['firstname']
+                                  }.toString().length + 1)}' +
+                              '...',
+                          style: TextStyle(fontSize: 24),
+                        )
                       : Text(
-                    '${contactDoc.data()['firstname']}' +
-                        ' ' +
-                        '${contactDoc.data()['lastname']}',
-                    style: TextStyle(fontSize: 24),
-                  ),
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname']}',
+                          style: TextStyle(fontSize: 24),
+                        ),
                   SizedBox(width: 8),
                   Spacer(),
                   _buildChild(contactDoc),
@@ -119,7 +165,7 @@ class ContactsListState extends State<ContactsList> {
         icon: Icon(Icons.playlist_add_check_sharp),
         onPressed: null,
       );
-    }else{
+    } else {
       return IconButton(
         icon: Icon(Icons.playlist_add_sharp),
         color: Colors.cyan,
@@ -131,14 +177,14 @@ class ContactsListState extends State<ContactsList> {
   }
 
   //Get the image from storage
-Future<Widget> getImage(
-    BuildContext context, String imageName, String docId) async {
-  Image image;
-  await FireStorageService.loadImage(context, imageName, docId).then((value) {
-    image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-  });
-  return image;
-}
+  Future<Widget> getImage(
+      BuildContext context, String imageName, String docId) async {
+    Image image;
+    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
+    });
+    return image;
+  }
 }
 
 //Helper class to get the image

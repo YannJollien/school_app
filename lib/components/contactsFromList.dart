@@ -30,10 +30,10 @@ class ContactFromListState extends State<ContactFromList> {
 
   bool searchActive = false;
   String search = "";
-
   Widget _appBarTitle = new Text(
       ContactFromList.listDoc.data()["listName"] + " list",
       style: TextStyle(color: Colors.white));
+  FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +72,7 @@ class ContactFromListState extends State<ContactFromList> {
                   searchActive = !searchActive;
                   if (searchActive) {
                     this._appBarTitle = new TextField(
+                      focusNode: myFocusNode,
                       onChanged: (text) {
                         setState(() {
                           search = text;
@@ -90,6 +91,7 @@ class ContactFromListState extends State<ContactFromList> {
                         style: TextStyle(color: Colors.white));
                   }
                 });
+                myFocusNode.requestFocus();
               },
             ),
           ),
