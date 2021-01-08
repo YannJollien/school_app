@@ -147,56 +147,7 @@ class ContactDetailsState extends State<ContactDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                //   FutureBuilder(
-                //     future: getImageFromFirestore(
-                //         context,
-                //         firebaseAuth.currentUser.email,
-                //         ContactDetails.contactDoc.id),
-                //     builder: (context, snapshot) {
-                //       if (snapshot.connectionState == ConnectionState.done) {
-                //         if (editMode) {
-                //           docSnapshot = snapshot;
-                //           return Container(
-                //             width: MediaQuery.of(context).size.width / 1.8,
-                //             height: MediaQuery.of(context).size.width / 1.8,
-                //             child: new Stack(children: <Widget>[
-                //               Container(
-                //                   width:
-                //                       MediaQuery.of(context).size.width / 1.8,
-                //                   height:
-                //                       MediaQuery.of(context).size.width / 1.8,
-                //                   child: snapshot.data),
-                //               Align(
-                //                 alignment: Alignment.bottomRight,
-                //                 child: FloatingActionButton(
-                //                     backgroundColor: Colors.cyan,
-                //                     child: new Icon(Icons.add_a_photo),
-                //                     onPressed: () {
-                //                       getImageFromGallery();
-                //                     }),
-                //               )
-                //             ]),
-                //           );
-                //         } else {
-                //           return Container(
-                //             width: MediaQuery.of(context).size.width / 1.8,
-                //             height: MediaQuery.of(context).size.width / 1.8,
-                //             child: snapshot.data,
-                //           );
-                //         }
-                //       }
-                //       if (snapshot.connectionState == ConnectionState.waiting) {
-                //         return Container(
-                //           width: MediaQuery.of(context).size.width / 1.8,
-                //           height: MediaQuery.of(context).size.width / 1.8,
-                //           child: CircularProgressIndicator(),
-                //         );
-                //       }
-                //       return Container();
-                //     },
-                //   ),
-                // ]),
+                //IMAGE BUILDER
                 imageLoader('image'),
 
                 //FIRSTNAME
