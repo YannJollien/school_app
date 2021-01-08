@@ -84,8 +84,13 @@ class ContactFromListState extends State<ContactFromList> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("Confirm"),
-                                    content: const Text(
-                                        "Are you sure you want to delete "),
+                                    content: Text("Are you sure you want to delete " +
+                                        doc.data()['firstname'] +
+                                        " " +
+                                        doc.data()['lastname'] +
+                                        " from the " +
+                                        widget.listDoc.data()['listName'] +
+                                        " list ?"),
                                     actions: <Widget>[
                                       FlatButton(
                                         color: Colors.cyan,
