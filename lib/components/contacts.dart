@@ -18,10 +18,50 @@ class ContactsState extends State<Contacts> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  Widget _appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+  bool searchActive = false;
+  String search = "";
+  FocusNode myFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text('All contacts')),
+      appBar: new AppBar(
+        title: _appBarTitle,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  searchActive = !searchActive;
+                  if (searchActive) {
+                    this._appBarTitle = new TextField(
+                      focusNode: myFocusNode,
+                      onChanged: (text) {
+                        setState(() {
+                          search = text;
+                        });
+                      },
+                      decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                          // prefixIcon: new Icon(Icons.search, color: Colors.white,),
+                          hintText: 'Search...'),
+                    );
+                  } else {
+                    search = "";
+                    this._appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+                  }
+                });
+                myFocusNode.requestFocus();
+              },
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
@@ -31,8 +71,62 @@ class ContactsState extends State<Contacts> {
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                  children:
-                  snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  children: snapshot.data.docs.map(
+                        (doc) {
+                      String unionLastFirstName = doc.data()['firstname'] + doc.data()['lastname'];
+                      return (unionLastFirstName.contains(search))
+                          ? Dismissible(
+                        key: Key(doc.id),
+                        onDismissed: (direction) {},
+                        confirmDismiss:
+                            (DismissDirection direction) async {
+                          return await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Confirm"),
+                                content: Text(
+                                    "Are you sure you want to delete " +
+                                        doc.data()['firstname'] +
+                                        " " +
+                                        doc.data()['lastname'] +
+                                        " from the " +
+                                        ContactFromList.listDoc
+                                            .data()['listName'] +
+                                        " list ?"),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    color: Colors.cyan,
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text("Cancel",
+                                        style: TextStyle(
+                                            color: Colors.white)),
+                                  ),
+                                  FlatButton(
+                                      color: Colors.red,
+                                      onPressed: () {
+                                        _contactService
+                                            .deleteContactFromList(
+                                            ContactFromList.listDoc,
+                                            doc);
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: const Text("Delete",
+                                          style: TextStyle(
+                                              color: Colors.white))),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        // Show a red background as the item is swiped away.
+                        background: Container(color: Colors.red),
+                        child: buildItem(doc),
+                      )
+                          : Row();
+                    },
+                  ).toList(),
                 );
               } else {
                 return SizedBox();
@@ -63,8 +157,8 @@ class ContactsState extends State<Contacts> {
               Row(
                 children: <Widget>[
                   FutureBuilder(
-                    future: getImage(context, firebaseAuth.currentUser.email,
-                        contactDoc.id),
+                    future: getImage(
+                        context, firebaseAuth.currentUser.email, contactDoc.id),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return Container(
@@ -85,25 +179,25 @@ class ContactsState extends State<Contacts> {
                   ),
                   SizedBox(width: 10),
                   ({contactDoc.data()['firstname']}.toString().length +
-                      {contactDoc.data()['lastname']}
-                          .toString()
-                          .length >
-                      22)
+                              {contactDoc.data()['lastname']}
+                                  .toString()
+                                  .length >
+                          22)
                       ? Text(
-                    '${contactDoc.data()['firstname']}' +
-                        ' ' +
-                        '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
-                          contactDoc.data()['firstname']
-                        }.toString().length + 1)}' +
-                        '...',
-                    style: TextStyle(fontSize: 24),
-                  )
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname'].toString().substring(0, 17 - {
+                                    contactDoc.data()['firstname']
+                                  }.toString().length + 1)}' +
+                              '...',
+                          style: TextStyle(fontSize: 24),
+                        )
                       : Text(
-                    '${contactDoc.data()['firstname']}' +
-                        ' ' +
-                        '${contactDoc.data()['lastname']}',
-                    style: TextStyle(fontSize: 24),
-                  ),
+                          '${contactDoc.data()['firstname']}' +
+                              ' ' +
+                              '${contactDoc.data()['lastname']}',
+                          style: TextStyle(fontSize: 24),
+                        ),
                   SizedBox(width: 8),
                   Spacer(),
                   IconButton(
@@ -124,6 +218,7 @@ class ContactsState extends State<Contacts> {
 
   //Delete image in storage
   Reference ref;
+
   Future deleteImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     ref.delete();
@@ -149,7 +244,7 @@ class ContactsState extends State<Contacts> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-//      title: Text(),
+      title: Text('Confirm'),
       content: Text("Are you sure you want to delete " +
           contactDoc.data()['firstname'] +
           " " +
