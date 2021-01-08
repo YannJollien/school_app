@@ -71,4 +71,9 @@ class ContactService {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactsFromListData(listDoc);
   }
+
+  Future<String> getContactNotes(DocumentSnapshot doc) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactNotesData(doc);
+  }
 }

@@ -32,6 +32,16 @@ class DatabaseService {
         .snapshots();
   }
 
+  Future<String> getContactNotesData(DocumentSnapshot doc) async {
+    DocumentSnapshot ds = await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(doc.id)
+        .get();
+
+    return ds.data()['notes'];
+  }
+
   //Update lists for a user
   Future updateContactListsData(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {

@@ -28,6 +28,7 @@ class ContactDetailsState extends State<ContactDetails> {
   static ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  UploadTask up ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +62,7 @@ class ContactDetailsState extends State<ContactDetails> {
                                 lastNameController.text,
                                 institutionController.text,
                                 notesController.text);
+                            up.whenComplete(() => _contactService.addImageLink(ContactDetails.contactDoc.id));
                             setState(() {
                               editMode = !editMode;
                             });
@@ -148,8 +150,10 @@ class ContactDetailsState extends State<ContactDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 //IMAGE BUILDER
-                imageLoader('image'),
-
+                Container(
+                    child: (editMode)
+                        ? imageLoaderEditable('image')
+                        : imageLoader('image')),
                 //FIRSTNAME
                 _label('Firstname'),
                 Container(
@@ -173,13 +177,10 @@ class ContactDetailsState extends State<ContactDetails> {
                 SizedBox(height: 20),
                 //NOTES
                 _label('Notes'),
-                // Container(
-                //     child: (editMode)
-                //         ? _buildNotesNotEditable('notes', context)
-                //         : _buildLiveUpdateNotes('notes', context)),
-                _buildLiveUpdateNotes('notes', context),
-                // _contentNotEditable('notes'),
-//                _buildNotes('notes', context)
+                Container(
+                    child: (editMode)
+                        ? _buildNotesNotEditable('notes', context)
+                        : _buildLiveUpdateNotes('notes', context)),
               ],
             ),
           ),
@@ -250,59 +251,25 @@ class ContactDetailsState extends State<ContactDetails> {
   static final notesController = TextEditingController();
 
   static Widget _buildLiveUpdateNotes(String content, BuildContext context) {
-    // ContactService _contactService = ContactService();
-    // final int notesLength = 100;
-
-    // print("NOTES CONTROLLER HERE");
-    // return StreamBuilder(
-    //     stream: _contactService.getContactDetails(ContactDetails.contactDoc),
-    //     builder:
-    //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-    //       notesController.text = snapshot.data[content];
-    //       return new SingleChildScrollView(
-    //         child: new TextFormField(
-    //           controller: notesController,
-    //           validator: (value) =>
-    //               value.isEmpty ? "Last name cannot be empty" : null,
-    //           style: _contentTextStyle(),
-    //           onChanged: (text) {
-    //             if (text.length < notesLength) {
-    //               _contactService.updateContactNotes(
-    //                   ContactDetails.contactDoc, text);
-    //             }
-    //           },
-    //           decoration: _buildInputDecoration(notesController),
-    //         ),
-    //       );
-    //     });
-
-    //
-    final int notesLength = 100;
-    ContactService _contactService = ContactService();
-
-    print("CONTACT DOC ID " + ContactDetails.contactDoc.id);
-    StreamBuilder(
-        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          return notesController.text = snapshot.data[content];
+    int notesLength = 100;
+    return FutureBuilder(
+        future: _contactService.getContactNotes(ContactDetails.contactDoc),
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          notesController.text = snapshot.data;
+          return TextFormField(
+            controller: notesController..text = notesController.text,
+            maxLines: 5,
+            maxLength: notesLength,
+            maxLengthEnforced: true,
+            onChanged: (text) {
+              if (text.length < notesLength) {
+                _contactService.updateContactNotes(
+                    ContactDetails.contactDoc, text);
+              }
+            },
+            decoration: _buildUpdateNotesDecoration(context),
+          );
         });
-    print("NOTES " + notesController.text);
-    return Container(
-      height: 5 * 24.0,
-      child: TextFormField(
-        controller: notesController..text = notesController.text,
-        maxLines: 5,
-        maxLength: notesLength,
-        maxLengthEnforced: true,
-        onChanged: (text) {
-          if (text.length < notesLength) {
-            _contactService.updateContactNotes(ContactDetails.contactDoc, text);
-          }
-        },
-        decoration: _buildUpdateNotesDecoration(context),
-      ),
-    );
   }
 
   static Widget _buildNotesNotEditable(String content, BuildContext context) {
@@ -363,7 +330,8 @@ class ContactDetailsState extends State<ContactDetails> {
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          // print('IMAGE : ' + snapshot.data[content]);
+          print('IMAGE : ' + snapshot.data[content]);
+          imageFile = File(snapshot.data['image']);
           return new SingleChildScrollView(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -372,6 +340,39 @@ class ContactDetailsState extends State<ContactDetails> {
                 snapshot.data[content],
                 width: MediaQuery.of(context).size.width / 1.8,
                 height: MediaQuery.of(context).size.width / 1.8,
+              ),
+            ],
+          ));
+        });
+  }
+
+  Widget imageLoaderEditable(String content) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          return new SingleChildScrollView(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width / 1.8,
+                height: MediaQuery.of(context).size.width / 1.8,
+                child: new GestureDetector(
+                  onTap: () => getImageFromGallery(),
+                  child: Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10)),
+                      alignment: Alignment.center,
+                      child: imageFile == null
+                          ? Text(
+                        "Tap to add profile picture",
+                        style: TextStyle(color: Colors.grey[400]),
+                      )
+                          : Image.file(imageFile)),
+                ),
               ),
             ],
           ));
@@ -483,11 +484,14 @@ class ContactDetailsState extends State<ContactDetails> {
   }
 
   //Get image
-  File imageFile;
+  static File imageFile;
   AsyncSnapshot docSnapshot;
 
   Future getImageFromGallery() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      imageFile = image;
+    });
   }
 
   //Get the image from storage
@@ -505,7 +509,7 @@ class ContactDetailsState extends State<ContactDetails> {
 
   Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    ref.putFile(imageFile);
+    up = ref.putFile(imageFile);
   }
 }
 
