@@ -42,7 +42,6 @@ List <Widget> _getGameCard(int numberOfContacts){
   });
 
 
-
   //Fetch images of contacts
   for(int i = 0 ; i < numberOfContacts ; i++ ){
     cardList.add(
@@ -60,9 +59,11 @@ List <Widget> _getGameCard(int numberOfContacts){
     );
     print("VALUE OF MY URL IMAGES !!!! : " + imagesUrl[i].toString());
   }
-
   return cardList;
 }
+
+
+
 
 
 //Test if the name that was entered by the user is correct
@@ -90,7 +91,7 @@ class GameTestKnowledge extends StatefulWidget {
 
 class _GameTestKnowledge  extends State<GameTestKnowledge> {
   TCardController _controller = TCardController();
-  
+
   TextEditingController answerController = new TextEditingController();
 
   int _index = 0;
