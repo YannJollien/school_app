@@ -3,12 +3,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:schoolapp/components/contactDetails.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'contactNew.dart';
-import 'contactsAllList.dart';
+import '../contact_add/contactNew.dart';
+import '../contact_add/addContactFromAll.dart';
 
 class ContactFromList extends StatefulWidget {
   static DocumentSnapshot listDoc;

@@ -8,10 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'contactsFromList.dart';
+import '../contact_list/contactsFromList.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'game/importation/contacts_dialog.dart';
+import 'contacts_dialog.dart';
 
 class ContactNew extends StatefulWidget {
   DocumentSnapshot listDoc;

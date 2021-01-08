@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schoolapp/components/contactsFromList.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/home.dart';
 import 'package:schoolapp/services/listService.dart';
 

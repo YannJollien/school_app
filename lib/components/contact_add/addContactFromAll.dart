@@ -1,26 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/services/contactService.dart';
 
-import 'contactDetails.dart';
-import 'contactsFromList.dart';
+class ContactsList extends StatefulWidget {
+  DocumentSnapshot listDoc;
 
-class Contacts extends StatefulWidget {
-  @override
-  ContactsState createState() {
-    return ContactsState();
+  ContactsList(DocumentSnapshot doc) {
+    this.listDoc = doc;
   }
+
+  @override
+  State<StatefulWidget> createState() => new ContactsListState(listDoc);
 }
 
-class ContactsState extends State<Contacts> {
+class ContactsListState extends State<ContactsList> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  Widget _appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+  ContactsListState(data);
+
   bool searchActive = false;
   String search = "";
+  Widget _appBarTitle =
+      new Text("All contacts", style: TextStyle(color: Colors.white));
   FocusNode myFocusNode = FocusNode();
 
   @override
@@ -46,14 +52,14 @@ class ContactsState extends State<Contacts> {
                         });
                       },
                       decoration: new InputDecoration(
-                          border: InputBorder.none,
+                          // border: InputBorder.none,
                           hintStyle: TextStyle(color: Colors.white),
-                          // prefixIcon: new Icon(Icons.search, color: Colors.white,),
                           hintText: 'Search...'),
                     );
                   } else {
                     search = "";
-                    this._appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+                    this._appBarTitle = new Text('All contacts',
+                        style: TextStyle(color: Colors.white));
                   }
                 });
                 myFocusNode.requestFocus();
@@ -71,66 +77,17 @@ class ContactsState extends State<Contacts> {
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                  children: snapshot.data.docs.map(
-                        (doc) {
-                      String unionLastFirstName = doc.data()['firstname'] + doc.data()['lastname'];
-                      return (unionLastFirstName.contains(search))
-                          ? Dismissible(
-                        key: Key(doc.id),
-                        onDismissed: (direction) {},
-                        confirmDismiss:
-                            (DismissDirection direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("Confirm"),
-                                content: Text(
-                                    "Are you sure you want to delete " +
-                                        doc.data()['firstname'] +
-                                        " " +
-                                        doc.data()['lastname'] +
-                                        " from the " +
-                                        ContactFromList.listDoc
-                                            .data()['listName'] +
-                                        " list ?"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    color: Colors.cyan,
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
-                                    child: const Text("Cancel",
-                                        style: TextStyle(
-                                            color: Colors.white)),
-                                  ),
-                                  FlatButton(
-                                      color: Colors.red,
-                                      onPressed: () {
-                                        _contactService.deleteContact(doc);
-                                        deleteImage(firebaseAuth.currentUser.email, doc.id);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("Delete",
-                                          style: TextStyle(
-                                              color: Colors.white))),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        // Show a red background as the item is swiped away.
-                        background: Container(color: Colors.red),
-                        child: buildItem(doc),
-                      )
-                          : Row();
-                    },
-                  ).toList(),
+                  children: snapshot.data.docs.map((doc) {
+                    String unionLastFirstName =
+                        doc.data()['firstname'] + doc.data()['lastname'];
+                    return (unionLastFirstName.contains(search)) ? buildItem(doc) : Row();
+                  }).toList(),
                 );
               } else {
                 return SizedBox();
               }
             },
-          ),
+          )
         ],
       ),
     );
@@ -139,14 +96,6 @@ class ContactsState extends State<Contacts> {
   Card buildItem(DocumentSnapshot contactDoc) {
     return Card(
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ContactDetails(ContactFromList.listDoc, contactDoc)),
-          );
-        },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -176,6 +125,7 @@ class ContactsState extends State<Contacts> {
                     },
                   ),
                   SizedBox(width: 10),
+                  //TEST FOR THE NAME/SURNAME LENGTH
                   ({contactDoc.data()['firstname']}.toString().length +
                               {contactDoc.data()['lastname']}
                                   .toString()
@@ -198,13 +148,7 @@ class ContactsState extends State<Contacts> {
                         ),
                   SizedBox(width: 8),
                   Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Colors.cyan,
-                    onPressed: () {
-                      showAlertDialog(context, contactDoc);
-                    },
-                  ),
+                  _buildChild(contactDoc),
                 ],
               ),
             ],
@@ -214,52 +158,22 @@ class ContactsState extends State<Contacts> {
     );
   }
 
-  //Delete image in storage
-  Reference ref;
-
-  Future deleteImage(String email, String docId) async {
-    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    ref.delete();
-  }
-
-  showAlertDialog(BuildContext context, DocumentSnapshot contactDoc) {
-    // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel", style: TextStyle(color: Colors.white)),
-      color: Colors.cyan,
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget continueButton = FlatButton(
-      child: Text("Delete"),
-      color: Colors.red,
-      onPressed: () {
-        _contactService.deleteContact(contactDoc);
-        deleteImage(firebaseAuth.currentUser.email, contactDoc.id);
-        Navigator.of(context).pop();
-      },
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirm'),
-      content: Text("Are you sure you want to delete " +
-          contactDoc.data()['firstname'] +
-          " " +
-          contactDoc.data()['lastname'] +
-          " definitively ?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
+  Widget _buildChild(DocumentSnapshot contactDoc) {
+    List values = contactDoc.data()['lists'];
+    if (values.contains(widget.listDoc.id)) {
+      return IconButton(
+        icon: Icon(Icons.playlist_add_check_sharp),
+        onPressed: null,
+      );
+    } else {
+      return IconButton(
+        icon: Icon(Icons.playlist_add_sharp),
+        color: Colors.cyan,
+        onPressed: () {
+          _contactService.updateContactLists(widget.listDoc, contactDoc);
+        },
+      );
+    }
   }
 
   //Get the image from storage
