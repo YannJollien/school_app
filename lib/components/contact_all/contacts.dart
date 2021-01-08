@@ -73,8 +73,8 @@ class ContactsState extends State<Contacts> {
                 return Column(
                   children: snapshot.data.docs.map(
                         (doc) {
-                      String unionLastFirstName = doc.data()['firstname'] + doc.data()['lastname'];
-                      return (unionLastFirstName.contains(search))
+                      String unionLastFirstName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                      return (unionLastFirstName.contains(search.toLowerCase()))
                           ? Dismissible(
                         key: Key(doc.id),
                         onDismissed: (direction) {},

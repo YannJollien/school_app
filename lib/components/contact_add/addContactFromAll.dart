@@ -78,9 +78,8 @@ class ContactsListState extends State<ContactsList> {
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs.map((doc) {
-                    String unionLastFirstName =
-                        doc.data()['firstname'] + doc.data()['lastname'];
-                    return (unionLastFirstName.contains(search)) ? buildItem(doc) : Row();
+                    String unionLastFirstName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                    return (unionLastFirstName.contains(search.toLowerCase())) ? buildItem(doc) : Row();
                   }).toList(),
                 );
               } else {

@@ -264,23 +264,25 @@ class ContactNewState extends State<ContactNew> {
   }
 
   // Showing contact list.
-  Future<Widget> _showContactList(BuildContext context) async {
+  Future _showContactList(BuildContext context) async {
     List<Contact> favoriteElements = [];
     final InputDecoration searchDecoration = const InputDecoration();
 
-    refreshContacts();
+    await refreshContacts();
     if (_contacts != null)
     {
       showDialog(
         context: context,
-        builder: (_) =>
-            SelectionDialogContacts(
+        builder: (BuildContext context) {
+          print("im in");
+          return SelectionDialogContacts(
               _contacts.toList(),
               favoriteElements,
               showCountryOnly: false,
               emptySearchBuilder: null,
               searchDecoration: searchDecoration,
-            ),
+            );
+        },
       ).then((e) async {
         if (e != null) {
           setState(() {
@@ -289,13 +291,13 @@ class ContactNewState extends State<ContactNew> {
           lastNameController.text = _actualContact.familyName;
           firstNameController.text = _actualContact.givenName;
           institutionController.text = _actualContact.company;
-          Uint8List avatar = _actualContact.avatar;
-          File image;
-          // image = await ImagePicker.pickImage(source: ImageSource.camera);
-          image = File.fromRawPath(avatar);
-          setState(() {
-            imageFile = image;
-          });
+          // Uint8List avatar = _actualContact.avatar;
+          // File image;
+          // image = await ImagePicker.pickImage(source: ImageSource.gallery);
+          // image = File.fromRawPath(avatar);
+          // setState(() {
+          //   imageFile = image;
+          // });
           // setState(() {
           //   imageFile = ImagePicker.pickImage(source: ImageSource.camera) as File;
             // imageFile = File.fromRawPath(avatar);
