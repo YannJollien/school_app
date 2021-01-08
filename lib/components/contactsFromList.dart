@@ -31,7 +31,9 @@ class ContactFromListState extends State<ContactFromList> {
   bool searchActive = false;
   String search = "";
 
-  Widget _appBarTitle = new Text(ContactFromList.listDoc.data()["listName"] + " list", style: TextStyle(color: Colors.white));
+  Widget _appBarTitle = new Text(
+      ContactFromList.listDoc.data()["listName"] + " list",
+      style: TextStyle(color: Colors.white));
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +72,9 @@ class ContactFromListState extends State<ContactFromList> {
                   searchActive = !searchActive;
                   if (searchActive) {
                     this._appBarTitle = new TextField(
-                      onChanged: (text){
+                      onChanged: (text) {
                         setState(() {
-                          search = text ;
+                          search = text;
                         });
                       },
                       decoration: new InputDecoration(
@@ -83,8 +85,9 @@ class ContactFromListState extends State<ContactFromList> {
                     );
                   } else {
                     search = "";
-                    this._appBarTitle =
-                        new Text(ContactFromList.listDoc.data()["listName"] + " list", style: TextStyle(color: Colors.white));
+                    this._appBarTitle = new Text(
+                        ContactFromList.listDoc.data()["listName"] + " list",
+                        style: TextStyle(color: Colors.white));
                   }
                 });
               },
@@ -96,61 +99,71 @@ class ContactFromListState extends State<ContactFromList> {
         padding: EdgeInsets.all(8),
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
-            stream: _contactService.getContactsFromList(ContactFromList.listDoc),
+            stream:
+                _contactService.getContactsFromList(ContactFromList.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Column(
-                  children: snapshot.data.docs
-                      .map((doc) => (doc.data()['lists'].contains(ContactFromList.listDoc.id) && doc.data()['firstname'].contains(search) || doc.data()['lastname'].contains(search)) ? Dismissible(
-                            key: Key(doc.id),
-                            onDismissed: (direction) {},
-                            confirmDismiss: (DismissDirection direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Confirm"),
-                                    content: Text(
-                                        "Are you sure you want to delete " +
-                                            doc.data()['firstname'] +
-                                            " " +
-                                            doc.data()['lastname'] +
-                                            " from the " +
-                                            ContactFromList.listDoc.data()['listName'] +
-                                            " list ?"),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        color: Colors.cyan,
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
-                                        child: const Text("Cancel",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                      FlatButton(
-                                          color: Colors.red,
-                                          onPressed: () {
-                                            _contactService
-                                                .deleteContactFromList(
-                                                ContactFromList.listDoc, doc);
-                                            Navigator.of(context).pop(true);
-                                          },
-                                          child: const Text("Delete",
+                  children: snapshot.data.docs.map(
+                    (doc) {
+                      String unionLastFirstName = doc.data()['firstname'] + doc.data()['lastname'];
+                      return (doc
+                                  .data()['lists']
+                                  .contains(ContactFromList.listDoc.id) &&
+                          unionLastFirstName.contains(search))
+                          ? Dismissible(
+                              key: Key(doc.id),
+                              onDismissed: (direction) {},
+                              confirmDismiss:
+                                  (DismissDirection direction) async {
+                                return await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirm"),
+                                      content: Text(
+                                          "Are you sure you want to delete " +
+                                              doc.data()['firstname'] +
+                                              " " +
+                                              doc.data()['lastname'] +
+                                              " from the " +
+                                              ContactFromList.listDoc
+                                                  .data()['listName'] +
+                                              " list ?"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          color: Colors.cyan,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text("Cancel",
                                               style: TextStyle(
-                                                  color: Colors.white))),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            // Show a red background as the item is swiped away.
-                            background: Container(color: Colors.red),
-                            child: buildItem(doc),
-                          )
-                  : Row(),
-                  )
-                      .toList(),
+                                                  color: Colors.white)),
+                                        ),
+                                        FlatButton(
+                                            color: Colors.red,
+                                            onPressed: () {
+                                              _contactService
+                                                  .deleteContactFromList(
+                                                      ContactFromList.listDoc,
+                                                      doc);
+                                              Navigator.of(context).pop(true);
+                                            },
+                                            child: const Text("Delete",
+                                                style: TextStyle(
+                                                    color: Colors.white))),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              // Show a red background as the item is swiped away.
+                              background: Container(color: Colors.red),
+                              child: buildItem(doc),
+                            )
+                          : Row();
+                    },
+                  ).toList(),
                 );
               } else {
                 return SizedBox();
@@ -178,7 +191,8 @@ class ContactFromListState extends State<ContactFromList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ContactsList(ContactFromList.listDoc)),
+                    builder: (context) =>
+                        ContactsList(ContactFromList.listDoc)),
               );
             },
           ),
@@ -215,7 +229,8 @@ class ContactFromListState extends State<ContactFromList> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.deleteContactFromList(ContactFromList.listDoc, contactDoc);
+        _contactService.deleteContactFromList(
+            ContactFromList.listDoc, contactDoc);
         Navigator.of(context).pop();
       },
     );
