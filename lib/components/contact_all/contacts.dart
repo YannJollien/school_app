@@ -18,7 +18,8 @@ class ContactsState extends State<Contacts> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  Widget _appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+  Widget _appBarTitle =
+      new Text('All contacts', style: TextStyle(color: Colors.white));
   bool searchActive = false;
   String search = "";
   FocusNode myFocusNode = FocusNode();
@@ -53,7 +54,8 @@ class ContactsState extends State<Contacts> {
                     );
                   } else {
                     search = "";
-                    this._appBarTitle = new Text('All contacts', style: TextStyle(color: Colors.white));
+                    this._appBarTitle = new Text('All contacts',
+                        style: TextStyle(color: Colors.white));
                   }
                 });
                 myFocusNode.requestFocus();
@@ -72,56 +74,60 @@ class ContactsState extends State<Contacts> {
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs.map(
-                        (doc) {
-                      String unionLastFirstName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                    (doc) {
+                      String unionLastFirstName =
+                          doc.data()['firstname'].toString().toLowerCase() +
+                              " " +
+                              doc.data()['lastname'].toString().toLowerCase();
                       return (unionLastFirstName.contains(search.toLowerCase()))
                           ? Dismissible(
-                        key: Key(doc.id),
-                        onDismissed: (direction) {},
-                        confirmDismiss:
-                            (DismissDirection direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("Confirm"),
-                                content: Text(
-                                    "Are you sure you want to delete " +
-                                        doc.data()['firstname'] +
-                                        " " +
-                                        doc.data()['lastname'] +
-                                        " from the " +
-                                        ContactFromList.listDoc
-                                            .data()['listName'] +
-                                        " list ?"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    color: Colors.cyan,
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
-                                    child: const Text("Cancel",
-                                        style: TextStyle(
-                                            color: Colors.white)),
-                                  ),
-                                  FlatButton(
-                                      color: Colors.red,
-                                      onPressed: () {
-                                        _contactService.deleteContact(doc);
-                                        deleteImage(firebaseAuth.currentUser.email, doc.id);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("Delete",
-                                          style: TextStyle(
-                                              color: Colors.white))),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        // Show a red background as the item is swiped away.
-                        background: Container(color: Colors.red),
-                        child: buildItem(doc),
-                      )
+                              key: Key(doc.id),
+                              onDismissed: (direction) {},
+                              confirmDismiss:
+                                  (DismissDirection direction) async {
+                                return await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirm"),
+                                      content: Text(
+                                          "Are you sure you want to delete " +
+                                              doc.data()['firstname'] +
+                                              " " +
+                                              doc.data()['lastname'] +
+                                              " definitively ?"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          color: Colors.cyan,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text("Cancel",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ),
+                                        FlatButton(
+                                            color: Colors.red,
+                                            onPressed: () {
+                                              _contactService
+                                                  .deleteContact(doc);
+                                              deleteImage(
+                                                  firebaseAuth
+                                                      .currentUser.email,
+                                                  doc.id);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Delete",
+                                                style: TextStyle(
+                                                    color: Colors.white))),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              // Show a red background as the item is swiped away.
+                              background: Container(color: Colors.red),
+                              child: buildItem(doc),
+                            )
                           : Row();
                     },
                   ).toList(),
