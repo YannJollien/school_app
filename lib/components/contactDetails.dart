@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ContactDetails extends StatefulWidget {
   static DocumentSnapshot contactDoc;
@@ -51,6 +53,8 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.save),
                           color: Colors.white,
                           onPressed: () {
+                            uploadImage(firebaseAuth.currentUser.email,
+                                ContactDetails.contactDoc.id);
                             _contactService.updateContactDetails(
                                 ContactDetails.contactDoc,
                                 firstnameController.text,
@@ -60,6 +64,10 @@ class ContactDetailsState extends State<ContactDetails> {
                             setState(() {
                               editMode = !editMode;
                             });
+                            // Navigator.pushReplacement(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (BuildContext context) => super.widget));
                           },
                         )
                       : IconButton(
@@ -96,12 +104,12 @@ class ContactDetailsState extends State<ContactDetails> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
-        _contactService.deleteContact(
+        _contactService.deleteContactFromList(
             ContactDetails.listDoc, ContactDetails.contactDoc);
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ContactList(ContactDetails.listDoc)),
+              builder: (context) => ContactFromList(ContactDetails.listDoc)),
         );
       },
     );
@@ -139,29 +147,58 @@ class ContactDetailsState extends State<ContactDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  FutureBuilder(
-                    future: getImage(context, firebaseAuth.currentUser.email,
-                        ContactDetails.contactDoc.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 1.8,
-                          height: MediaQuery.of(context).size.width / 1.8,
-                          child: snapshot.data,
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 1.8,
-                          height: MediaQuery.of(context).size.width / 1.8,
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return Container();
-                    },
-                  ),
-                ]),
+                // Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                //   FutureBuilder(
+                //     future: getImageFromFirestore(
+                //         context,
+                //         firebaseAuth.currentUser.email,
+                //         ContactDetails.contactDoc.id),
+                //     builder: (context, snapshot) {
+                //       if (snapshot.connectionState == ConnectionState.done) {
+                //         if (editMode) {
+                //           docSnapshot = snapshot;
+                //           return Container(
+                //             width: MediaQuery.of(context).size.width / 1.8,
+                //             height: MediaQuery.of(context).size.width / 1.8,
+                //             child: new Stack(children: <Widget>[
+                //               Container(
+                //                   width:
+                //                       MediaQuery.of(context).size.width / 1.8,
+                //                   height:
+                //                       MediaQuery.of(context).size.width / 1.8,
+                //                   child: snapshot.data),
+                //               Align(
+                //                 alignment: Alignment.bottomRight,
+                //                 child: FloatingActionButton(
+                //                     backgroundColor: Colors.cyan,
+                //                     child: new Icon(Icons.add_a_photo),
+                //                     onPressed: () {
+                //                       getImageFromGallery();
+                //                     }),
+                //               )
+                //             ]),
+                //           );
+                //         } else {
+                //           return Container(
+                //             width: MediaQuery.of(context).size.width / 1.8,
+                //             height: MediaQuery.of(context).size.width / 1.8,
+                //             child: snapshot.data,
+                //           );
+                //         }
+                //       }
+                //       if (snapshot.connectionState == ConnectionState.waiting) {
+                //         return Container(
+                //           width: MediaQuery.of(context).size.width / 1.8,
+                //           height: MediaQuery.of(context).size.width / 1.8,
+                //           child: CircularProgressIndicator(),
+                //         );
+                //       }
+                //       return Container();
+                //     },
+                //   ),
+                // ]),
+                imageLoader('image'),
+
                 //FIRSTNAME
                 _label('Firstname'),
                 Container(
@@ -185,10 +222,12 @@ class ContactDetailsState extends State<ContactDetails> {
                 SizedBox(height: 20),
                 //NOTES
                 _label('Notes'),
-                Container(
-                    child: (editMode)
-                        ? _buildNotesNotEditable('notes', context)
-                        : _buildLiveUpdateNotes('notes', context)),
+                // Container(
+                //     child: (editMode)
+                //         ? _buildNotesNotEditable('notes', context)
+                //         : _buildLiveUpdateNotes('notes', context)),
+                _buildLiveUpdateNotes('notes', context),
+                // _contentNotEditable('notes'),
 //                _buildNotes('notes', context)
               ],
             ),
@@ -260,16 +299,44 @@ class ContactDetailsState extends State<ContactDetails> {
   static final notesController = TextEditingController();
 
   static Widget _buildLiveUpdateNotes(String content, BuildContext context) {
+    // ContactService _contactService = ContactService();
+    // final int notesLength = 100;
+
+    // print("NOTES CONTROLLER HERE");
+    // return StreamBuilder(
+    //     stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+    //     builder:
+    //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    //       notesController.text = snapshot.data[content];
+    //       return new SingleChildScrollView(
+    //         child: new TextFormField(
+    //           controller: notesController,
+    //           validator: (value) =>
+    //               value.isEmpty ? "Last name cannot be empty" : null,
+    //           style: _contentTextStyle(),
+    //           onChanged: (text) {
+    //             if (text.length < notesLength) {
+    //               _contactService.updateContactNotes(
+    //                   ContactDetails.contactDoc, text);
+    //             }
+    //           },
+    //           decoration: _buildInputDecoration(notesController),
+    //         ),
+    //       );
+    //     });
+
+    //
     final int notesLength = 100;
     ContactService _contactService = ContactService();
 
+    print("CONTACT DOC ID " + ContactDetails.contactDoc.id);
     StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           return notesController.text = snapshot.data[content];
         });
-
+    print("NOTES " + notesController.text);
     return Container(
       height: 5 * 24.0,
       child: TextFormField(
@@ -340,6 +407,26 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  static Widget imageLoader(String content) {
+    return StreamBuilder(
+        stream: _contactService.getContactDetails(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          // print('IMAGE : ' + snapshot.data[content]);
+          return new SingleChildScrollView(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                snapshot.data[content],
+                width: MediaQuery.of(context).size.width / 1.8,
+                height: MediaQuery.of(context).size.width / 1.8,
+              ),
+            ],
+          ));
+        });
+  }
+
   //FIRSTNAME EDITABLE CONTENT WIDGET
   static var firstnameController = TextEditingController();
 
@@ -395,7 +482,7 @@ class ContactDetailsState extends State<ContactDetails> {
             child: new TextFormField(
               controller: institutionController,
               validator: (value) =>
-                  value.isEmpty ? "Last name cannot be empty" : null,
+                  value.isEmpty ? "Institution cannot be empty" : null,
               style: _contentTextStyle(),
               decoration: _buildInputDecoration(institutionController),
             ),
@@ -444,14 +531,30 @@ class ContactDetailsState extends State<ContactDetails> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)));
   }
 
+  //Get image
+  File imageFile;
+  AsyncSnapshot docSnapshot;
+
+  Future getImageFromGallery() async {
+    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+  }
+
   //Get the image from storage
-  Future<Widget> getImage(
+  Future<Widget> getImageFromFirestore(
       BuildContext context, String imageName, String docId) async {
     Image image;
     await FireStorageService.loadImage(context, imageName, docId).then((value) {
       image = Image.network(value.toString(), fit: BoxFit.scaleDown);
     });
     return image;
+  }
+
+  //Upload image
+  Reference ref;
+
+  Future uploadImage(String email, String docId) async {
+    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
+    ref.putFile(imageFile);
   }
 }
 

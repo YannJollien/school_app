@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 
 class DatabaseService {
   final String uid;
@@ -7,7 +10,7 @@ class DatabaseService {
 
   //Collection reference user
   final CollectionReference collectionUser =
-  FirebaseFirestore.instance.collection("users");
+      FirebaseFirestore.instance.collection("users");
 
   Future updateUserData(String name) async {
     return await collectionUser.doc(uid).set({
@@ -30,18 +33,20 @@ class DatabaseService {
   }
 
   //Update lists for a user
-  Future updateContactListsData(DocumentSnapshot docList,
-      DocumentSnapshot docContact) async {
+  Future updateContactListsData(
+      DocumentSnapshot docList, DocumentSnapshot docContact) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
         .doc(docContact.id)
-        .update({'lists': [docList.id]});
+        .update({
+      'lists': [docList.id]
+    });
   }
 
   //Delete contact in a list
-  Future deleteContactData(DocumentSnapshot docList,
-      DocumentSnapshot docContact) async {
+  Future deleteContactFromListData(
+      DocumentSnapshot docList, DocumentSnapshot docContact) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -51,9 +56,18 @@ class DatabaseService {
     });
   }
 
+  //Delete contact definitively
+  Future deleteContactData(DocumentSnapshot docContact) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(docContact.id)
+        .delete();
+  }
+
   //Update notes of a contact
-  Future updateContactNotesData(DocumentSnapshot docContact,
-      String notes) async {
+  Future updateContactNotesData(
+      DocumentSnapshot docContact, String notes) async {
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -74,7 +88,28 @@ class DatabaseService {
       'firstname': firstname,
       'lastname': lastname,
       'institution': institution,
-      'notes': notes
+      'notes': notes,
+    });
+  }
+
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  //Get the image from storage
+  Future<String> getImageFromFirestore(String docId) async {
+    String t ;
+    await FireStorageService.loadImage(firebaseAuth.currentUser.email, docId).then((value) {
+      t = value.toString();
+    });
+    return t;
+  }
+
+  //Update details of a contact
+  Future addImageLinkData(String id) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(id)
+        .update({
+      'image': await getImageFromFirestore(id),
     });
   }
 
@@ -82,22 +117,20 @@ class DatabaseService {
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
     DocumentReference docRef =
-    await collectionUser.doc(uid).collection('contacts').add({
+        await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
       'lastname': lastname,
       'institution': institution,
       'notes': '',
-      'lists': [docList.id]
+      'lists': [docList.id],
+      'image': '',
     });
-    return docRef.id;
+    return docRef;
   }
 
   //Get all contacts
   Stream<QuerySnapshot> getAllContactsData() {
-    return collectionUser
-        .doc(uid)
-        .collection('contacts')
-        .snapshots();
+    return collectionUser.doc(uid).collection('contacts').snapshots();
   }
 
   //Get contact from a list
@@ -118,7 +151,6 @@ class DatabaseService {
         .update({'listName': listName});
   }
 
-
   //Update the score of the game for each list
   Future updateScoreData(String doc, String newScore) async {
     return await collectionUser
@@ -128,11 +160,11 @@ class DatabaseService {
         .update({'score': newScore});
   }
 
-
   //Get document from the collection lists
   Future<int> getDocumentData(String newListName) async {
-    final QuerySnapshot result = await collectionUser.doc(uid).collection(
-        'lists')
+    final QuerySnapshot result = await collectionUser
+        .doc(uid)
+        .collection('lists')
         .where('listName', isEqualTo: newListName)
         .limit(1)
         .get();
@@ -151,10 +183,7 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({
-        'listName': listName,
-        'score' : '0'
-        });
+        .set({'listName': listName, 'score': '0'});
   }
 
   //Delete lists for a user
@@ -175,5 +204,22 @@ class DatabaseService {
         ds.reference.delete();
       }
     });
+  }
+
+}
+
+class FireStorageService extends ChangeNotifier {
+  FireStorageService();
+
+  static Future<dynamic> loadImage(
+      String email, String docId) async {
+
+    print('LOAD IMAGE ' + await FirebaseStorage.instance
+        .ref("contacts/$email/$docId")
+        .getDownloadURL().toString());
+
+    return await FirebaseStorage.instance
+        .ref("contacts/$email/$docId")
+        .getDownloadURL();
   }
 }

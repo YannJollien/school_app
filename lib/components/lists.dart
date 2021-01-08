@@ -24,7 +24,7 @@ class ListsState extends State<Lists> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ContactList(doc)),
+                builder: (context) => ContactFromList(doc)),
           );
         },
         child: Padding(

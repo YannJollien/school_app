@@ -38,7 +38,6 @@ void main() async {
         '/gametrainingres' : (context) => GameTrainingResume(),
         '/gametestknowledge' : (context) => GameTestKnowledge('0'),
         '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(),
-
       }
   ));
 }
