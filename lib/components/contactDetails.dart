@@ -28,7 +28,8 @@ class ContactDetailsState extends State<ContactDetails> {
   static ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  UploadTask up ;
+  UploadTask up;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,13 +57,14 @@ class ContactDetailsState extends State<ContactDetails> {
                           onPressed: () {
                             uploadImage(firebaseAuth.currentUser.email,
                                 ContactDetails.contactDoc.id);
+                            up.whenComplete(() => _contactService
+                                .addImageLink(ContactDetails.contactDoc.id));
                             _contactService.updateContactDetails(
                                 ContactDetails.contactDoc,
                                 firstnameController.text,
                                 lastNameController.text,
                                 institutionController.text,
                                 notesController.text);
-                            up.whenComplete(() => _contactService.addImageLink(ContactDetails.contactDoc.id));
                             setState(() {
                               editMode = !editMode;
                             });
@@ -76,6 +78,7 @@ class ContactDetailsState extends State<ContactDetails> {
                           icon: Icon(Icons.edit),
                           color: Colors.white,
                           onPressed: () {
+                            imageFile = null;
                             setState(() {
                               editMode = !editMode;
                             });
@@ -330,17 +333,24 @@ class ContactDetailsState extends State<ContactDetails> {
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          print('IMAGE : ' + snapshot.data[content]);
-          imageFile = File(snapshot.data['image']);
+          // imageFile = File(snapshot.data['image']);
           return new SingleChildScrollView(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(
-                snapshot.data[content],
-                width: MediaQuery.of(context).size.width / 1.8,
-                height: MediaQuery.of(context).size.width / 1.8,
-              ),
+              FutureBuilder(
+                  future: Future.delayed(Duration(milliseconds: 1000)),
+                  builder: (c, s) => s.connectionState == ConnectionState.done
+                      ? Image.network(
+                          snapshot.data[content],
+                          width: MediaQuery.of(context).size.width / 1.8,
+                          height: MediaQuery.of(context).size.width / 1.8,
+                        )
+                      : Container(
+                          width: MediaQuery.of(context).size.width / 1.8,
+                          height: MediaQuery.of(context).size.width / 1.8,
+                          child: CircularProgressIndicator(),
+                        )),
             ],
           ));
         });
@@ -368,9 +378,9 @@ class ContactDetailsState extends State<ContactDetails> {
                       alignment: Alignment.center,
                       child: imageFile == null
                           ? Text(
-                        "Tap to add profile picture",
-                        style: TextStyle(color: Colors.grey[400]),
-                      )
+                              "Tap to change profile picture",
+                              style: TextStyle(color: Colors.grey[400]),
+                            )
                           : Image.file(imageFile)),
                 ),
               ),
