@@ -21,6 +21,8 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  permission_handler: ^3.0.2
+  contacts_service: ^0.2.6
   flutter:
     sdk: flutter
 

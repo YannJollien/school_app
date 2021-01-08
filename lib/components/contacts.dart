@@ -106,11 +106,9 @@ class ContactsState extends State<Contacts> {
                                   FlatButton(
                                       color: Colors.red,
                                       onPressed: () {
-                                        _contactService
-                                            .deleteContactFromList(
-                                            ContactFromList.listDoc,
-                                            doc);
-                                        Navigator.of(context).pop(true);
+                                        _contactService.deleteContact(doc);
+                                        deleteImage(firebaseAuth.currentUser.email, doc.id);
+                                        Navigator.of(context).pop();
                                       },
                                       child: const Text("Delete",
                                           style: TextStyle(

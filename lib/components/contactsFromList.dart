@@ -178,12 +178,19 @@ class ContactFromListState extends State<ContactFromList> {
         backgroundColor: Colors.cyan,
         animatedIcon: AnimatedIcons.menu_close,
         children: [
-          SpeedDialChild(
-              child: Icon(Icons.save_alt),
-              backgroundColor: Colors.red,
-              label: 'Import',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('FIRST CHILD')),
+          // SpeedDialChild(
+          //     child: Icon(Icons.save_alt),
+          //     backgroundColor: Colors.red,
+          //     label: 'Import',
+          //     labelStyle: TextStyle(fontSize: 18.0),
+          //     onTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) =>
+          //                 ContactImportation()),
+          //       );
+          //     }),
           SpeedDialChild(
             child: Icon(Icons.add),
             backgroundColor: Colors.blue,
@@ -283,27 +290,6 @@ class ContactFromListState extends State<ContactFromList> {
                     width: MediaQuery.of(context).size.width / 8,
                     height: MediaQuery.of(context).size.width / 8,
                   ),
-                  // FutureBuilder(
-                  //   future: getImage(
-                  //       context, firebaseAuth.currentUser.email, contactDoc.id),
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.done) {
-                  //       return Container(
-                  //         width: MediaQuery.of(context).size.width / 8,
-                  //         height: MediaQuery.of(context).size.width / 8,
-                  //         child: snapshot.data,
-                  //       );
-                  //     }
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return Container(
-                  //         width: MediaQuery.of(context).size.width / 8,
-                  //         height: MediaQuery.of(context).size.width / 8,
-                  //         child: CircularProgressIndicator(),
-                  //       );
-                  //     }
-                  //     return Container();
-                  //   },
-                  // ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH
                   ({contactDoc.data()['firstname']}.toString().length +
