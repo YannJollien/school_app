@@ -46,7 +46,9 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                       gameTestKnowledge.getList()[index].nameNew,
                     ),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage( gameTestKnowledge.getList()[index].imageNew),
+                      backgroundImage: AssetImage(
+                          gameTestKnowledge.getList()[index].imageNew
+                      ),
                     ),
                   ),
                 );

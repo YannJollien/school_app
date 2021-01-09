@@ -16,6 +16,9 @@ ListService _listService = ListService();
 List<GameCard> cards = new List();
 List<String> names = List<String>();
 List<String> imagesUrl = List<String>();
+List<Widget> cardList = new List();
+
+
 
 //Get image Url
 Future <String> downloadImage (String email, String docId) async{
@@ -23,21 +26,23 @@ Future <String> downloadImage (String email, String docId) async{
   return await ref.getDownloadURL();
 }
 
+
+
 List<GameCard> wrongAnswers = new List<GameCard>();
 
 //Get all the contact from a list and put them into a list
 List <Widget> _getGameCard(int numberOfContacts){
 
   final contactsRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("contacts");
-  List<Widget> cardList = new List();
 
   //Fetch name of contacts
-  contactsRef.getDocuments().then((snapshot) {
-    snapshot.documents.forEach((doc) {
+  contactsRef.get().then((snapshot) {
+    snapshot.docs.forEach((doc) {
       names.add(doc.data()['firstname']);
-      downloadImage(user.email, doc.id).then((value) => {
-        imagesUrl.add(value)
-      });
+      imagesUrl.add(doc.data()['image']);
+//      downloadImage(user.email, doc.id).then((value) => {
+//        imagesUrl.add(value)
+//      });
     });
   });
 
@@ -57,8 +62,16 @@ List <Widget> _getGameCard(int numberOfContacts){
           ),
         )
     );
+
+    //cards[i].nameNew = names[i];
+    //cards[i].imageNew = imagesUrl[i];
+
     print("VALUE OF MY URL IMAGES !!!! : " + imagesUrl[i].toString());
+    print("NAME OF THE CONTACT : " + names[i]);
+
   }
+
+
   return cardList;
 }
 
@@ -74,6 +87,8 @@ bool test(String inputName, String toTest){
     return false;
   }
 }
+
+
 
 
 class GameTestKnowledge extends StatefulWidget {
@@ -94,7 +109,9 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
   TextEditingController answerController = new TextEditingController();
 
+
   int _index = 0;
+
   String answer = " ";
 
   int progress = 0;
@@ -103,8 +120,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   String progressText= "0%";
 
   double _score = 0;
-
-
 
 
   @override
@@ -134,18 +149,20 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                     //Update the score according to the wrong answers
                     _score = ((int.parse(widget.numberChose) - wrongAnswers.length) / 100) ;
                     _listService.updateScore("8OezymiqI4nuZbmuhiMX", _score.toString() + "%");
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GameTestKnowledgeResume()),
-                    );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GameTestKnowledgeResume()),
+                      );
+
                     setState(() {
                       int.parse(widget.numberChose);
                     });
                   },
                   onForward: (index, info) {
                     _index = index;
-                    print(info.direction);
+                    print( "INFOR DIRECTION : " + info.direction.toString());
                     setState(() {
 
                     });
@@ -174,6 +191,11 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                         icon: Icon(Icons.done, size: 40.0, color: Colors.green),
                         onPressed: () {
                           setState(() {
+
+//                            imagesUrl.remove(imagesUrl[progress]);
+//                            names.remove(names[progress]);
+
+
                             answer = answerController.text;
                             progress = progress + 1;
                             percent = (100 / int.parse(widget.numberChose) * progress).toDouble() / 100;
@@ -181,18 +203,47 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
                             print("percent: " + percent.toString());
                             print("progress : " + progress.toString());
+                            print("nombre de contacts utilisés : " + int.parse(widget.numberChose).toString());
+                            print("my answer: " + answer +  " :  the correct answer :" + names[_index]);
+
+
 
                             progressText = (100 / int.parse(widget.numberChose) * progress)
                                 .toString();
+
+
                           });
-                          test(answer, cards[_index].nameNew);
-                          //Ajouter dans la liste des "faux"
-                          if (test(answer, cards[_index].nameNew) == false) {
+
+
+                          //Test if the answer is correct
+                          test(answer, names[_index]);
+
+
+
+
+                          //Add every wrong answer to the list of the wrong answers
+                          if (test(answer, names[_index]) == false) {
                             wrongAnswers.add(GameCard(
-                                cards[_index].imageNew, cards[_index].nameNew));
+                                imagesUrl[_index], names[_index]
+                            ));
                           }
-                          _controller.forward();
+
+                          //
+                          if(progress == int.parse(widget.numberChose)){
+                            percent = 0.0;
+                            progress = 0;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GameTestKnowledgeResume()),
+                            );
+                          }
+
                           answerController.text = "";
+                          _controller.forward();
+
+
+
                         }
                     ),
                   ),
