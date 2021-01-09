@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
+import 'package:schoolapp/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';

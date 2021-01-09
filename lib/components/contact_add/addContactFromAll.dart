@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 class ContactsList extends StatefulWidget {
