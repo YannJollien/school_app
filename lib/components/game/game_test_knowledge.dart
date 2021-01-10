@@ -17,6 +17,8 @@ List<GameCard> cards = new List();
 List<String> names = List<String>();
 List<String> imagesUrl = List<String>();
 List<Widget> cardList = new List();
+String docId;
+
 
 
 
@@ -31,12 +33,18 @@ Future <String> downloadImage (String email, String docId) async{
 List<GameCard> wrongAnswers = new List<GameCard>();
 
 //Get all the contact from a list and put them into a list
-List <Widget> _getGameCard(int numberOfContacts){
+List <Widget> _getGameCard(int numberOfContacts, String listId){
 
   final contactsRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("contacts");
 
+  final listRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("lists");
+
+
   //Fetch name of contacts
-  contactsRef.get().then((snapshot) {
+  contactsRef
+      .where('lists', arrayContainsAny: [listId] )
+      .get()
+      .then((snapshot) {
     snapshot.docs.forEach((doc) {
       names.add(doc.data()['firstname']);
       imagesUrl.add(doc.data()['image']);
@@ -62,9 +70,6 @@ List <Widget> _getGameCard(int numberOfContacts){
           ),
         )
     );
-
-    //cards[i].nameNew = names[i];
-    //cards[i].imageNew = imagesUrl[i];
 
     print("VALUE OF MY URL IMAGES !!!! : " + imagesUrl[i].toString());
     print("NAME OF THE CONTACT : " + names[i]);
@@ -93,7 +98,8 @@ bool test(String inputName, String toTest){
 
 class GameTestKnowledge extends StatefulWidget {
   final String numberChose;
-  GameTestKnowledge(this.numberChose, {Key key}) : super(key: key);
+  final String choosenListId;
+  GameTestKnowledge(this.numberChose, this.choosenListId, {Key key}) : super(key: key);
 
 
   @override
@@ -109,7 +115,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
   TextEditingController answerController = new TextEditingController();
 
-
   int _index = 0;
 
   String answer = " ";
@@ -119,7 +124,8 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
   String progressText= "0%";
 
-  double _score = 0;
+
+
 
 
   @override
@@ -138,7 +144,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
               AbsorbPointer(
                 absorbing: true,
                 child: TCard(
-                  cards: _getGameCard(int.parse(widget.numberChose)),
+                  cards: _getGameCard(int.parse(widget.numberChose), widget.choosenListId),
                   size: Size(350, 450),
                   controller: _controller,
                   onEnd: () {
@@ -146,9 +152,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                     for (int i = 0; i < wrongAnswers.length; i++) {
                       print("MY WRONG ANSWERS!!! : " + wrongAnswers[i].nameNew);
                     }
-                    //Update the score according to the wrong answers
-                    _score = ((int.parse(widget.numberChose) - wrongAnswers.length) / 100) ;
-                    _listService.updateScore("8OezymiqI4nuZbmuhiMX", _score.toString() + "%");
 
                       Navigator.pushReplacement(
                         context,
@@ -192,10 +195,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                         onPressed: () {
                           setState(() {
 
-//                            imagesUrl.remove(imagesUrl[progress]);
-//                            names.remove(names[progress]);
-
-
                             answer = answerController.text;
                             progress = progress + 1;
                             percent = (100 / int.parse(widget.numberChose) * progress).toDouble() / 100;
@@ -206,10 +205,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                             print("nombre de contacts utilisés : " + int.parse(widget.numberChose).toString());
                             print("my answer: " + answer +  " :  the correct answer :" + names[_index]);
 
-
-
-                            progressText = (100 / int.parse(widget.numberChose) * progress)
-                                .toString();
+                            progressText = (100 / int.parse(widget.numberChose) * progress).toString();
 
 
                           });
@@ -230,8 +226,21 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
                           //
                           if(progress == int.parse(widget.numberChose)){
+
+                            //Refresh variables
                             percent = 0.0;
                             progress = 0;
+
+                            //Prepare the score
+                            int nbChosen = (int.parse(widget.numberChose));
+                            int listLenght = wrongAnswers.length;
+                            int total = (nbChosen - listLenght) * 100;
+                            int pourcant = total;
+                            int score = pourcant ~/ 10;
+
+                            //Update the score
+                            _listService.updateScore(widget.choosenListId, score.toString());
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(

@@ -188,8 +188,17 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({'listName': listName, 'score': '0'});
+        .set({
+        'listName': listName,
+        'score': '0',
+        'wrongAnswers' : []
+        });
   }
+
+  //Add data to the list of wrong answers
+
+  //Delete the content of the wrong answers
+
 
   //Delete lists for a user
   Future deleteListsData(String doc) async {

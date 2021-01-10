@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../lists.dart';
 import 'game_test_knowledge.dart';
 
 
@@ -12,7 +13,7 @@ class GameTestKnowledgeResume extends StatefulWidget {
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
 
-  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge('0');
+  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge('0', '0');
 
 
   @override
@@ -20,7 +21,19 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Test knowledge mode resume"),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Lists()),
+            );
+          },
+          child: Icon(
+            Icons.arrow_back,  // add custom icons also
+          ),
+        ),
       ),
+
       backgroundColor: Colors.grey[300],
       body: Column(
         children: <Widget>[
@@ -46,8 +59,8 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                       gameTestKnowledge.getList()[index].nameNew,
                     ),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage(
-                          gameTestKnowledge.getList()[index].imageNew
+                      backgroundImage: NetworkImage(
+                          gameTestKnowledge.getList()[index].imageNew,
                       ),
                     ),
                   ),

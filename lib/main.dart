@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/game/game_trianing_resume.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,8 @@ import 'components/lists.dart';
 import 'components/register.dart';
 import 'components/settings.dart';
 import 'components/login.dart';
+
+List<GameCard> emptyList = [];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,10 +36,10 @@ void main() async {
         '/lists': (context) => Lists(),
         '/settings': (context) => Settings(),
         '/password' : (context) => Password(),
-        '/gamescreen' : (context) => GameScreen(),
+        '/gamescreen' : (context) => GameScreen('0', emptyList),
         '/gametraining' : (context) => GameTraining('0'),
         '/gametrainingres' : (context) => GameTrainingResume(),
-        '/gametestknowledge' : (context) => GameTestKnowledge('0'),
+        '/gametestknowledge' : (context) => GameTestKnowledge('0', '0'),
         '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(),
       }
   ));

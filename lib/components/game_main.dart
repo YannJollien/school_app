@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
-
+import 'package:schoolapp/components/learning/learning_mode.dart';
+import 'game/game_card.dart';
 import 'game/game_test_knowledge.dart';
-import 'game/game_training.dart';
 
 class GameScreen extends StatefulWidget {
+  static String listDoc;
+  static List<GameCard> planetCard ;
+
+  GameScreen(String listId, List<GameCard> pc) {
+    planetCard = pc;
+    listDoc = listId;
+  }
+
   @override
-  _GameScreenState createState() => _GameScreenState();
+  _GameScreenState createState() => _GameScreenState(listDoc);
 }
 
 class _GameScreenState extends State<GameScreen> {
+  _GameScreenState(data);
 
   String numberChose;
   String gameMode;
@@ -23,7 +32,7 @@ class _GameScreenState extends State<GameScreen> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(
-          "Game"
+            "Game"
         ),
       ),
       body: Column(
@@ -33,51 +42,51 @@ class _GameScreenState extends State<GameScreen> {
             child: Text(
               "Let's play !",
               style: TextStyle(
-                color: Colors.lightBlue[800],
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold
+                  color: Colors.lightBlue[800],
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold
               ),
             ),
           ),
           Padding(
-            child: Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,
                 crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Center(
-                    child: Text(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Center(
+                      child: Text(
                         "Chose the number of contact",
+                      ),
                     ),
                   ),
-                ),
-                DropdownButton<String>(
-                  items: <String>['1', '3', '5', '7', '9', '10'].map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String newValue) {
-                    setState(() {
+                  DropdownButton<String>(
+                    items: <String>['1', '3', '5', '7', '9', '10'].map((String value) {
+                      return new DropdownMenuItem<String>(
+                        value: value,
+                        child: new Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String newValue) {
+                      setState(() {
                         numberChose = newValue;
-                    });
-                  },
-                  value: numberChose,
-                )
-              ],
-            ),
-            padding: EdgeInsets.only(top: 10.0)
+                      });
+                    },
+                    value: numberChose,
+                  )
+                ],
+              ),
+              padding: EdgeInsets.only(top: 10.0)
           ),
           Visibility(
             visible: textDropDownVisible,
             child: Text(
-                "Please select number of contact",
-                style: TextStyle(
-                    color: Colors.red,
-                ),
+              "Please select number of contact",
+              style: TextStyle(
+                color: Colors.red,
               ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(top: 30.0),
@@ -122,85 +131,85 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           ),
-            Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 30.0),
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 200,
-                          child: FlatButton(
-                            color: Colors.lightBlue,
-                            onPressed: () {
-                              if(numberChose == null){
-                                setState(() {
-                                  textDropDownVisible = true;
-                                });
-                              } if (gameMode == null){
-                                setState(() {
-                                  textGameModeVisible = true;
-                                });
-                              }
-                              else {
-                                //Reset visibility texts
-                                setState(() {
-                                  textDropDownVisible = false;
-                                  textGameModeVisible = false;
-                                });
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => GameTraining(numberChose)),
-                                );
-                              }
-                            },
-                            child: Text(
-                                "Training"
-                            ),
+          Expanded(
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 30.0),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 200,
+                        child: FlatButton(
+                          color: Colors.lightBlue,
+                          onPressed: () {
+                            if(numberChose == null){
+                              setState(() {
+                                textDropDownVisible = true;
+                              });
+                            } if (gameMode == null){
+                              setState(() {
+                                textGameModeVisible = true;
+                              });
+                            }
+                            else {
+                              //Reset visibility texts
+                              setState(() {
+                                textDropDownVisible = false;
+                                textGameModeVisible = false;
+                              });
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => LearningMode(GameScreen.planetCard, numberChose)),
+                              );
+                            }
+                          },
+                          child: Text(
+                              "Learning"
                           ),
                         ),
-                        SizedBox(
-                          width: 200,
-                          child: FlatButton(
-                            onPressed: () {
-                              if(numberChose == null){
-                                setState(() {
-                                  textDropDownVisible = true;
-                                });
-                              } if (gameMode == null){
-                                setState(() {
-                                  textGameModeVisible = true;
-                                });
-                              }
-                              else {
-                                //Reset visibility texts
-                                setState(() {
-                                  textDropDownVisible = false;
-                                  textGameModeVisible = false;
-                                });
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => GameTestKnowledge(numberChose)),
-                                );
-                              }
-                            },
-                            color: Colors.lightBlue,
-                            child: Text(
-                                "Test my knowledge"
-                            ),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: FlatButton(
+                          onPressed: () {
+                            if(numberChose == null){
+                              setState(() {
+                                textDropDownVisible = true;
+                              });
+                            } if (gameMode == null){
+                              setState(() {
+                                textGameModeVisible = true;
+                              });
+                            }
+                            else {
+                              //Reset visibility texts
+                              setState(() {
+                                textDropDownVisible = false;
+                                textGameModeVisible = false;
+                              });
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.listDoc, numberChose)),
+                              );
+                            }
+                          },
+                          color: Colors.lightBlue,
+                          child: Text(
+                              "Test my knowledge"
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
