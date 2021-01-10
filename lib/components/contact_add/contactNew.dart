@@ -288,9 +288,21 @@ class ContactNewState extends State<ContactNew> {
           setState(() {
             _actualContact = e;
           });
-          lastNameController.text = _actualContact.familyName;
-          firstNameController.text = _actualContact.givenName;
-          institutionController.text = _actualContact.company;
+
+          lastNameController.text = '';
+          firstNameController.text = '';
+          institutionController.text = '';
+
+          if(_actualContact.familyName != null){
+            lastNameController.text = _actualContact.familyName;
+          }
+          if(_actualContact.givenName != null){
+            firstNameController.text = _actualContact.givenName;
+          }
+          if(_actualContact.company != null){
+            institutionController.text = _actualContact.company;
+          }
+
           // Uint8List avatar = _actualContact.avatar;
           // File image;
           // image = await ImagePicker.pickImage(source: ImageSource.gallery);

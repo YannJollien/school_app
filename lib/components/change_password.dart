@@ -17,7 +17,7 @@ class _PasswordState extends State<Password> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-        appBar: AppBar(title: Text("Sign Up")),
+        appBar: AppBar(title: Text("Change password", style: Theme.of(context).textTheme.headline1)),
         body: Form(
             key: _formKey,
             child: SingleChildScrollView(

@@ -52,7 +52,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(20.0),
-              color: Colors.cyan,
               child: Center(
                 child: Column(
                   children: <Widget>[
@@ -109,74 +108,77 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.list),
-              title: Text(
-                  "List",
-                  style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
-              onTap: () {
-                Navigator.of(context).pushNamed("/lists");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.assignment_ind),
-              title: Text(
-                "Contact",
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
-              onTap: () {
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(20.0),
+              color: Theme.of(context).primaryColor,
+              child:
+                Column(
+                  children: [
+                    ListTile(
+                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.list)),
+                      title: Text(
+                          "List",
+                          style: Theme.of(context).textTheme.headline1
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushNamed("/lists");
+                      },
+                    ),
+                    ListTile(
+                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.assignment_ind)),
+                      title: Text(
+                        "Contact",
+                          style: Theme.of(context).textTheme.headline1
+                      ),
+                      onTap: () {
 //                Navigator.of(context).pushNamed("/contacts");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Contacts()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text(
-                "About us",
-                style: TextStyle(
-                  fontSize: 18.0,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Contacts()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.info)),
+                      title: Text(
+                        "About us",
+                          style: Theme.of(context).textTheme.headline1
+                      ),
+                      onTap: null,
+                    ),
+                    ListTile(
+                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.settings)),
+                      title: Text(
+                        "Settings",
+                          style: Theme.of(context).textTheme.headline1
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushNamed("/settings");
+                      },
+                    ),
+                    ListTile(
+                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.logout)),
+                      title: Text(
+                        "Log out",
+                          style: Theme.of(context).textTheme.headline1
+                      ),
+                      onTap: () async{
+                        //Log out
+                        removePref();
+                        _auth.signOut();
+                        //Go to opening page when logged out
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                    ),
+                    // SizedBox(
+                    //   height: 200,
+                    // )
+                  ],
                 ),
-              ),
-              onTap: null,
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text(
-                "Settings",
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
-              onTap: () {
-                Navigator.of(context).pushNamed("/settings");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text(
-                "Log out",
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
-              onTap: () async{
-                //Log out
-                removePref();
-                _auth.signOut();
-                //Go to opening page when logged out
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
-              },
             ),
           ],
         )

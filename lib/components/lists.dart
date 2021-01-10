@@ -76,7 +76,6 @@ class ListsState extends State<Lists> {
   @override
   Widget build(BuildContext context) {
     final autoID = db.collection('lists').doc().id;
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       floatingActionButton: FloatingActionButton (
@@ -96,8 +95,7 @@ class ListsState extends State<Lists> {
         },
       ),
       appBar: AppBar(
-        title: Text(
-            'My lists'),
+        title: Text('My lists', style: Theme.of(context).textTheme.headline1),
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -105,8 +103,11 @@ class ListsState extends State<Lists> {
               MaterialPageRoute(builder: (context) => Home()),
             );
           },
-          child: Icon(
-            Icons.arrow_back,  // add custom icons also
+          child: IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: Icon(
+              Icons.arrow_back,
+            ),
           ),
         ),
       ),
@@ -119,7 +120,51 @@ class ListsState extends State<Lists> {
               if (snapshot.hasData) {
                 return Column(
                   children:
-                  snapshot.data.docs.map((doc) => buildItem(doc)).toList(),
+                  snapshot.data.docs.map((doc) {
+                    return Dismissible(
+                      key: Key(doc.id),
+                      onDismissed: (direction) {},
+                      confirmDismiss:
+                          (DismissDirection direction) async {
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Delete " + doc.data()['listName']),
+                              content: Text(
+                                  "Are you sure you want to delete this list ? The contacts in this list will be deleted from the applicaiton."),
+                              actions: <Widget>[
+                                FlatButton(
+                                  color: Colors.cyan,
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text("Cancel",
+                                      style: TextStyle(
+                                          color: Colors.white)),
+                                ),
+                                FlatButton(
+                                    color: Colors.red,
+                                    onPressed: () {
+                                      _listService.deleteSubLists(doc.id);
+                                      _listService.deleteLists(doc.id);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text("Delete",
+                                        style: TextStyle(
+                                            color: Colors.white))),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      // Show a red background as the item is swiped away.
+                      background: Container( padding: EdgeInsets.only(right: 20.0),
+                          alignment: Alignment.centerRight,
+                          color: Colors.red,
+                          child: Icon(Icons.delete, color: Colors.white)),
+                      child: buildItem(doc),
+                    );
+                  }).toList(),
                 );
               } else {
                 return SizedBox();
@@ -143,7 +188,7 @@ class ListsState extends State<Lists> {
             content: TextField(
               controller: customController,
               decoration:
-              new InputDecoration(labelText: 'list name'),
+              new InputDecoration(labelText: 'List name'),
             ),
             actions: <Widget>[
               MaterialButton(
@@ -175,7 +220,7 @@ class ListsState extends State<Lists> {
             content: TextField(
               controller: customController,
               decoration:
-              new InputDecoration(labelText: 'list name'),
+              new InputDecoration(labelText: 'List name'),
             ),
             actions: <Widget>[
               MaterialButton(
@@ -219,7 +264,7 @@ class ListsState extends State<Lists> {
     AlertDialog alert = AlertDialog(
       title: Text("Delete " + doc.data()['listName']),
       content: Text(
-          "Are you sure you want to delete this list ? The contacts in this list will be deleted from the applicaiton."),
+          "Are you sure you want to delete this list ? The contacts from this list will be NOT deleted definitively."),
       actions: [
         cancelButton,
         continueButton,
@@ -240,7 +285,7 @@ class ListsState extends State<Lists> {
   AlertListName(BuildContext context) {
     // set up the buttons
     Widget OkButton = FlatButton(
-      child: Text("Ok"),
+      child: Text("Ok", style: TextStyle(color: Colors.white),),
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();

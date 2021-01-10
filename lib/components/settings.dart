@@ -13,7 +13,7 @@ class Settings extends StatelessWidget {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text(
-          "Setting"
+          "Setting", style: Theme.of(context).textTheme.headline1
         ),
       ),
       body: Column(
@@ -64,9 +64,23 @@ class Settings extends StatelessWidget {
               ),
             ),
           ),
+          ToggleButtons(
+            children: <Widget>[
+              Icon(Icons.wb_sunny),
+              Icon(Icons.nights_stay),
+            ],
+            // onPressed: (int index) {
+            //   setState(() {
+            //     isSelected[index] = !isSelected[index];
+            //   });
+            // },
+            isSelected: toggled,
+          ),
         ],
       )
     );
   }
+
+  List<bool> toggled = [false, true];
 }
 

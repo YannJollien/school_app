@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan,
+        title: Text('Welcome', style: Theme.of(context).textTheme.headline1),
       ),
       drawer: HomeDrawer(),
       body: Container(

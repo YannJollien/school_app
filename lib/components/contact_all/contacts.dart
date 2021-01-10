@@ -19,7 +19,7 @@ class ContactsState extends State<Contacts> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   Widget _appBarTitle =
-      new Text('All contacts', style: TextStyle(color: Colors.white));
+      new Text('All contacts', style: TextStyle(color: Colors.black));
   bool searchActive = false;
   String search = "";
   FocusNode myFocusNode = FocusNode();
@@ -32,34 +32,35 @@ class ContactsState extends State<Contacts> {
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: IconButton(
-              icon: Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {
-                setState(() {
-                  searchActive = !searchActive;
-                  if (searchActive) {
-                    this._appBarTitle = new TextField(
-                      focusNode: myFocusNode,
-                      onChanged: (text) {
-                        setState(() {
-                          search = text;
-                        });
-                      },
-                      decoration: new InputDecoration(
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
-                          // prefixIcon: new Icon(Icons.search, color: Colors.white,),
-                          hintText: 'Search...'),
-                    );
-                  } else {
-                    search = "";
-                    this._appBarTitle = new Text('All contacts',
-                        style: TextStyle(color: Colors.white));
-                  }
-                });
-                myFocusNode.requestFocus();
-              },
+            child: IconTheme(
+              data: Theme.of(context).iconTheme,
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    searchActive = !searchActive;
+                    if (searchActive) {
+                      this._appBarTitle = new TextField(
+                        focusNode: myFocusNode,
+                        onChanged: (text) {
+                          setState(() {
+                            search = text;
+                          });
+                        },
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            hintStyle: Theme.of(context).textTheme.headline1,
+                            // prefixIcon: new Icon(Icons.search, color: Colors.white,),
+                            hintText: 'Search...'),
+                      );
+                    } else {
+                      search = "";
+                      this._appBarTitle = new Text('All contacts', style: Theme.of(context).textTheme.headline1);
+                    }
+                  });
+                  myFocusNode.requestFocus();
+                },
+              ),
             ),
           ),
         ],
@@ -75,11 +76,9 @@ class ContactsState extends State<Contacts> {
                 return Column(
                   children: snapshot.data.docs.map(
                     (doc) {
-                      String unionLastFirstName =
-                          doc.data()['firstname'].toString().toLowerCase() +
-                              " " +
-                              doc.data()['lastname'].toString().toLowerCase();
-                      return (unionLastFirstName.contains(search.toLowerCase()))
+                      String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                      String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
+                      return (unionLastFirstName.contains(search.toLowerCase()) || unionFirstLastName.contains(search.toLowerCase()))
                           ? Dismissible(
                               key: Key(doc.id),
                               onDismissed: (direction) {},
