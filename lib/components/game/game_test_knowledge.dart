@@ -224,7 +224,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                           //Add every wrong answer to the list of the wrong answers
                           if (test(answer, names[_index]) == false) {
                             wrongAnswers.add(GameCard(
-                                imagesUrl[_index], names[_index]
+                                imagesUrl[_index], names[_index], ''
                             ));
                           }
 
