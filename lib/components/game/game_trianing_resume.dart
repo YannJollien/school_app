@@ -42,10 +42,10 @@ class _GameTrainingResumeState extends State<GameTrainingResume> {
                     //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
                     onTap: () {},
                     title: Text(
-                      gameTraining.getList()[index].nameNew,
+                      gameTraining.getList()[index].firstname,
                     ),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage( gameTraining.getList()[index].imageNew),
+                      backgroundImage: AssetImage( gameTraining.getList()[index].firstname),
                     ),
                   ),
                 );

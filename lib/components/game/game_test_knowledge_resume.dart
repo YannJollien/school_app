@@ -43,10 +43,10 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                     //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
                     onTap: () {},
                     title: Text(
-                      gameTestKnowledge.getList()[index].nameNew,
+                      gameTestKnowledge.getList()[index].firstname,
                     ),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage( gameTestKnowledge.getList()[index].imageNew),
+                      backgroundImage: AssetImage( gameTestKnowledge.getList()[index].image),
                     ),
                   ),
                 );

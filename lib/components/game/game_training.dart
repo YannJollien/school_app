@@ -39,11 +39,11 @@ List <Widget> _getGameCard(){
   });
 
   for(int i = 0 ; i < names.length; i++){
-    cards.add(GameCard(imagesUrl[i], names[i]));
+    cards.add(GameCard(imagesUrl[i], names[i], ''));
   }
 
   for(int i = 0 ; i < names.length; i++){
-    print("NAMES"+cards[i].nameNew);
+    print("NAMES"+cards[i].firstname);
   }
 
   print("LENGTH"+cards.length.toString());
@@ -129,7 +129,7 @@ class _GameTrainingState extends State<GameTraining> {
                   onEnd: () {
                     print("End! at $_index");
                     for(int i = 0 ; i < wrongAnswers.length ; i++){
-                      print(wrongAnswers[i].nameNew);
+                      print(wrongAnswers[i].firstname);
                     }
                     Navigator.pushReplacement(
                       context,
@@ -178,11 +178,11 @@ class _GameTrainingState extends State<GameTraining> {
                             progressText = (100/_indexList*progress).toString();
                           });
                           print("From field" + answerController.text);
-                          print("from cards" +cards[_index].nameNew);
-                          test(answer, cards[_index].nameNew);
+                          print("from cards" +cards[_index].firstname);
+                          test(answer, cards[_index].firstname);
                           //Ajouter dans la liste des "faux"
-                          if(test(answer, cards[_index].nameNew)==false){
-                            wrongAnswers.add(GameCard(cards[_index].imageNew, cards[_index].nameNew));
+                          if(test(answer, cards[_index].firstname)==false){
+                            wrongAnswers.add(GameCard(cards[_index].image, cards[_index].firstname, ''));
                           }
                           _controller.forward();
                           answerController.text = "";

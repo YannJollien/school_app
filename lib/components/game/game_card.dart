@@ -1,11 +1,13 @@
 class GameCard {
 
-  String imageNew;
-  String nameNew;
+  String image;
+  String firstname;
+  String lastname;
 
-  GameCard(String image, String name){
-    imageNew = image;
-    nameNew = name;
+  GameCard(String i, String fname, String lname){
+    image = i;
+    firstname = fname;
+    lastname = lname;
   }
 
 }

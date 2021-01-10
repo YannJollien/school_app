@@ -129,7 +129,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                   onEnd: () {
                     print("End! at $_index");
                     for (int i = 0; i < wrongAnswers.length; i++) {
-                      print("MY WRONG ANSWERS!!! : " + wrongAnswers[i].nameNew);
+                      print("MY WRONG ANSWERS!!! : " + wrongAnswers[i].firstname);
                     }
                     //Update the score according to the wrong answers
                     _score = ((int.parse(widget.numberChose) - wrongAnswers.length) / 100) ;
@@ -185,11 +185,11 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                             progressText = (100 / int.parse(widget.numberChose) * progress)
                                 .toString();
                           });
-                          test(answer, cards[_index].nameNew);
+                          test(answer, cards[_index].firstname);
                           //Ajouter dans la liste des "faux"
-                          if (test(answer, cards[_index].nameNew) == false) {
+                          if (test(answer, cards[_index].firstname) == false) {
                             wrongAnswers.add(GameCard(
-                                cards[_index].imageNew, cards[_index].nameNew));
+                                cards[_index].image, cards[_index].firstname, cards[_index].lastname));
                           }
                           _controller.forward();
                           answerController.text = "";
