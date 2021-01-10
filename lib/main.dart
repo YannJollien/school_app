@@ -61,7 +61,7 @@ void main() async {
         '/lists': (context) => Lists(),
         '/settings': (context) => Settings(),
         '/password': (context) => Password(),
-        '/gamescreen': (context) => GameScreen(),
+        // '/gamescreen': (context) => GameScreen(),
         '/gametraining': (context) => GameTraining('0'),
         '/gametrainingres': (context) => GameTrainingResume(),
         '/gametestknowledge': (context) => GameTestKnowledge('0'),

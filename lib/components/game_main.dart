@@ -1,14 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'game/game_test_knowledge.dart';
-import 'game/game_training.dart';
+import 'learning/PlanetCard.dart';
 
 class GameScreen extends StatefulWidget {
+  static String listDoc;
+  static List<PlanetCard> planetCard ;
+
+  GameScreen(String listId, List<PlanetCard> pc) {
+    planetCard = pc;
+    listDoc = listId;
+  }
+
   @override
-  _GameScreenState createState() => _GameScreenState();
+  _GameScreenState createState() => _GameScreenState(listDoc);
 }
 
 class _GameScreenState extends State<GameScreen> {
+  _GameScreenState(data);
 
   String numberChose;
   String gameMode;
@@ -155,12 +165,12 @@ class _GameScreenState extends State<GameScreen> {
                                 });
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => GameTraining(numberChose)),
+                                  MaterialPageRoute(builder: (context) => LearningMode(GameScreen.planetCard, numberChose)),
                                 );
                               }
                             },
                             child: Text(
-                                "Training"
+                                "Learning"
                             ),
                           ),
                         ),
