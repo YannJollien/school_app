@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:schoolapp/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
+import 'package:schoolapp/components/learning/PlanetCard.dart';
+import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_add/contactNew.dart';
@@ -26,13 +28,15 @@ class ContactFromListState extends State<ContactFromList> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  List<PlanetCard> planetCard = new List<PlanetCard>();
+
   ContactFromListState(data);
 
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle = new Text(
       ContactFromList.listDoc.data()["listName"] + " list",
-      style: TextStyle(color: Colors.white));
+      style: TextStyle(color: Colors.black));
   FocusNode myFocusNode = FocusNode();
 
   @override
@@ -47,52 +51,58 @@ class ContactFromListState extends State<ContactFromList> {
               MaterialPageRoute(builder: (context) => Lists()),
             );
           },
-          child: Icon(
-            Icons.arrow_back, // add custom icons also
-          ),
+          child: new IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: Icon(
+              Icons.arrow_back, // add custom icons also
+            ),
+          )
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.sports_esports),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => GameScreen()),
-              );
-            },
+          IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: IconButton(
+              icon: Icon(Icons.sports_esports),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, planetCard)),
+                );
+              },
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: IconButton(
-              icon: Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {
-                setState(() {
-                  searchActive = !searchActive;
-                  if (searchActive) {
-                    this._appBarTitle = new TextField(
-                      focusNode: myFocusNode,
-                      onChanged: (text) {
-                        setState(() {
-                          search = text;
-                        });
-                      },
-                      decoration: new InputDecoration(
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
-                          // prefixIcon: new Icon(Icons.search, color: Colors.white,),
-                          hintText: 'Search...'),
-                    );
-                  } else {
-                    search = "";
-                    this._appBarTitle = new Text(
-                        ContactFromList.listDoc.data()["listName"] + " list",
-                        style: TextStyle(color: Colors.white));
-                  }
-                });
-                myFocusNode.requestFocus();
-              },
+            child: IconTheme(
+              data: Theme.of(context).iconTheme,
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    searchActive = !searchActive;
+                    if (searchActive) {
+                      this._appBarTitle = new TextField(
+                        focusNode: myFocusNode,
+                        onChanged: (text) {
+                          setState(() {
+                            search = text;
+                          });
+                        },
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            hintStyle: TextStyle(color: Colors.black),
+                            // prefixIcon: new Icon(Icons.search, color: Colors.white,),
+                            hintText: 'Search...'),
+                      );
+                    } else {
+                      search = "";
+                      this._appBarTitle = new Text(
+                          ContactFromList.listDoc.data()["listName"] + " list", style: Theme.of(context).textTheme.headline1);
+                    }
+                  });
+                  myFocusNode.requestFocus();
+                },
+              ),
             ),
           ),
         ],
@@ -109,11 +119,14 @@ class ContactFromListState extends State<ContactFromList> {
                 return Column(
                   children: snapshot.data.docs.map(
                     (doc) {
-                      String unionLastFirstName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                      String unionFirstLastNameForCard = doc.data()['firstname'] + " " + doc.data()['lastname'] ;
+                      planetCard.add(PlanetCard(unionFirstLastNameForCard, doc.data()['image'], 70.0));
+                      String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
+                      String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
                       return (doc
                                   .data()['lists']
                                   .contains(ContactFromList.listDoc.id) &&
-                          unionLastFirstName.contains(search.toLowerCase()))
+                          (unionLastFirstName.contains(search.toLowerCase()) || unionFirstLastName.contains(search.toLowerCase())))
                           ? Dismissible(
                               key: Key(doc.id),
                               onDismissed: (direction) {},
@@ -160,7 +173,10 @@ class ContactFromListState extends State<ContactFromList> {
                                 );
                               },
                               // Show a red background as the item is swiped away.
-                              background: Container(color: Colors.red),
+                              background: Container( padding: EdgeInsets.only(right: 20.0),
+                                alignment: Alignment.centerRight,
+                                color: Colors.red,
+                                child: Icon(Icons.delete, color: Colors.white)),
                               child: buildItem(doc),
                             )
                           : Row();

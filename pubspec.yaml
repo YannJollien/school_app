@@ -21,8 +21,6 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  permission_handler: ^3.0.2
-  contacts_service: ^0.2.6
   flutter:
     sdk: flutter
 
@@ -40,6 +38,8 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   tcard: ^1.2.2
   percent_indicator: ^2.1.8
+  permission_handler: ^3.0.2
+  contacts_service: ^0.2.6
 
 
   # The following adds the Cupertino Icons font to your application.

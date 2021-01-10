@@ -35,68 +35,74 @@ class ContactDetailsState extends State<ContactDetails> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Contact details'),
+          title: Text('Contact details', style: Theme.of(context).textTheme.headline1),
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 0),
-              child: IconButton(
-                icon: Icon(Icons.delete),
-                color: Colors.white,
-                onPressed: () {
-                  showAlertDialogOnDelete(context);
-                },
+              child: IconTheme(
+                data: Theme.of(context).iconTheme,
+                child: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    showAlertDialogOnDelete(context);
+                  },
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(right: 10),
               child: Container(
                   child: (editMode)
-                      ? IconButton(
-                          icon: Icon(Icons.save),
-                          color: Colors.white,
-                          onPressed: () {
-                            setState(() {
-                              contactWasEdited = !contactWasEdited ;
-                            });
-                            if (imageWasEdited) {
-                              uploadImage(firebaseAuth.currentUser.email,
-                                  ContactDetails.contactDoc.id);
-                              up.whenComplete(() {
-                                _contactService
-                                    .addImageLink(ContactDetails.contactDoc.id);
-                                setState(() {
-                                  contactWasEdited = !contactWasEdited ;
-                                });
-                              });
-                            }else{
+                      ? IconTheme(
+                          data: Theme.of(context).iconTheme,
+                          child: IconButton(
+                            icon: Icon(Icons.save),
+                            onPressed: () {
                               setState(() {
-                                contactWasEdited = !contactWasEdited ;
+                                contactWasEdited = !contactWasEdited;
                               });
-                            }
-                            _contactService.updateContactDetails(
-                                ContactDetails.contactDoc,
-                                firstnameController.text,
-                                lastNameController.text,
-                                institutionController.text,
-                                notesController.text);
-                            setState(() {
-                              editMode = !editMode;
-                            });
-                            // Navigator.pushReplacement(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (BuildContext context) => super.widget));
-                          },
+                              if (imageWasEdited) {
+                                uploadImage(firebaseAuth.currentUser.email,
+                                    ContactDetails.contactDoc.id);
+                                up.whenComplete(() {
+                                  _contactService.addImageLink(
+                                      ContactDetails.contactDoc.id);
+                                  setState(() {
+                                    contactWasEdited = !contactWasEdited;
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  contactWasEdited = !contactWasEdited;
+                                });
+                              }
+                              _contactService.updateContactDetails(
+                                  ContactDetails.contactDoc,
+                                  firstnameController.text,
+                                  lastNameController.text,
+                                  institutionController.text,
+                                  notesController.text);
+                              setState(() {
+                                editMode = !editMode;
+                              });
+                              // Navigator.pushReplacement(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (BuildContext context) => super.widget));
+                            },
+                          ),
                         )
-                      : IconButton(
-                          icon: Icon(Icons.edit),
-                          color: Colors.white,
-                          onPressed: () {
-                            imageFile = null;
-                            setState(() {
-                              editMode = !editMode;
-                            });
-                          },
+                      : IconTheme(
+                          data: Theme.of(context).iconTheme,
+                          child: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              imageFile = null;
+                              setState(() {
+                                editMode = !editMode;
+                              });
+                            },
+                          ),
                         )),
             ),
           ],
