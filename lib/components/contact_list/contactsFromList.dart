@@ -3,10 +3,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:schoolapp/components/contact_details/contactDetails.dart';
+import 'package:schoolapp/components/game/game_card.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
-import 'package:schoolapp/components/learning/PlanetCard.dart';
-import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_add/contactNew.dart';
@@ -28,7 +27,7 @@ class ContactFromListState extends State<ContactFromList> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  List<PlanetCard> planetCard = new List<PlanetCard>();
+  List<GameCard> gameCard = new List<GameCard>();
 
   ContactFromListState(data);
 
@@ -66,7 +65,7 @@ class ContactFromListState extends State<ContactFromList> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, planetCard)),
+                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, gameCard)),
                 );
               },
             ),
@@ -119,8 +118,7 @@ class ContactFromListState extends State<ContactFromList> {
                 return Column(
                   children: snapshot.data.docs.map(
                     (doc) {
-                      String unionFirstLastNameForCard = doc.data()['firstname'] + " " + doc.data()['lastname'] ;
-                      planetCard.add(PlanetCard(unionFirstLastNameForCard, doc.data()['image'], 70.0));
+                      gameCard.add(GameCard(doc.data()['image'], doc.data()['firstname'], doc.data()['lastname']));
                       String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
                       String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
                       return (doc
