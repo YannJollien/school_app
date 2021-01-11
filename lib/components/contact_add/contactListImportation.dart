@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
@@ -91,27 +89,8 @@ class ContactListImportationState extends State<ContactListImportation> {
       };
       //If data is not null push it to firestore (firstname, lastname, institution)
       if(columnsValue[1] != null){
-        // imageFile = new File('https://eu.ui-avatars.com/api/?name='+columnsValue[0]+"+"+columnsValue[1]);
         _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
-        // var temp = _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
-        // temp.then((value) {
-        //   uploadImage(firebaseAuth.currentUser.email, value.id);
-        //   up.whenComplete(() => _contactService.addImageLink(value.id));
-        // });
-        // _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
       }
     }
   }
-
-  //Upload image
-  Future uploadImage(String email, String docId) async {
-    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    print("image path " + imageFile.path);
-    up = ref.putFile(imageFile);
-  }
-
-  File imageFile;
-  Reference ref;
-  UploadTask up ;
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 }
