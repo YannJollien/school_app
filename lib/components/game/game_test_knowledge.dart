@@ -35,10 +35,12 @@ bool test(String inputName, String toTest){
 class GameTestKnowledge extends StatefulWidget {
   static String numberChoose;
   static List<GameCard> gameCard;
+  static String listDoc;
 
-  GameTestKnowledge(List<GameCard> gc, String nb) {
+  GameTestKnowledge(List<GameCard> gc, String nb, String id) {
     gameCard = gc;
     numberChoose = nb;
+    listDoc = id;
   }
 
 
@@ -266,7 +268,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
 
                             //Update the score
-                            _listService.updateScore(GameTestKnowledge.numberChoose, score.toString());
+                            _listService.updateScore(GameTestKnowledge.listDoc, score.toString());
 
 
                             //At the end of the game update the wrong answer in the database

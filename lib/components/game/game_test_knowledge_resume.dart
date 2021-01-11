@@ -21,7 +21,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
 
   List<GameCard> emptyList = new List<GameCard>();
-  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge(GameTestKnowledgeResume.gameCard, '0');
+  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge(GameTestKnowledgeResume.gameCard, '0', '0');
 
 
   @override

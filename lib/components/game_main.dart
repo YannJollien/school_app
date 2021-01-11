@@ -194,7 +194,7 @@ class _GameScreenState extends State<GameScreen> {
                               });
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.gameCard, numberChose)),
+                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.gameCard, numberChose, GameScreen.listDoc)),
                               );
                             }
                           },

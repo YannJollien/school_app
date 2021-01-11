@@ -35,7 +35,7 @@ void main() async {
         '/settings': (context) => Settings(),
         '/password' : (context) => Password(),
         '/gamescreen' : (context) => GameScreen('0', emptyList),
-        '/gametestknowledge' : (context) => GameTestKnowledge(emptyList, '0'),
+        '/gametestknowledge' : (context) => GameTestKnowledge(emptyList, '0', '0'),
         '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(emptyList),
       }
   ));
