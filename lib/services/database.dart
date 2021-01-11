@@ -142,8 +142,8 @@ class DatabaseService {
     return collectionUser
         .doc(uid)
         .collection('contacts')
-        .orderBy('firstname')
-        // .where('lists', arrayContains: listDoc.id)
+        //.orderBy('firstname')
+        .where('lists', arrayContains: listDoc.id)
         .snapshots();
   }
 
@@ -196,9 +196,23 @@ class DatabaseService {
   }
 
   //Add data to the list of wrong answers
+  Future updateWrongAnswersData(
+      DocumentSnapshot docList, DocumentSnapshot docContact) async {
+      return await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(docContact.id)
+        .update({
+        'wrongAnswers': FieldValue.arrayUnion([docList.id])
+    });
+  }
 
   //Delete the content of the wrong answers
-
+  Future deleteWrongAnswers(String doc) async{
+    return await collectionUser.doc(uid).collection('lists')
+        .doc(doc)
+        .update({'wrongAnswer' : FieldValue.delete()});
+  }
 
   //Delete lists for a user
   Future deleteListsData(String doc) async {

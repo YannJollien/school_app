@@ -27,14 +27,14 @@ class ContactFromListState extends State<ContactFromList> {
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  List<GameCard> planetCard = new List<GameCard>();
+  List<GameCard> gameCard = new List<GameCard>();
 
   ContactFromListState(data);
 
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle = new Text(
-      ContactFromList.listDoc.data()["listName"] + " list",
+      ContactFromList.listDoc.data()["listName"] + " list" + " " + ContactFromList.listDoc.data()["score"] + "%",
       style: TextStyle(color: Colors.black));
   FocusNode myFocusNode = FocusNode();
 
@@ -65,7 +65,7 @@ class ContactFromListState extends State<ContactFromList> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, planetCard)),
+                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, gameCard)),
                 );
               },
             ),
@@ -118,8 +118,7 @@ class ContactFromListState extends State<ContactFromList> {
                 return Column(
                   children: snapshot.data.docs.map(
                         (doc) {
-                      String unionFirstLastNameForCard = doc.data()['firstname'] + " " + doc.data()['lastname'] ;
-                      planetCard.add(GameCard(unionFirstLastNameForCard, doc.data()['image']));
+                      gameCard.add(GameCard(doc.data()['image'], doc.data()['firstname'], doc.data()['lastname']));
                       String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
                       String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
                       return (doc

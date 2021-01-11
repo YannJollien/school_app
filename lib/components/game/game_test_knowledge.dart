@@ -1,86 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
+import '../game_main.dart';
 import 'game_test_knowledge_resume.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;
 ListService _listService = ListService();
 
-List<GameCard> cards = new List();
-List<String> names = List<String>();
-List<String> imagesUrl = List<String>();
 List<Widget> cardList = new List();
-String docId;
-
-
-
-
-//Get image Url
-Future <String> downloadImage (String email, String docId) async{
-  Reference ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-  return await ref.getDownloadURL();
-}
-
-
 
 List<GameCard> wrongAnswers = new List<GameCard>();
-
-//Get all the contact from a list and put them into a list
-List <Widget> _getGameCard(int numberOfContacts, String listId){
-
-  final contactsRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("contacts");
-
-  final listRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection("lists");
-
-
-  //Fetch name of contacts
-  contactsRef
-      .where('lists', arrayContainsAny: [listId] )
-      .get()
-      .then((snapshot) {
-    snapshot.docs.forEach((doc) {
-      names.add(doc.data()['firstname']);
-      imagesUrl.add(doc.data()['image']);
-//      downloadImage(user.email, doc.id).then((value) => {
-//        imagesUrl.add(value)
-//      });
-    });
-  });
-
-
-  //Fetch images of contacts
-  for(int i = 0 ; i < numberOfContacts ; i++ ){
-    cardList.add(
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  imagesUrl[i]
-              ),
-              fit: BoxFit.fitWidth,
-            ),
-            shape: BoxShape.rectangle,
-          ),
-        )
-    );
-
-    print("VALUE OF MY URL IMAGES !!!! : " + imagesUrl[i].toString());
-    print("NAME OF THE CONTACT : " + names[i]);
-
-  }
-
-
-  return cardList;
-}
-
-
 
 
 
@@ -96,10 +30,16 @@ bool test(String inputName, String toTest){
 
 
 
+
+
 class GameTestKnowledge extends StatefulWidget {
-  final String numberChose;
-  final String choosenListId;
-  GameTestKnowledge(this.numberChose, this.choosenListId, {Key key}) : super(key: key);
+  static String numberChoose;
+  static List<GameCard> gameCard;
+
+  GameTestKnowledge(List<GameCard> gc, String nb) {
+    gameCard = gc;
+    numberChoose = nb;
+  }
 
 
   @override
@@ -125,7 +65,98 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   String progressText= "0%";
 
 
+  void removeCards(index) {
+    setState(() {
+      cardList.removeAt(index);
+    });
+  }
 
+  //Generate the cards
+  List<Widget> _generateCards() {
+    //List<Widget> cardList = new List();
+
+    int loopIteration = int.parse(GameTestKnowledge.numberChoose);
+    if (int.parse(GameTestKnowledge.numberChoose) > GameScreen.gameCard.length) {
+      loopIteration = GameScreen.gameCard.length;
+    }
+
+    //Make learning random
+    GameTestKnowledge.gameCard.shuffle();
+
+    for (int x = 0; x < loopIteration; x++) {
+      cardList.add(
+        Positioned(
+          top: 70.0,
+          child: Draggable(
+              onDragEnd: (drag) {
+                removeCards(x);
+              },
+              childWhenDragging: Container(),
+              feedback: GestureDetector(
+                onTap: () {},
+                child: Card(
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  // color: Color.fromARGB(250, 112, 19, 179),
+                  child: Column(
+                    children: <Widget>[
+                      Hero(
+                        tag: "imageTag",
+                        child: Image.network(
+                          GameTestKnowledge.gameCard[x].image,
+                          width: 320.0,
+                          height: 440.0,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                        child: Text(
+                          GameTestKnowledge.gameCard[x].firstname,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.cyan,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              child: GestureDetector(
+                onTap: () {},
+                child: Card(
+                    elevation: 8.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    // color: Color.fromARGB(250, 112, 19, 179),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0)),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    GameTestKnowledge.gameCard[x].image),
+                                fit: BoxFit.cover),
+                          ),
+                          height: 350.0,
+                          width: 320.0,
+                        ),
+
+                      ],
+                    )),
+              )),
+        ),
+      );
+    }
+    return cardList;
+  }
 
 
   @override
@@ -144,23 +175,18 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
               AbsorbPointer(
                 absorbing: true,
                 child: TCard(
-                  cards: _getGameCard(int.parse(widget.numberChose), widget.choosenListId),
+                  cards: _generateCards(),
                   size: Size(350, 450),
                   controller: _controller,
                   onEnd: () {
-                    print("End! at $_index");
-                    for (int i = 0; i < wrongAnswers.length; i++) {
-                      print("MY WRONG ANSWERS!!! : " + wrongAnswers[i].nameNew);
-                    }
-
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GameTestKnowledgeResume()),
+                            builder: (context) => GameTestKnowledgeResume(wrongAnswers)),
                       );
 
                     setState(() {
-                      int.parse(widget.numberChose);
+                      int.parse(GameTestKnowledge.numberChoose);
                     });
                   },
                   onForward: (index, info) {
@@ -197,54 +223,61 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
                             answer = answerController.text;
                             progress = progress + 1;
-                            percent = (100 / int.parse(widget.numberChose) * progress).toDouble() / 100;
+                            percent = (100 / int.parse(GameTestKnowledge.numberChoose) * progress).toDouble() / 100;
 
 
                             print("percent: " + percent.toString());
                             print("progress : " + progress.toString());
-                            print("nombre de contacts utilisés : " + int.parse(widget.numberChose).toString());
-                            print("my answer: " + answer +  " :  the correct answer :" + names[_index]);
+                            print("nombre de contacts utilisés : " + int.parse(GameTestKnowledge.numberChoose).toString());
+                            print("my answer: " + answer +  " :  the correct answer :" + GameTestKnowledge.gameCard[_index].firstname);
 
-                            progressText = (100 / int.parse(widget.numberChose) * progress).toString();
+                            progressText = (100 / int.parse(GameTestKnowledge.numberChoose) * progress).toString();
 
 
                           });
 
 
                           //Test if the answer is correct
-                          test(answer, names[_index]);
+                          test(answer, GameTestKnowledge.gameCard[_index].firstname);
 
 
 
 
                           //Add every wrong answer to the list of the wrong answers
-                          if (test(answer, names[_index]) == false) {
+                          if (test(answer, GameTestKnowledge.gameCard[_index].firstname) == false) {
                             wrongAnswers.add(GameCard(
-                                imagesUrl[_index], names[_index]
+                                GameTestKnowledge.gameCard[_index].image, GameTestKnowledge.gameCard[_index].firstname, " "
                             ));
                           }
 
                           //
-                          if(progress == int.parse(widget.numberChose)){
+                          if(progress == int.parse(GameTestKnowledge.numberChoose)){
 
                             //Refresh variables
                             percent = 0.0;
                             progress = 0;
 
                             //Prepare the score
-                            int nbChosen = (int.parse(widget.numberChose));
+                            int nbChosen = (int.parse(GameTestKnowledge.numberChoose));
                             int listLenght = wrongAnswers.length;
                             int total = (nbChosen - listLenght) * 100;
                             int pourcant = total;
                             int score = pourcant ~/ 10;
 
+
                             //Update the score
-                            _listService.updateScore(widget.choosenListId, score.toString());
+                            _listService.updateScore(GameTestKnowledge.numberChoose, score.toString());
+
+
+                            //At the end of the game update the wrong answer in the database
+                            for(int i=0; i<wrongAnswers.length; i++){
+                              _listService.updateWrongAnswer('R8F7UN2tYTp1BicHrMn1');
+                            }
 
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume()),
+                                  builder: (context) => GameTestKnowledgeResume(wrongAnswers)),
                             );
                           }
 

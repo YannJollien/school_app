@@ -1,10 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/game/game_card.dart';
 import '../lists.dart';
 import 'game_test_knowledge.dart';
 
 
 class GameTestKnowledgeResume extends StatefulWidget {
+
+  static List<GameCard> gameCard;
+
+  GameTestKnowledgeResume(List<GameCard> gc) {
+    gameCard = gc;
+  }
 
   @override
   _GameTestKnowledgeResumeState createState() => _GameTestKnowledgeResumeState();
@@ -13,7 +20,8 @@ class GameTestKnowledgeResume extends StatefulWidget {
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
 
-  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge('0', '0');
+  List<GameCard> emptyList = new List<GameCard>();
+  GameTestKnowledge gameTestKnowledge = new GameTestKnowledge(GameTestKnowledgeResume.gameCard, '0');
 
 
   @override
@@ -56,11 +64,11 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                     //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
                     onTap: () {},
                     title: Text(
-                      gameTestKnowledge.getList()[index].nameNew,
+                      gameTestKnowledge.getList()[index].firstname,
                     ),
                     leading: CircleAvatar(
                       backgroundImage: NetworkImage(
-                          gameTestKnowledge.getList()[index].imageNew,
+                          gameTestKnowledge.getList()[index].image,
                       ),
                     ),
                   ),

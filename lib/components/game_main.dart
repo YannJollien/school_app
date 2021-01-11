@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
-import 'game/game_card.dart';
 import 'game/game_test_knowledge.dart';
 
 class GameScreen extends StatefulWidget {
   static String listDoc;
-  static List<GameCard> planetCard ;
+  static List<GameCard> gameCard ;
 
-  GameScreen(String listId, List<GameCard> pc) {
-    planetCard = pc;
+  GameScreen(String listId, List<GameCard> gc) {
+    gameCard = gc;
     listDoc = listId;
   }
 
@@ -164,7 +164,7 @@ class _GameScreenState extends State<GameScreen> {
                               });
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => LearningMode(GameScreen.planetCard, numberChose)),
+                                MaterialPageRoute(builder: (context) => LearningMode(GameScreen.gameCard, numberChose)),
                               );
                             }
                           },
@@ -194,7 +194,7 @@ class _GameScreenState extends State<GameScreen> {
                               });
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.listDoc, numberChose)),
+                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.gameCard, numberChose)),
                               );
                             }
                           },

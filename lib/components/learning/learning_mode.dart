@@ -6,15 +6,15 @@ import 'package:schoolapp/components/game_main.dart';
 
 class LearningMode extends StatefulWidget {
   static String numberChoose;
-  static List<GameCard> planetCard;
+  static List<GameCard> gameCard;
 
-  LearningMode(List<GameCard> pc, String nb) {
-    planetCard = pc;
+  LearningMode(List<GameCard> gc, String nb) {
+    gameCard = gc;
     numberChoose = nb;
   }
 
   @override
-  State<StatefulWidget> createState() => new LearningModeState(planetCard);
+  State<StatefulWidget> createState() => new LearningModeState(gameCard);
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -47,26 +47,24 @@ class LearningModeState extends State<LearningMode> {
     List<Widget> cardList = new List();
 
     int loopIteration = int.parse(LearningMode.numberChoose);
-    if (int.parse(LearningMode.numberChoose) > GameScreen.planetCard.length) {
-      loopIteration = GameScreen.planetCard.length;
+    if (int.parse(LearningMode.numberChoose) > GameScreen.gameCard.length) {
+      loopIteration = GameScreen.gameCard.length;
     }
 
     //Make learning random
-    LearningMode.planetCard.shuffle();
+    LearningMode.gameCard.shuffle();
 
     for (int x = 0; x < loopIteration; x++) {
       cardList.add(
         Positioned(
-          //top: LearningMode.planetCard[x].topMargin,
+          top: 70.0,
           child: Draggable(
               onDragEnd: (drag) {
                 removeCards(x);
               },
               childWhenDragging: Container(),
               feedback: GestureDetector(
-                onTap: () {
-                  print("Hello All");
-                },
+                onTap: () {},
                 child: Card(
                   elevation: 8.0,
                   shape: RoundedRectangleBorder(
@@ -78,7 +76,7 @@ class LearningModeState extends State<LearningMode> {
                       Hero(
                         tag: "imageTag",
                         child: Image.network(
-                          LearningMode.planetCard[x].imageNew,
+                          LearningMode.gameCard[x].image,
                           width: 320.0,
                           height: 440.0,
                           fit: BoxFit.fill,
@@ -87,7 +85,7 @@ class LearningModeState extends State<LearningMode> {
                       Container(
                         padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                         child: Text(
-                          LearningMode.planetCard[x].nameNew,
+                          LearningMode.gameCard[x].firstname + " " + LearningMode.gameCard[x].lastname,
                           style: TextStyle(
                             fontSize: 20.0,
                             color: Colors.cyan,
@@ -115,7 +113,7 @@ class LearningModeState extends State<LearningMode> {
                                 topRight: Radius.circular(20.0)),
                             image: DecorationImage(
                                 image: NetworkImage(
-                                    LearningMode.planetCard[x].imageNew),
+                                    LearningMode.gameCard[x].image),
                                 fit: BoxFit.cover),
                           ),
                           height: 480.0,
@@ -124,7 +122,7 @@ class LearningModeState extends State<LearningMode> {
                         Container(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                           child: Text(
-                            LearningMode.planetCard[x].nameNew,
+                            LearningMode.gameCard[x].firstname,
                             style: TextStyle(
                               fontSize: 20.0,
                               color: Colors.cyan,
