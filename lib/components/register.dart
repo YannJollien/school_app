@@ -8,6 +8,7 @@ import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/shared/loading.dart';
 import 'home.dart';
+import 'lists.dart';
 
 //inpiration https://github.com/PeterHdd/Firebase-Flutter-tutorials/blob/master/firebase_authentication_tutorial/lib/email_signup.dart
 
@@ -36,6 +37,7 @@ class _RegisterState extends State<Register> {
   Future uploadImage (String email) async {
     ref = FirebaseStorage.instance.ref().child("images/$email");
     ref.putFile(imageFile);
+    print("IMAGE PATH " + imageFile.path);
   }
 
   //Get image Url
@@ -151,8 +153,6 @@ class _RegisterState extends State<Register> {
                     child: RaisedButton(
                       color: Colors.lightBlue,
                       onPressed: () async{
-                        uploadImage(emailController.text);
-                        downloadImage();
                         if (_formKey.currentState.validate()) {
                           //Show Loading
                           setState(() {
@@ -165,12 +165,16 @@ class _RegisterState extends State<Register> {
                               isLoading = false;
                             });
                           } else {
+                            //Upload the image after the user is created (token access)
+                            uploadImage(emailController.text);
+                            downloadImage();
+
                             //SharedPreferences prefs = await SharedPreferences.getInstance();
                             //prefs.setString("email", emailController.text);
-                            //Go to Home when registerd
+                            //Go to lists when registerd
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => Home()),
+                              MaterialPageRoute(builder: (context) => Lists()),
                             );
                           }
                         }

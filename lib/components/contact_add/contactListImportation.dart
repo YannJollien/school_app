@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
+import 'package:flutter/services.dart';
 
 class ContactListImportation extends StatefulWidget {
   static DocumentSnapshot listDoc;
@@ -17,7 +16,8 @@ class ContactListImportation extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => new ContactListImportationState(listDoc);
+  State<StatefulWidget> createState() =>
+      new ContactListImportationState(listDoc);
 }
 
 class ContactListImportationState extends State<ContactListImportation> {
@@ -36,8 +36,30 @@ class ContactListImportationState extends State<ContactListImportation> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Text('CSV Example', style: Theme.of(context).textTheme.headline1),
+            SizedBox(height: 20),
+            Text('firstname,lastname,institution',
+                style: TextStyle(fontSize: 20)),
+            SizedBox(height: 10),
+            Image.network('https://i.ibb.co/DKFJVd8/CSVExample.png'),
+            SizedBox(height: 50),
             FlatButton(
-              child: Text('Get documents'),
+              child: Container(
+                margin: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.upload_file,
+                      color: Colors.black,
+                      size: 50,
+                    ),
+                    Text('Import a CSV file',
+                        style: Theme.of(context).textTheme.headline1),
+                  ],
+                )
+              ),
+              color: Colors.cyan,
+              textColor: Colors.white,
               onPressed: () {
                 getCSVAndPushDataToFirestore();
                 Navigator.push(
@@ -90,28 +112,10 @@ class ContactListImportationState extends State<ContactListImportation> {
         for (int i = 0; i < splitEachColumns.length; i++) i: splitEachColumns[i]
       };
       //If data is not null push it to firestore (firstname, lastname, institution)
-      if(columnsValue[1] != null){
-        // imageFile = new File('https://eu.ui-avatars.com/api/?name='+columnsValue[0]+"+"+columnsValue[1]);
-        _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
-        // var temp = _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
-        // temp.then((value) {
-        //   uploadImage(firebaseAuth.currentUser.email, value.id);
-        //   up.whenComplete(() => _contactService.addImageLink(value.id));
-        // });
-        // _contactService.addContact(ContactListImportation.listDoc, columnsValue[0], columnsValue[1], columnsValue[2]);
+      if (columnsValue[1] != null) {
+        _contactService.addContact(ContactListImportation.listDoc,
+            columnsValue[0], columnsValue[1], columnsValue[2]);
       }
     }
   }
-
-  //Upload image
-  Future uploadImage(String email, String docId) async {
-    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    print("image path " + imageFile.path);
-    up = ref.putFile(imageFile);
-  }
-
-  File imageFile;
-  Reference ref;
-  UploadTask up ;
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 }

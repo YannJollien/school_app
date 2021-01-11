@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/register.dart';
 import 'package:schoolapp/services/auth.dart';

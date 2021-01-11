@@ -4,7 +4,14 @@ import 'package:schoolapp/services/auth.dart';
 
 import 'home_drawer.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
+  @override
+  SettingsState createState() {
+    return SettingsState();
+  }
+}
+
+class SettingsState extends State<Settings> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   AuthService _auth = AuthService();
 
@@ -13,7 +20,7 @@ class Settings extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
-          title: Text("Setting", style: Theme.of(context).textTheme.headline1),
+          title: Text("Settings", style: Theme.of(context).textTheme.headline1),
         ),
         drawer: HomeDrawer(),
         body: Column(
@@ -33,11 +40,7 @@ class Settings extends StatelessWidget {
               width: double.infinity,
               child: FlatButton(
                 onPressed: () async {
-                  _auth.deleteUser();
-                  //Remove from fp to stop auto logged in
-                  //SharedPreferences prefs = await SharedPreferences.getInstance();
-                  //prefs.remove('email');
-                  Navigator.of(context).pushNamed("/login");
+                  showAlertDialog(context);
                 },
                 child: Align(
                   alignment: Alignment.topLeft,
@@ -45,35 +48,90 @@ class Settings extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: FlatButton(
-                onPressed: () async {
-                  Navigator.of(context).pushNamed("/password");
-                },
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Change password",
-                  ),
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: FlatButton(
+            //     onPressed: () async {
+            //       Navigator.of(context).pushNamed("/password");
+            //     },
+            //     child: Align(
+            //       alignment: Alignment.topLeft,
+            //       child: Text(
+            //         "Change password",
+            //       ),
+            //     ),
+            //   ),
+            // ),
             ToggleButtons(
               children: <Widget>[
                 Icon(Icons.wb_sunny),
                 Icon(Icons.nights_stay),
               ],
-              // onPressed: (int index) {
-              //   setState(() {
-              //     isSelected[index] = !isSelected[index];
-              //   });
-              // },
+              onPressed: (int index) {
+                setState(() {
+                  for (int buttonIndex = 0; buttonIndex < toggled.length; buttonIndex++) {
+                    if (buttonIndex == index) {
+                      toggled[buttonIndex] = true;
+                    } else {
+                      toggled[buttonIndex] = false;
+                    }
+                  }
+                });
+              },
               isSelected: toggled,
             ),
           ],
         ));
   }
-
+  bool _value = true ;
   List<bool> toggled = [false, true];
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel", style: TextStyle(color: Colors.white)),
+      color: Colors.cyan,
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Delete"),
+      color: Colors.red,
+      onPressed: () {
+        _auth.deleteUser();
+        Navigator.of(context).pushNamed("/login");
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirm'),
+      content: RichText(
+        text: new TextSpan(
+          // Note: Styles for TextSpans must be explicitly defined.
+          // Child text spans will inherit styles from parent
+          style: new TextStyle(
+            fontSize: 16.0,
+            color: Colors.black,
+          ),
+          children: <TextSpan>[
+            new TextSpan(text: "Are you sure you want to delete your account "),
+            new TextSpan(text: ' definitively ?', style: new TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
 }

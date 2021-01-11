@@ -34,6 +34,7 @@ class ContactService {
         .updateContactNotesData(docContact, notes);
   }
 
+  //Update contact details
   Future updateContactDetails(DocumentSnapshot docContact, String firstname,
       String lastname, String institution, String notes) async {
     User user = await _auth.currentUser;
@@ -58,6 +59,17 @@ class ContactService {
   Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactDetailsData(doc);
+  }
+
+  Future<DocumentSnapshot> getContactLists(DocumentSnapshot doc) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactListsData(doc);
+  }
+
+
+  Future<String> getContactListNames(List<dynamic> listId) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactListNamesData(listId);
   }
 
   //Get the all contacts
