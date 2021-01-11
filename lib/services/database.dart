@@ -197,13 +197,13 @@ class DatabaseService {
 
   //Add data to the list of wrong answers
   Future updateWrongAnswersData(
-      DocumentSnapshot docList, DocumentSnapshot docContact) async {
+      String docList, String docContact) async {
       return await collectionUser
         .doc(uid)
         .collection('lists')
-        .doc(docContact.id)
+        .doc(docContact)
         .update({
-        'wrongAnswers': FieldValue.arrayUnion([docList.id])
+        'wrongAnswers': FieldValue.arrayUnion([docList])
     });
   }
 

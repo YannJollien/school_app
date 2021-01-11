@@ -273,7 +273,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
 
                             //At the end of the game update the wrong answer in the database
                             for(int i=0; i<wrongAnswers.length; i++){
-                              _listService.updateWrongAnswer('R8F7UN2tYTp1BicHrMn1');
+                              _listService.updateWrongAnswers(GameTestKnowledge.listDoc, 'R8F7UN2tYTp1BicHrMn1');
                             }
 
                             Navigator.push(
