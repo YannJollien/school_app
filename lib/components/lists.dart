@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schoolapp/components/home.dart';
+import 'package:schoolapp/components/home_drawer.dart';
 import 'package:schoolapp/services/listService.dart';
 
 import 'contact_list/contactsFromList.dart';
@@ -97,21 +98,8 @@ class ListsState extends State<Lists> {
       ),
       appBar: AppBar(
         title: Text('My lists', style: Theme.of(context).textTheme.headline1),
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-            );
-          },
-          child: IconTheme(
-            data: Theme.of(context).iconTheme,
-            child: Icon(
-              Icons.arrow_back,
-            ),
-          ),
-        ),
       ),
+      drawer: HomeDrawer(),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
