@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/game_main.dart';
 
@@ -38,6 +39,22 @@ class LearningModeState extends State<LearningMode> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Learning mode"),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ContactFromList(ContactFromList.listDoc)),
+            );
+          },
+          child: IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: Icon(
+              Icons.arrow_back,
+            ),
+          ),
+        ),
       ),
       body: Stack(alignment: Alignment.center, children: cardList),
     );
@@ -122,7 +139,7 @@ class LearningModeState extends State<LearningMode> {
                         Container(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                           child: Text(
-                            LearningMode.gameCard[x].firstname,
+                            LearningMode.gameCard[x].firstname + " " + LearningMode.gameCard[x].lastname,
                             style: TextStyle(
                               fontSize: 20.0,
                               color: Colors.cyan,

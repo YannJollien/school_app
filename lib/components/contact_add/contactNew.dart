@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_list/contactsFromList.dart';
@@ -107,6 +107,21 @@ class ContactNewState extends State<ContactNew> {
           ),
         ),
       ),
+      floatingActionButton: SpeedDial(
+        backgroundColor: Colors.cyan,
+        animatedIcon: AnimatedIcons.menu_close,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.contact_page_outlined),
+            backgroundColor: Colors.blue,
+            label: 'Import from contact',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              _showContactList(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -151,15 +166,6 @@ class ContactNewState extends State<ContactNew> {
       child:  Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save_alt),
-            iconSize: 50,
-            color: Colors.cyan,
-            onPressed: () {
-              _showContactList(context);
-            },
-          ),
-          SizedBox(width: 5),
           IconButton(
             icon: Icon(Icons.save),
             iconSize: 50,

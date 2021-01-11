@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:schoolapp/components/contact_add/listImportation.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game_main.dart';
@@ -44,19 +45,18 @@ class ContactFromListState extends State<ContactFromList> {
       appBar: AppBar(
         title: _appBarTitle,
         leading: GestureDetector(
-          onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Lists()),
-            );
-          },
-          child: new IconTheme(
-            data: Theme.of(context).iconTheme,
-            child: Icon(
-              Icons.arrow_back, // add custom icons also
-            ),
-          )
-        ),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Lists()),
+              );
+            },
+            child: new IconTheme(
+              data: Theme.of(context).iconTheme,
+              child: Icon(
+                Icons.arrow_back, // add custom icons also
+              ),
+            )),
         actions: <Widget>[
           IconTheme(
             data: Theme.of(context).iconTheme,
@@ -65,7 +65,9 @@ class ContactFromListState extends State<ContactFromList> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, gameCard)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          GameScreen(ContactFromList.listDoc.id, gameCard)),
                 );
               },
             ),
@@ -96,7 +98,8 @@ class ContactFromListState extends State<ContactFromList> {
                     } else {
                       search = "";
                       this._appBarTitle = new Text(
-                          ContactFromList.listDoc.data()["listName"] + " list", style: Theme.of(context).textTheme.headline1);
+                          ContactFromList.listDoc.data()["listName"] + " list",
+                          style: Theme.of(context).textTheme.headline1);
                     }
                   });
                   myFocusNode.requestFocus();
@@ -118,13 +121,27 @@ class ContactFromListState extends State<ContactFromList> {
                 return Column(
                   children: snapshot.data.docs.map(
                     (doc) {
-                      gameCard.add(GameCard(doc.data()['image'], doc.data()['firstname'], doc.data()['lastname']));
-                      String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
-                      String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
+                      if (doc
+                          .data()['lists']
+                          .contains(ContactFromList.listDoc.id)) {
+                        gameCard.add(GameCard(doc.data()['image'],
+                            doc.data()['firstname'], doc.data()['lastname']));
+                      }
+                      String unionFirstLastName =
+                          doc.data()['firstname'].toString().toLowerCase() +
+                              " " +
+                              doc.data()['lastname'].toString().toLowerCase();
+                      String unionLastFirstName =
+                          doc.data()['lastname'].toString().toLowerCase() +
+                              " " +
+                              doc.data()['firstname'].toString().toLowerCase();
                       return (doc
                                   .data()['lists']
                                   .contains(ContactFromList.listDoc.id) &&
-                          (unionLastFirstName.contains(search.toLowerCase()) || unionFirstLastName.contains(search.toLowerCase())))
+                              (unionLastFirstName
+                                      .contains(search.toLowerCase()) ||
+                                  unionFirstLastName
+                                      .contains(search.toLowerCase())))
                           ? Dismissible(
                               key: Key(doc.id),
                               onDismissed: (direction) {},
@@ -171,10 +188,12 @@ class ContactFromListState extends State<ContactFromList> {
                                 );
                               },
                               // Show a red background as the item is swiped away.
-                              background: Container( padding: EdgeInsets.only(right: 20.0),
-                                alignment: Alignment.centerRight,
-                                color: Colors.red,
-                                child: Icon(Icons.delete, color: Colors.white)),
+                              background: Container(
+                                  padding: EdgeInsets.only(right: 20.0),
+                                  alignment: Alignment.centerRight,
+                                  color: Colors.red,
+                                  child:
+                                      Icon(Icons.delete, color: Colors.white)),
                               child: buildItem(doc),
                             )
                           : Row();
@@ -192,19 +211,6 @@ class ContactFromListState extends State<ContactFromList> {
         backgroundColor: Colors.cyan,
         animatedIcon: AnimatedIcons.menu_close,
         children: [
-          // SpeedDialChild(
-          //     child: Icon(Icons.save_alt),
-          //     backgroundColor: Colors.red,
-          //     label: 'Import',
-          //     labelStyle: TextStyle(fontSize: 18.0),
-          //     onTap: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) =>
-          //                 ContactImportation()),
-          //       );
-          //     }),
           SpeedDialChild(
             child: Icon(Icons.add),
             backgroundColor: Colors.blue,
@@ -220,9 +226,23 @@ class ContactFromListState extends State<ContactFromList> {
             },
           ),
           SpeedDialChild(
+            child: Icon(Icons.upload_file),
+            backgroundColor: Colors.green,
+            label: 'Import a list',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ListImportation(ContactFromList.listDoc)),
+              );
+            },
+          ),
+          SpeedDialChild(
             child: Icon(Icons.fiber_new_outlined),
             backgroundColor: Colors.green,
-            label: 'New/Import',
+            label: 'New contact',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () {
               Navigator.push(
