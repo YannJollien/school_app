@@ -32,6 +32,37 @@ class DatabaseService {
         .snapshots();
   }
 
+  //Get contact details
+  Future<DocumentSnapshot> getContactListsData(DocumentSnapshot doc) {
+    return collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .doc(doc.id)
+        .get();
+  }
+
+  //Get contact details
+  Future<String> getContactListNamesData(List<dynamic> listId) async {
+
+    DocumentSnapshot ds ;
+
+    //String of the list names
+    String listNames = "" ;
+
+    //For each id list, add the name of the list
+    for(int i=0; i<listId.length; i++){
+      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
+      listNames += ds.data()['listName'] + " ";
+
+      //Display management to not add "/" for the last list name
+      if(i+1<listId.length){
+        listNames += "/ ";
+      }
+    }
+
+    return listNames;
+  }
+
   Future<String> getContactNotesData(DocumentSnapshot doc) async {
     DocumentSnapshot ds =
         await collectionUser.doc(uid).collection('contacts').doc(doc.id).get();

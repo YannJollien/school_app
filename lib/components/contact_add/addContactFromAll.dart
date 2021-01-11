@@ -102,26 +102,10 @@ class ContactsListState extends State<ContactsList> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  FutureBuilder(
-                    future: getImage(
-                        context, firebaseAuth.currentUser.email, contactDoc.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: snapshot.data,
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return Container();
-                    },
+                  Image.network(
+                    contactDoc.data()['image'],
+                    width: MediaQuery.of(context).size.width / 8,
+                    height: MediaQuery.of(context).size.width / 8,
                   ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH

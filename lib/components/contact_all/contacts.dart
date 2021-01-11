@@ -155,6 +155,8 @@ class ContactsState extends State<Contacts> {
   }
 
   Card buildItem(DocumentSnapshot contactDoc) {
+
+    DocumentSnapshot emptyDocumentSnapshot ;
     return Card(
       child: InkWell(
         onTap: () {
@@ -162,7 +164,7 @@ class ContactsState extends State<Contacts> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ContactDetails(ContactFromList.listDoc, contactDoc)),
+                    ContactDetails(emptyDocumentSnapshot, contactDoc)),
           );
         },
         child: Padding(
@@ -172,26 +174,10 @@ class ContactsState extends State<Contacts> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  FutureBuilder(
-                    future: getImage(
-                        context, firebaseAuth.currentUser.email, contactDoc.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: snapshot.data,
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 8,
-                          height: MediaQuery.of(context).size.width / 8,
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return Container();
-                    },
+                  Image.network(
+                    contactDoc.data()['image'],
+                    width: MediaQuery.of(context).size.width / 8,
+                    height: MediaQuery.of(context).size.width / 8,
                   ),
                   SizedBox(width: 10),
                   ({contactDoc.data()['firstname']}.toString().length +

@@ -21,6 +21,8 @@ class ContactDetails extends StatefulWidget {
 }
 
 class ContactDetailsState extends State<ContactDetails> {
+  bool comeFromList = true;
+
   ContactDetailsState(data);
 
   bool editMode = false;
@@ -32,21 +34,34 @@ class ContactDetailsState extends State<ContactDetails> {
 
   @override
   Widget build(BuildContext context) {
+    if(ContactDetails.listDoc == null){
+      setState(() {
+        comeFromList = false ;
+      });
+    }else{
+      setState(() {
+        comeFromList = true ;
+      });
+    }
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Contact details', style: Theme.of(context).textTheme.headline1),
+          title: Text('Contact details',
+              style: Theme.of(context).textTheme.headline1),
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 0),
               child: IconTheme(
                 data: Theme.of(context).iconTheme,
-                child: IconButton(
+                child:
+                (comeFromList)
+                  ? IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () {
                     showAlertDialogOnDelete(context);
                   },
-                ),
+                )
+                    : Text(''),
               ),
             ),
             Padding(
@@ -183,21 +198,25 @@ class ContactDetailsState extends State<ContactDetails> {
                     child: (editMode)
                         ? _firstnameEditable('firstname')
                         : _contentNotEditable('firstname')),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 //LASTNAME
                 _label('Lastname'),
                 Container(
                     child: (editMode)
                         ? _lastnameEditable('lastname')
                         : _contentNotEditable('lastname')),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 //INSTITUTION
                 _label('Institution'),
                 Container(
                     child: (editMode)
                         ? _institutionEditable('institution')
                         : _contentNotEditable('institution')),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
+                //List which contains this contact
+                _label('Lists'),
+                _buildListNames('lists'),
+                SizedBox(height: 10),
                 //NOTES
                 _label('Notes'),
                 Container(
@@ -218,7 +237,7 @@ class ContactDetailsState extends State<ContactDetails> {
       child: Text(
         labelName,
         style: TextStyle(
-          fontSize: 24,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -293,6 +312,28 @@ class ContactDetailsState extends State<ContactDetails> {
             decoration: _buildUpdateNotesDecoration(context),
           );
         });
+  }
+
+  static List<dynamic> listsId;
+
+  Widget _buildListNames(String content) {
+    return FutureBuilder(
+      future: _contactService.getContactLists(ContactDetails.contactDoc),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        listsId = snapshot.data['lists'];
+        return FutureBuilder(
+            future: _contactService.getContactListNames(listsId),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              return (snapshot.connectionState == ConnectionState.done)
+                  ? SingleChildScrollView(
+                child: new Text(snapshot.data, style: TextStyle(fontSize: 18, color: Colors.grey)),
+              )
+                  : SingleChildScrollView(
+                child: new Text('Checking...', style: TextStyle(fontSize: 18, color: Colors.grey)),
+              );
+            });
+      }
+    );
   }
 
   static Widget _buildNotesNotEditable(String content, BuildContext context) {
@@ -376,8 +417,8 @@ class ContactDetailsState extends State<ContactDetails> {
                             ))
                   : Image.network(
                       snapshot.data[content],
-                      width: MediaQuery.of(context).size.width / 1.8,
-                      height: MediaQuery.of(context).size.width / 1.8,
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.width / 2,
                     ),
             ],
           ));
@@ -491,6 +532,8 @@ class ContactDetailsState extends State<ContactDetails> {
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //Set the list of list id where the contact is
+          // listsId = snapshot.data['lists'];
           return new SingleChildScrollView(
             child: new TextFormField(
               enabled: false,
