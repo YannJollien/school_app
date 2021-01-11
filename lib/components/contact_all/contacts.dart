@@ -6,6 +6,7 @@ import 'package:schoolapp/services/contactService.dart';
 
 import '../contact_details/contactDetails.dart';
 import '../contact_list/contactsFromList.dart';
+import '../home_drawer.dart';
 
 class Contacts extends StatefulWidget {
   @override
@@ -65,6 +66,7 @@ class ContactsState extends State<Contacts> {
           ),
         ],
       ),
+      drawer: HomeDrawer(),
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[

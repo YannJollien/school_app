@@ -52,7 +52,7 @@ void main() async {
           color: Colors.white,
         ),
       ),
-      home: (email == null ? Login() : Home()),
+      home: (email == null ? Login() : Lists()),
       routes: {
         //'/': (context) => Loading(),
         '/login': (context) => Login(),
