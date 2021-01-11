@@ -151,6 +151,7 @@ class DatabaseService {
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
+    print("URL " + 'https://avatar.oxro.io/avatar.svg?name=' + firstname + "+" + lastname + '&background=random&caps=3&bold=true');
     DocumentReference docRef =
         await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
@@ -159,7 +160,7 @@ class DatabaseService {
       'notes': '',
       'lists': [docList.id],
           //API call in case of no image is added, this api create an image with the initials of the contact
-      'image': 'https://eu.ui-avatars.com/api/?name='+firstname+"+"+lastname,
+      'image': 'https://eu.ui-avatars.com/api/?name=' + firstname + "+" + lastname + '&size=128&background=random',
     });
     return docRef;
   }

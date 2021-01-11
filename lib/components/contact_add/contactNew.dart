@@ -35,7 +35,7 @@ class ContactNewState extends State<ContactNew> {
   Reference ref;
   String downloadUrl;
   bool imageAdded = true;
-  UploadTask up ;
+  UploadTask up;
 
   //Contacts
   Iterable<Contact> _contacts;
@@ -107,21 +107,21 @@ class ContactNewState extends State<ContactNew> {
           ),
         ),
       ),
-      floatingActionButton: SpeedDial(
-        backgroundColor: Colors.cyan,
-        animatedIcon: AnimatedIcons.menu_close,
-        children: [
-          SpeedDialChild(
-            child: Icon(Icons.contact_page_outlined),
-            backgroundColor: Colors.blue,
-            label: 'Import from contact',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              _showContactList(context);
-            },
-          ),
-        ],
-      ),
+      // floatingActionButton: SpeedDial(
+      //   backgroundColor: Colors.cyan,
+      //   animatedIcon: AnimatedIcons.menu_close,
+      //   children: [
+      //     SpeedDialChild(
+      //       child: Icon(Icons.contact_page_outlined),
+      //       backgroundColor: Colors.blue,
+      //       label: 'Import from contact',
+      //       labelStyle: TextStyle(fontSize: 18.0),
+      //       onTap: () {
+      //         _showContactList(context);
+      //       },
+      //     ),
+      //   ],
+      // ),
     );
   }
 
@@ -163,9 +163,17 @@ class ContactNewState extends State<ContactNew> {
 
   Widget _buildImportButton(BuildContext context) {
     return Center(
-      child:  Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save_alt),
+            iconSize: 50,
+            color: Colors.cyan,
+            onPressed: () {
+              _showContactList(context);
+            },
+          ),
           IconButton(
             icon: Icon(Icons.save),
             iconSize: 50,
@@ -190,7 +198,7 @@ class ContactNewState extends State<ContactNew> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    // builder: (context) => ContactDetails(widget.listDoc, t)),
+                      // builder: (context) => ContactDetails(widget.listDoc, t)),
                       builder: (context) => ContactFromList(widget.listDoc)),
                 );
               }
@@ -224,7 +232,6 @@ class ContactNewState extends State<ContactNew> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)));
   }
 
-
   // Getting list of contacts from AGENDA
   refreshContacts() async {
     PermissionStatus permissionStatus = await _getContactPermission();
@@ -245,8 +252,8 @@ class ContactNewState extends State<ContactNew> {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.disabled) {
       Map<PermissionGroup, PermissionStatus> permissionStatus =
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.contacts]);
+          await PermissionHandler()
+              .requestPermissions([PermissionGroup.contacts]);
       return permissionStatus[PermissionGroup.contacts] ??
           PermissionStatus.unknown;
     } else {
@@ -275,19 +282,18 @@ class ContactNewState extends State<ContactNew> {
     final InputDecoration searchDecoration = const InputDecoration();
 
     await refreshContacts();
-    if (_contacts != null)
-    {
+    if (_contacts != null) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           print("im in");
           return SelectionDialogContacts(
-              _contacts.toList(),
-              favoriteElements,
-              showCountryOnly: false,
-              emptySearchBuilder: null,
-              searchDecoration: searchDecoration,
-            );
+            _contacts.toList(),
+            favoriteElements,
+            showCountryOnly: false,
+            emptySearchBuilder: null,
+            searchDecoration: searchDecoration,
+          );
         },
       ).then((e) async {
         if (e != null) {
@@ -299,13 +305,13 @@ class ContactNewState extends State<ContactNew> {
           firstNameController.text = '';
           institutionController.text = '';
 
-          if(_actualContact.familyName != null){
+          if (_actualContact.familyName != null) {
             lastNameController.text = _actualContact.familyName;
           }
-          if(_actualContact.givenName != null){
+          if (_actualContact.givenName != null) {
             firstNameController.text = _actualContact.givenName;
           }
-          if(_actualContact.company != null){
+          if (_actualContact.company != null) {
             institutionController.text = _actualContact.company;
           }
 
@@ -318,7 +324,7 @@ class ContactNewState extends State<ContactNew> {
           // });
           // setState(() {
           //   imageFile = ImagePicker.pickImage(source: ImageSource.camera) as File;
-            // imageFile = File.fromRawPath(avatar);
+          // imageFile = File.fromRawPath(avatar);
           // });
         }
       });
