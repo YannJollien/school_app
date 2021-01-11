@@ -91,12 +91,23 @@ class ContactsState extends State<Contacts> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: const Text("Confirm"),
-                                      content: Text(
-                                          "Are you sure you want to delete " +
-                                              doc.data()['firstname'] +
-                                              " " +
-                                              doc.data()['lastname'] +
-                                              " definitively ?"),
+                                      content: RichText(
+                                        text: new TextSpan(
+                                          // Note: Styles for TextSpans must be explicitly defined.
+                                          // Child text spans will inherit styles from parent
+                                          style: new TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.black,
+                                          ),
+                                          children: <TextSpan>[
+                                            new TextSpan(text: "Are you sure you want to delete '" +
+                                                doc.data()['firstname'] +
+                                                " " +
+                                                doc.data()['lastname'] + "'"),
+                                            new TextSpan(text: ' definitively ?', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                          ],
+                                        ),
+                                      ),
                                       actions: <Widget>[
                                         FlatButton(
                                           color: Colors.cyan,
@@ -250,11 +261,23 @@ class ContactsState extends State<Contacts> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text('Confirm'),
-      content: Text("Are you sure you want to delete " +
-          contactDoc.data()['firstname'] +
-          " " +
-          contactDoc.data()['lastname'] +
-          " definitively ?"),
+      content: RichText(
+        text: new TextSpan(
+          // Note: Styles for TextSpans must be explicitly defined.
+          // Child text spans will inherit styles from parent
+          style: new TextStyle(
+            fontSize: 16.0,
+            color: Colors.black,
+          ),
+          children: <TextSpan>[
+            new TextSpan(text: "Are you sure you want to delete '" +
+                contactDoc.data()['firstname'] +
+                " " +
+                contactDoc.data()['lastname'] + "'"),
+            new TextSpan(text: ' definitively ?', style: new TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
       actions: [
         cancelButton,
         continueButton,

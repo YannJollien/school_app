@@ -227,7 +227,7 @@ class ContactFromListState extends State<ContactFromList> {
           ),
           SpeedDialChild(
             child: Icon(Icons.upload_file),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blueGrey,
             label: 'Import a list',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () {
@@ -235,7 +235,7 @@ class ContactFromListState extends State<ContactFromList> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ListImportation(ContactFromList.listDoc)),
+                        ContactListImportation(ContactFromList.listDoc)),
               );
             },
           ),

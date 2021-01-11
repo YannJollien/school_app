@@ -127,7 +127,8 @@ class DatabaseService {
       'institution': institution,
       'notes': '',
       'lists': [docList.id],
-      'image': '',
+          //API call in case of no image is added, this api create an image with the initials of the contact
+      'image': 'https://eu.ui-avatars.com/api/?name='+firstname+"+"+lastname,
     });
     return docRef;
   }
