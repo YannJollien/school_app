@@ -64,6 +64,9 @@ class LearningModeState extends State<LearningMode> {
     List<Widget> cardList = new List();
 
     int loopIteration = int.parse(LearningMode.numberChoose);
+    print("LENGTHS");
+    print(int.parse(LearningMode.numberChoose));
+    print(GameScreen.gameCard.length);
     if (int.parse(LearningMode.numberChoose) > GameScreen.gameCard.length) {
       loopIteration = GameScreen.gameCard.length;
     }
@@ -72,6 +75,7 @@ class LearningModeState extends State<LearningMode> {
     LearningMode.gameCard.shuffle();
 
     for (int x = 0; x < loopIteration; x++) {
+      print("GAME CARD " + LearningMode.gameCard[x].firstname);
       cardList.add(
         Positioned(
           top: 70.0,

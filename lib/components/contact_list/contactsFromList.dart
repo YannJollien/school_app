@@ -117,6 +117,7 @@ class ContactFromListState extends State<ContactFromList> {
                 _contactService.getContactsFromList(ContactFromList.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  gameCard.clear();
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs.map(
@@ -124,8 +125,8 @@ class ContactFromListState extends State<ContactFromList> {
                       if (doc
                           .data()['lists']
                           .contains(ContactFromList.listDoc.id)) {
-                        gameCard.add(GameCard(doc.data()['image'],
-                            doc.data()['firstname'], doc.data()['lastname']));
+                          gameCard.add(GameCard(doc.data()['image'],
+                              doc.data()['firstname'], doc.data()['lastname']));
                       }
                       String unionFirstLastName =
                           doc.data()['firstname'].toString().toLowerCase() +
