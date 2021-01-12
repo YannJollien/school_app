@@ -26,6 +26,8 @@ class LearningModeState extends State<LearningMode> {
 
   List<Widget> cardList = new List();
 
+  int cardLearned = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -56,7 +58,7 @@ class LearningModeState extends State<LearningMode> {
           ),
         ),
       ),
-      body: Stack(alignment: Alignment.center, children: cardList),
+      body: Stack(alignment: Alignment.topCenter, children: cardList),
     );
   }
 
@@ -73,12 +75,12 @@ class LearningModeState extends State<LearningMode> {
 
     //Make learning random
     LearningMode.gameCard.shuffle();
+    double top = 10.0 ;
 
     for (int x = 0; x < loopIteration; x++) {
-      print("GAME CARD " + LearningMode.gameCard[x].firstname);
       cardList.add(
         Positioned(
-          top: 70.0,
+          top: top+=1.0,
           child: Draggable(
               onDragEnd: (drag) {
                 removeCards(x);
@@ -100,7 +102,7 @@ class LearningModeState extends State<LearningMode> {
                           LearningMode.gameCard[x].image,
                           width: 320.0,
                           height: 440.0,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       Container(
@@ -134,11 +136,12 @@ class LearningModeState extends State<LearningMode> {
                                 topRight: Radius.circular(20.0)),
                             image: DecorationImage(
                                 image: NetworkImage(
-                                    LearningMode.gameCard[x].image),
+                                    LearningMode.gameCard[x].image
+                                ),
                                 fit: BoxFit.cover),
                           ),
-                          height: 480.0,
                           width: 320.0,
+                          height: 440.0,
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
@@ -152,7 +155,8 @@ class LearningModeState extends State<LearningMode> {
                         )
                       ],
                     )),
-              )),
+              )
+          ),
         ),
       );
     }
