@@ -324,6 +324,9 @@ class ContactDetailsState extends State<ContactDetails> {
         return FutureBuilder(
             future: _contactService.getContactListNames(listsId),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              // if(snapshot.data==null){
+              //   print("SNAPSHOT VALUE " + snapshot.data);
+              // }
               return (snapshot.connectionState == ConnectionState.done)
                   ? SingleChildScrollView(
                 child: new Text(snapshot.data, style: TextStyle(fontSize: 18, color: Colors.grey)),

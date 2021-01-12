@@ -51,13 +51,24 @@ class DatabaseService {
 
     //For each id list, add the name of the list
     for(int i=0; i<listId.length; i++){
-      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
-      listNames += ds.data()['listName'] + " ";
 
-      //Display management to not add "/" for the last list name
-      if(i+1<listId.length){
-        listNames += "/ ";
+      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
+
+      //In case of a list is deleted, don't return null data
+      if(ds.data()!=null){
+        //Add list name in the string
+        listNames += ds.data()['listName'] + " ";
+
+        //Display management to not add "/" for the last list name
+        if(i+1<listId.length){
+          listNames += "/ ";
+        }
       }
+    }
+
+    //In case of the contact have no list
+    if(listNames.isEmpty){
+      return listNames  = "This contact is not in any list";
     }
 
     return listNames;
