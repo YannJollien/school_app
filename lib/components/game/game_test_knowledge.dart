@@ -276,6 +276,8 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                               _listService.updateWrongAnswers(GameTestKnowledge.listDoc, 'R8F7UN2tYTp1BicHrMn1');
                             }
 
+                            //Define wrong answer as being the wrong answer from the db
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(

@@ -51,6 +51,12 @@ class ListService {
     await DatabaseService(uid: user.uid).deleteSubListsData(doc);
   }
 
+  //Get the wrong answers from a list
+  Future<QuerySnapshot> getWrongAnswers(String doc) async{
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).getWrongAnswersData(doc);
+  }
+
   Future updateWrongAnswers(String docList, String docContact) async{
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).updateWrongAnswersData(docList, docContact);
@@ -61,5 +67,7 @@ class ListService {
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).deleteWrongAnswers(doc);
   }
+
+
 
 }

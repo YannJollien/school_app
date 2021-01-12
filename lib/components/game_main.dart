@@ -1,16 +1,23 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
+import 'package:schoolapp/services/listService.dart';
 import 'game/game_test_knowledge.dart';
 
 class GameScreen extends StatefulWidget {
-  static String listDoc;
+  static  DocumentSnapshot listDoc;
   static List<GameCard> gameCard ;
 
-  GameScreen(String listId, List<GameCard> gc) {
+
+  GameScreen(DocumentSnapshot listId, List<GameCard> gc) {
     gameCard = gc;
     listDoc = listId;
   }
+
+
+
 
   @override
   _GameScreenState createState() => _GameScreenState(listDoc);
@@ -19,8 +26,14 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   _GameScreenState(data);
 
+  ListService _listService = ListService();
+
   String numberChose;
   String gameMode;
+  List<GameCard> gameCardMode ;
+  String search = "";
+
+
 
   bool textDropDownVisible = false;
 
@@ -106,6 +119,7 @@ class _GameScreenState extends State<GameScreen> {
               onChanged: (String value) {
                 setState(() {
                   gameMode = value;
+                  gameCardMode = GameScreen.gameCard;
                 });
               },
             ),
@@ -118,6 +132,18 @@ class _GameScreenState extends State<GameScreen> {
               onChanged: (String value) {
                 setState(() {
                   gameMode = value;
+
+//                  FutureBuilder(
+//                    future: _listService.getWrongAnswers(GameScreen.listDoc.id),
+//                    builder: (BuildContext context, AsyncSnapshot snapshot){
+//                      if (snapshot.hasData) {
+//                        return Column(
+//                            children: snapshot.data.docs.map(
+//
+//                        );
+//                      }
+//                    }
+//                  );
                 });
               },
             ),
@@ -164,7 +190,7 @@ class _GameScreenState extends State<GameScreen> {
                               });
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => LearningMode(GameScreen.gameCard, numberChose)),
+                                MaterialPageRoute(builder: (context) => LearningMode(gameCardMode, numberChose)),
                               );
                             }
                           },
@@ -194,7 +220,7 @@ class _GameScreenState extends State<GameScreen> {
                               });
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => GameTestKnowledge(GameScreen.gameCard, numberChose, GameScreen.listDoc)),
+                                MaterialPageRoute(builder: (context) => GameTestKnowledge(gameCardMode, numberChose, GameScreen.listDoc.id)),
                               );
                             }
                           },

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
@@ -14,6 +15,7 @@ import 'components/settings.dart';
 import 'components/login.dart';
 
 List<GameCard> emptyList = [];
+DocumentSnapshot doc;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,9 +34,8 @@ void main() async {
         '/register': (context) => Register(),
         '/home': (context) => Home(),
         '/lists': (context) => Lists(),
-        '/settings': (context) => Settings(),
         '/password' : (context) => Password(),
-        '/gamescreen' : (context) => GameScreen('0', emptyList),
+        '/gamescreen' : (context) => GameScreen(doc, emptyList),
         '/gametestknowledge' : (context) => GameTestKnowledge(emptyList, '0', '0'),
         '/gametestknowledgegres' : (context) => GameTestKnowledgeResume(emptyList),
       }

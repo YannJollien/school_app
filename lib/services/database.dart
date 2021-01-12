@@ -195,6 +195,13 @@ class DatabaseService {
         });
   }
 
+  //Get the wrong answer of a list
+  Future<String> getWrongAnswersData(String doc) async {
+    DocumentSnapshot ds =
+    await collectionUser.doc(uid).collection('lists').doc(doc).get();
+    return ds.data()['wrongAnswers'];
+  }
+
   //Add data to the list of wrong answers
   Future updateWrongAnswersData(
       String docList, String docContact) async {
@@ -234,6 +241,7 @@ class DatabaseService {
     });
   }
 }
+
 
 class FireStorageService extends ChangeNotifier {
   FireStorageService();

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
+import 'package:schoolapp/services/listService.dart';
 import '../lists.dart';
 import 'game_test_knowledge.dart';
 
@@ -8,6 +9,8 @@ import 'game_test_knowledge.dart';
 class GameTestKnowledgeResume extends StatefulWidget {
 
   static List<GameCard> gameCard;
+  static String listGame;
+
 
   GameTestKnowledgeResume(List<GameCard> gc) {
     gameCard = gc;
@@ -18,6 +21,9 @@ class GameTestKnowledgeResume extends StatefulWidget {
 }
 
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
+
+  ListService _listService = ListService();
+
 
 
   List<GameCard> emptyList = new List<GameCard>();

@@ -65,7 +65,7 @@ class ContactFromListState extends State<ContactFromList> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc.id, gameCard)),
+                  MaterialPageRoute(builder: (context) => GameScreen(ContactFromList.listDoc, gameCard)),
                 );
               },
             ),
