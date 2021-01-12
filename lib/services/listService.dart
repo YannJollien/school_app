@@ -51,4 +51,9 @@ class ListService {
     await DatabaseService(uid: user.uid).deleteSubListsData(doc);
   }
 
+  Future updateWrongAnswers(String docList, String docContact) async{
+    User user = await _auth.currentUser;
+    await DatabaseService(uid: user.uid).updateWrongAnswersData(docList, docContact);
+  }
+
 }
