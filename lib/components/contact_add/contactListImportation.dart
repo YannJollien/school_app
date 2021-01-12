@@ -45,19 +45,18 @@ class ContactListImportationState extends State<ContactListImportation> {
             SizedBox(height: 50),
             FlatButton(
               child: Container(
-                margin: EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.upload_file,
-                      color: Colors.black,
-                      size: 50,
-                    ),
-                    Text('Import a CSV file',
-                        style: Theme.of(context).textTheme.headline1),
-                  ],
-                )
-              ),
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.upload_file,
+                        color: Colors.black,
+                        size: 50,
+                      ),
+                      Text('Import a CSV file',
+                          style: Theme.of(context).textTheme.headline1),
+                    ],
+                  )),
               color: Colors.cyan,
               textColor: Colors.white,
               onPressed: () {
@@ -76,8 +75,11 @@ class ContactListImportationState extends State<ContactListImportation> {
     );
   }
 
+  String message = "CSV uploaded successfully";
+
   //Method to get csv document of the user smartphone and push it to firestore according to field (firstname, lastname, institution)
   Future getCSVAndPushDataToFirestore() async {
+    String path;
     File fileToImport;
 
     //Set the document picker
@@ -87,8 +89,12 @@ class ContactListImportationState extends State<ContactListImportation> {
     );
 
     //Open the document picker (to pick in the smartphone files of the user)
-    final path = await FlutterDocumentPicker.openDocument(params: params);
+    // try{
 
+    path = await FlutterDocumentPicker.openDocument(params: params);
+
+    print("PATH");
+    print(path);
     //Save the file to import
     setState(() {
       fileToImport = File(path);
@@ -117,5 +123,11 @@ class ContactListImportationState extends State<ContactListImportation> {
             columnsValue[0], columnsValue[1], columnsValue[2]);
       }
     }
+    // }catch(Exception){
+    //   setState(() {
+    //     message = "Contact importation failed.";
+    //   });
+    //   throw Exception("Contact importation failed.");
+    // }
   }
 }

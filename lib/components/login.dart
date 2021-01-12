@@ -5,6 +5,7 @@ import 'package:schoolapp/shared/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
+import 'lists.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -94,7 +95,7 @@ class _LoginState extends State<Login> {
                             //Go to home
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => Home()),
+                              MaterialPageRoute(builder: (context) => Lists()),
                             );
                           }
                         }

@@ -26,7 +26,7 @@ class ContactsListState extends State<ContactsList> {
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle =
-      new Text("All contacts", style: TextStyle(color: Colors.white));
+      new Text("All contacts", style: TextStyle(color: Colors.black));
   FocusNode myFocusNode = FocusNode();
 
   @override
@@ -39,7 +39,7 @@ class ContactsListState extends State<ContactsList> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               icon: Icon(Icons.search),
-              color: Colors.white,
+              color: Colors.black,
               onPressed: () {
                 setState(() {
                   searchActive = !searchActive;
@@ -53,13 +53,13 @@ class ContactsListState extends State<ContactsList> {
                       },
                       decoration: new InputDecoration(
                           // border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.black),
                           hintText: 'Search...'),
                     );
                   } else {
                     search = "";
                     this._appBarTitle = new Text('All contacts',
-                        style: TextStyle(color: Colors.white));
+                        style: Theme.of(context).textTheme.headline1);
                   }
                 });
                 myFocusNode.requestFocus();
