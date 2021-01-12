@@ -35,7 +35,7 @@ class ContactFromListState extends State<ContactFromList> {
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle = new Text(
-      ContactFromList.listDoc.data()["listName"] + " list",
+      ContactFromList.listDoc.data()["listName"] + " list" + " " + ContactFromList.listDoc.data()["score"] + "%",
       style: TextStyle(color: Colors.black));
   FocusNode myFocusNode = FocusNode();
 
@@ -98,7 +98,7 @@ class ContactFromListState extends State<ContactFromList> {
                     } else {
                       search = "";
                       this._appBarTitle = new Text(
-                          ContactFromList.listDoc.data()["listName"] + " list",
+                          ContactFromList.listDoc.data()["listName"] + " list" + " " + ContactFromList.listDoc.data()["score"] + "%",
                           style: Theme.of(context).textTheme.headline1);
                     }
                   });

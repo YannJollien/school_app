@@ -21,6 +21,7 @@ class _GameScreenState extends State<GameScreen> {
 
   String numberChose;
   String gameMode;
+  List<GameCard> gameCardMode ;
 
   bool textDropDownVisible = false;
 
@@ -112,6 +113,7 @@ class _GameScreenState extends State<GameScreen> {
               onChanged: (String value) {
                 setState(() {
                   gameMode = value;
+                  gameCardMode = GameScreen.gameCard;
                 });
               },
             ),
@@ -122,9 +124,19 @@ class _GameScreenState extends State<GameScreen> {
               value: "Wrong",
               groupValue: gameMode,
               onChanged: (String value) {
-                setState(() {
-                  gameMode = value;
-                });
+                gameMode = value;
+
+//                  FutureBuilder(
+//                    future: _listService.getWrongAnswers(GameScreen.listDoc.id),
+//                    builder: (BuildContext context, AsyncSnapshot snapshot){
+//                      if (snapshot.hasData) {
+//                        return Column(
+//                            children: snapshot.data.docs.map(
+//
+//                        );
+//                      }
+//                    }
+//                  );
               },
             ),
           ),
@@ -202,7 +214,7 @@ class _GameScreenState extends State<GameScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        GameTestKnowledge(numberChose)),
+                                        GameTestKnowledge(gameCardMode, numberChose, GameScreen.listDoc)),
                               );
                             }
                           },
