@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
+import 'package:schoolapp/services/listService.dart';
 import 'game/game_test_knowledge.dart';
 
 class GameScreen extends StatefulWidget {
@@ -21,31 +23,41 @@ class _GameScreenState extends State<GameScreen> {
 
   String numberChose;
   String gameMode;
-  List<GameCard> gameCardMode ;
+
+  ListService _listService = ListService();
 
   bool textDropDownVisible = false;
 
   bool textGameModeVisible = false;
+
+  //Toggled game mode choosen
+  List<bool> toggledButtonGameMode = [false, true];
+
+  List<GameCard> gameCardMode;
 
   @override
   Widget build(BuildContext context) {
     //Dropdown list management
     //Display number in the dropdown list according to number of card (25%, 50%, 75% and 100%)
     List<String> dropdownNumberOfContact = List<String>();
-    for(double i=0.25; i<=1.0; i+=0.25){
+    for (double i = 0.25; i <= 1.0; i += 0.25) {
       //Test if the number is already in the dropdown list and block if rounded to 0
-      if(!dropdownNumberOfContact.contains((GameScreen.gameCard.length*i).round().toString()) && (GameScreen.gameCard.length*i).round()!=0){
-        dropdownNumberOfContact.add((GameScreen.gameCard.length*i).round().toString());
+      if (!dropdownNumberOfContact
+              .contains((GameScreen.gameCard.length * i).round().toString()) &&
+          (GameScreen.gameCard.length * i).round() != 0) {
+        dropdownNumberOfContact
+            .add((GameScreen.gameCard.length * i).round().toString());
       }
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Game"),
       ),
       body: Column(
-        children: <Widget>[
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
           Padding(
             padding: EdgeInsets.only(top: 20.0),
             child: Text(
@@ -57,98 +69,94 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           Padding(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                //Center Row contents horizontally,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                //Center Row contents vertically,
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: Text(
+                "Choose the game mode",
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ToggleButtons(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Center(
-                      child: Text(
-                        "Chose the number of contact",
-                      ),
+                    padding: EdgeInsets.only(right: 15.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.done_all),
+                        ),
+                        Text('ALL     '),
+                      ],
                     ),
                   ),
-                  DropdownButton<String>(
-                    items: dropdownNumberOfContact.map((String value) {
-                      return new DropdownMenuItem<String>(
-                        value: value,
-                        child: new Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        numberChose = newValue;
-                      });
-                    },
-                    value: numberChose,
-                  )
+                  Padding(
+                    padding: EdgeInsets.only(right: 15.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.not_interested),
+                        ),
+                        Text('WRONG'),
+                      ],
+                    ),
+                  ),
                 ],
+                onPressed: (int index) {
+                  setState(() {
+                    switch (index) {
+                      case 0:
+                        gameMode = "all";
+                        toggledButtonGameMode[0] = true;
+                        toggledButtonGameMode[1] = false;
+                        gameCardMode = GameScreen.gameCard;
+                        break;
+                      case 1:
+                        gameMode = "wrong";
+                        toggledButtonGameMode[0] = false;
+                        toggledButtonGameMode[1] = true;
+                        break;
+                    }
+                  });
+                },
+                isSelected: toggledButtonGameMode,
               ),
-              padding: EdgeInsets.only(top: 10.0)),
-          Visibility(
-            visible: textDropDownVisible,
-            child: Text(
-              "Please select number of contact",
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 30.0),
-            child: Text(
-              "Game mode: ",
-              style: TextStyle(
-                  color: Colors.lightBlue[800], fontWeight: FontWeight.bold),
-            ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Total : '),
+              (toggledButtonGameMode[0])
+                  ? Text(GameScreen.gameCard.length.toString())
+                  : _buildWrongCard(),
+            ],
           ),
-          ListTile(
-            title: const Text('All contacts'),
-            leading: Radio(
-              value: "All",
-              groupValue: gameMode,
-              onChanged: (String value) {
-                setState(() {
-                  gameMode = value;
-                  gameCardMode = GameScreen.gameCard;
-                });
-              },
-            ),
-          ),
-          ListTile(
-            title: const Text('Wrong answers'),
-            leading: Radio(
-              value: "Wrong",
-              groupValue: gameMode,
-              onChanged: (String value) {
-                gameMode = value;
-
-//                  FutureBuilder(
-//                    future: _listService.getWrongAnswers(GameScreen.listDoc.id),
-//                    builder: (BuildContext context, AsyncSnapshot snapshot){
-//                      if (snapshot.hasData) {
-//                        return Column(
-//                            children: snapshot.data.docs.map(
-//
-//                        );
-//                      }
-//                    }
-//                  );
-              },
-            ),
-          ),
-          Visibility(
-            visible: textGameModeVisible,
-            child: Text(
-              "Please select game mode",
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-          ),
+          (gameMode == "all")
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Chose the number of contact : '),
+                    DropdownButton<String>(
+                      items: dropdownNumberOfContact.map((String value) {
+                        return new DropdownMenuItem<String>(
+                          value: value,
+                          child: new Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          numberChose = newValue;
+                        });
+                      },
+                      value: numberChose,
+                    ),
+                  ],
+                )
+              : Text(''),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,
@@ -165,28 +173,12 @@ class _GameScreenState extends State<GameScreen> {
                         child: FlatButton(
                           color: Colors.lightBlue,
                           onPressed: () {
-                            if (numberChose == null) {
-                              setState(() {
-                                textDropDownVisible = true;
-                              });
-                            }
-                            if (gameMode == null) {
-                              setState(() {
-                                textGameModeVisible = true;
-                              });
-                            } else {
-                              //Reset visibility texts
-                              setState(() {
-                                textDropDownVisible = false;
-                                textGameModeVisible = false;
-                              });
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LearningMode(
-                                        GameScreen.gameCard, numberChose)),
-                              );
-                            }
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LearningMode(
+                                      gameCardMode, numberChose)),
+                            );
                           },
                           child: Text("Learning"),
                         ),
@@ -195,28 +187,19 @@ class _GameScreenState extends State<GameScreen> {
                         width: 200,
                         child: FlatButton(
                           onPressed: () {
-                            if (numberChose == null) {
+                            if(numberChose==null){
                               setState(() {
-                                textDropDownVisible = true;
+                                numberChose=gameCardMode.length.toString();
                               });
                             }
-                            if (gameMode == null) {
-                              setState(() {
-                                textGameModeVisible = true;
-                              });
-                            } else {
-                              //Reset visibility texts
-                              setState(() {
-                                textDropDownVisible = false;
-                                textGameModeVisible = false;
-                              });
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        GameTestKnowledge(gameCardMode, numberChose, GameScreen.listDoc)),
-                              );
-                            }
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GameTestKnowledge(
+                                      gameCardMode,
+                                      numberChose,
+                                      GameScreen.listDoc)),
+                            );
                           },
                           color: Colors.lightBlue,
                           child: Text("Test my knowledge"),
@@ -231,5 +214,28 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildWrongCard() {
+    return FutureBuilder(
+        future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot1) {
+          List<dynamic> contactsId;
+          if (snapshot1.connectionState == ConnectionState.done) {
+            contactsId = snapshot1.data['wrongAnswers'];
+            return FutureBuilder(
+                future: _listService.getWrongContactFromTheList(contactsId),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<GameCard>> snapshot2) {
+                  // print(snapshot2.data);
+                  gameCardMode = snapshot2.data;
+                  return (snapshot2.connectionState == ConnectionState.done)
+                      ? Text(snapshot2.data.length.toString())
+                      : Text('Loading...');
+                });
+          }
+          return Text('Loading...');
+        });
   }
 }
