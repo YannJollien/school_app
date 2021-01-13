@@ -34,13 +34,13 @@ class ContactDetailsState extends State<ContactDetails> {
 
   @override
   Widget build(BuildContext context) {
-    if(ContactDetails.listDoc == null){
+    if (ContactDetails.listDoc == null) {
       setState(() {
-        comeFromList = false ;
+        comeFromList = false;
       });
-    }else{
+    } else {
       setState(() {
-        comeFromList = true ;
+        comeFromList = true;
       });
     }
     return Scaffold(
@@ -53,14 +53,13 @@ class ContactDetailsState extends State<ContactDetails> {
               padding: EdgeInsets.only(right: 0),
               child: IconTheme(
                 data: Theme.of(context).iconTheme,
-                child:
-                (comeFromList)
-                  ? IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    showAlertDialogOnDelete(context);
-                  },
-                )
+                child: (comeFromList)
+                    ? IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          showAlertDialogOnDelete(context);
+                        },
+                      )
                     : Text(''),
               ),
             ),
@@ -318,25 +317,24 @@ class ContactDetailsState extends State<ContactDetails> {
 
   Widget _buildListNames(String content) {
     return FutureBuilder(
-      future: _contactService.getContactLists(ContactDetails.contactDoc),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        listsId = snapshot.data['lists'];
-        return FutureBuilder(
-            future: _contactService.getContactListNames(listsId),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              // if(snapshot.data==null){
-              //   print("SNAPSHOT VALUE " + snapshot.data);
-              // }
-              return (snapshot.connectionState == ConnectionState.done)
-                  ? SingleChildScrollView(
-                child: new Text(snapshot.data, style: TextStyle(fontSize: 18, color: Colors.grey)),
-              )
-                  : SingleChildScrollView(
-                child: new Text('Checking...', style: TextStyle(fontSize: 18, color: Colors.grey)),
-              );
-            });
-      }
-    );
+        future: _contactService.getContactLists(ContactDetails.contactDoc),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          listsId = snapshot.data['lists'];
+          return FutureBuilder(
+              future: _contactService.getContactListNames(listsId),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                return (snapshot.connectionState == ConnectionState.done)
+                    ? SingleChildScrollView(
+                        child: new Text(snapshot.data,
+                            style: TextStyle(fontSize: 18, color: Colors.grey)),
+                      )
+                    : SingleChildScrollView(
+                        child: new Text('Checking...',
+                            style: TextStyle(fontSize: 18, color: Colors.grey)),
+                      );
+              });
+        });
   }
 
   static Widget _buildNotesNotEditable(String content, BuildContext context) {

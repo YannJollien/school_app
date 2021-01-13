@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'package:schoolapp/components/game_main.dart';
+
+import '../game_main.dart';
 
 class LearningMode extends StatefulWidget {
   static String numberChoose;
@@ -65,11 +66,14 @@ class LearningModeState extends State<LearningMode> {
   List<Widget> _generateCards() {
     List<Widget> cardList = new List();
 
+    if(LearningMode.numberChoose==null){
+      LearningMode.numberChoose=LearningMode.gameCard.length.toString();
+    }
     int loopIteration = int.parse(LearningMode.numberChoose);
     print("LENGTHS");
     print(int.parse(LearningMode.numberChoose));
     print(GameScreen.gameCard.length);
-    if (int.parse(LearningMode.numberChoose) > GameScreen.gameCard.length) {
+    if (int.parse(LearningMode.numberChoose) > LearningMode.gameCard.length) {
       loopIteration = GameScreen.gameCard.length;
     }
 

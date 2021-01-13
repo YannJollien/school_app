@@ -65,6 +65,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
               shrinkWrap: true,
               itemCount: gameTestKnowledge.getList().length,
               itemBuilder: (context, index){
+
                 return Card(
                   child: ListTile(
                     //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note

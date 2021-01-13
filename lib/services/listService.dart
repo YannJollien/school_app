@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/services/database.dart';
 
 import 'database.dart';
@@ -54,6 +55,16 @@ class ListService {
   Future updateWrongAnswers(String docList, String docContact) async{
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).updateWrongAnswersData(docList, docContact);
+  }
+
+  Future<DocumentSnapshot> getContactIdWrongOfTheList(String listDoc) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactIdWrongOfTheListData(listDoc);
+  }
+
+  Future<List<GameCard>>getWrongContactFromTheList(List<dynamic> contactsId) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getWrongContactFromTheListData(contactsId);
   }
 
 }

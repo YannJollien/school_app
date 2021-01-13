@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:schoolapp/components/game/game_card.dart';
 
 class DatabaseService {
   final String uid;
@@ -39,39 +40,6 @@ class DatabaseService {
         .collection('contacts')
         .doc(doc.id)
         .get();
-  }
-
-  //Get contact details
-  Future<String> getContactListNamesData(List<dynamic> listId) async {
-
-    DocumentSnapshot ds ;
-
-    //String of the list names
-    String listNames = "" ;
-
-    //For each id list, add the name of the list
-    for(int i=0; i<listId.length; i++){
-
-      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
-
-      //In case of a list is deleted, don't return null data
-      if(ds.data()!=null){
-        //Add list name in the string
-        listNames += ds.data()['listName'] + " ";
-
-        //Display management to not add "/" for the last list name
-        if(i+1<listId.length){
-          listNames += "/ ";
-        }
-      }
-    }
-
-    //In case of the contact have no list
-    if(listNames.isEmpty){
-      return listNames  = "This contact is not in any list";
-    }
-
-    return listNames;
   }
 
   Future<String> getContactNotesData(DocumentSnapshot doc) async {
@@ -181,8 +149,19 @@ class DatabaseService {
     return collectionUser.doc(uid).collection('contacts').orderBy('firstname').snapshots();
   }
 
+  Future<DocumentSnapshot> getWrongAnswersFromList(DocumentSnapshot listDoc) async {
+    DocumentSnapshot ds = await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc.id)
+        .get();
+
+    return ds ;
+  }
+
   //Get contact from a list
   Stream<QuerySnapshot> getContactsFromListData(DocumentSnapshot listDoc) {
+
     return collectionUser
         .doc(uid)
         .collection('contacts')
@@ -279,6 +258,71 @@ class DatabaseService {
     return await collectionUser.doc(uid).collection('lists')
         .doc(doc)
         .update({'wrongAnswer' : FieldValue.delete()});
+  }
+
+  Future<DocumentSnapshot> getContactIdWrongOfTheListData(String listDoc) async {
+    // DocumentSnapshot ds = await collectionUser
+    //     .doc(uid)
+    //     .collection('lists')
+    //     .doc(listDoc)
+    //     .get();
+    // print("document list " + listDoc);
+    // print(ds.data()['wrongAnswers']);
+
+    return await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc)
+        .get();
+  }
+
+  Future<List<GameCard>> getWrongContactFromTheListData(List<dynamic> contactsId) async{
+    DocumentSnapshot ds ;
+
+    List<GameCard> wrongGameCard = new List<GameCard>();
+
+    for(int i=0; i<contactsId.length; i++){
+      ds = await collectionUser.doc(uid).collection('contacts').doc(contactsId.elementAt(i)).get();
+
+      print("ADDING TO WRONG GAME CARD " + ds.data()['firstname']);
+      wrongGameCard.add(GameCard(ds.data()['image'], ds.data()['firstname'], ds.data()['lastname']));
+      print(wrongGameCard.first.firstname);
+    }
+
+    return wrongGameCard;
+  }
+
+  //Get contact details
+  Future<String> getContactListNamesData(List<dynamic> listId) async {
+
+    DocumentSnapshot ds ;
+
+    //String of the list names
+    String listNames = "" ;
+
+    //For each id list, add the name of the list
+    for(int i=0; i<listId.length; i++){
+
+      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
+
+      //In case of a list is deleted, don't return null data
+      if(ds.data()!=null){
+        //Add list name in the string
+        listNames += ds.data()['listName'] + " ";
+
+        //Display management to not add "/" for the last list name
+        if(i+1<listId.length){
+          listNames += "/ ";
+        }
+      }
+    }
+
+    //In case of the contact have no list
+    if(listNames.isEmpty){
+      return listNames  = "This contact is not in any list";
+    }
+
+    return listNames;
   }
 }
 
