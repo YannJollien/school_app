@@ -35,11 +35,7 @@ class DatabaseService {
 
   //Get contact details
   Future<DocumentSnapshot> getContactListsData(DocumentSnapshot doc) {
-    return collectionUser
-        .doc(uid)
-        .collection('contacts')
-        .doc(doc.id)
-        .get();
+    return collectionUser.doc(uid).collection('contacts').doc(doc.id).get();
   }
 
   Future<String> getContactNotesData(DocumentSnapshot doc) async {
@@ -63,13 +59,8 @@ class DatabaseService {
   //Delete contact in a list
   Future deleteContactFromListData(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
-
     //Remove the contact from wrong contact array of the list
-    collectionUser
-        .doc(uid)
-        .collection('lists')
-        .doc(docList.id)
-        .update({
+    collectionUser.doc(uid).collection('lists').doc(docList.id).update({
       'wrongAnswers': FieldValue.arrayRemove([docContact.id])
     });
 
@@ -149,30 +140,35 @@ class DatabaseService {
       'institution': institution,
       'notes': '',
       'lists': [docList.id],
-          //API call in case of no image is added, this api create an image with the initials of the contact
-      'image': 'https://eu.ui-avatars.com/api/?name=' + firstname + "+" + lastname + '&size=128&background=random',
+      //API call in case of no image is added, this api create an image with the initials of the contact
+      'image': 'https://eu.ui-avatars.com/api/?name=' +
+          firstname +
+          "+" +
+          lastname +
+          '&size=128&background=random',
     });
     return docRef;
   }
 
   //Get all contacts
   Stream<QuerySnapshot> getAllContactsData() {
-    return collectionUser.doc(uid).collection('contacts').orderBy('firstname').snapshots();
+    return collectionUser
+        .doc(uid)
+        .collection('contacts')
+        .orderBy('firstname')
+        .snapshots();
   }
 
-  Future<DocumentSnapshot> getWrongAnswersFromList(DocumentSnapshot listDoc) async {
-    DocumentSnapshot ds = await collectionUser
-        .doc(uid)
-        .collection('lists')
-        .doc(listDoc.id)
-        .get();
+  Future<DocumentSnapshot> getWrongAnswersFromList(
+      DocumentSnapshot listDoc) async {
+    DocumentSnapshot ds =
+        await collectionUser.doc(uid).collection('lists').doc(listDoc.id).get();
 
-    return ds ;
+    return ds;
   }
 
   //Get contact from a list
   Stream<QuerySnapshot> getContactsFromListData(DocumentSnapshot listDoc) {
-
     return collectionUser
         .doc(uid)
         .collection('contacts')
@@ -213,7 +209,11 @@ class DatabaseService {
 
   //Get lists for a user
   Stream<QuerySnapshot> getListsData() {
-    return collectionUser.doc(uid).collection('lists').orderBy('listName', descending: false).snapshots();
+    return collectionUser
+        .doc(uid)
+        .collection('lists')
+        .orderBy('listName', descending: false)
+        .snapshots();
   }
 
   //Add a list for a user
@@ -248,100 +248,100 @@ class DatabaseService {
   //Get the wrong answer of a list
   Future<String> getWrongAnswersData(String doc) async {
     DocumentSnapshot ds =
-    await collectionUser.doc(uid).collection('lists').doc(doc).get();
+        await collectionUser.doc(uid).collection('lists').doc(doc).get();
     return ds.data()['wrongAnswers'];
   }
 
   //Add data to the list of wrong answers
-  Future updateWrongAnswersData(
-      String docList, List<GameCard> wrongContactCard) async {
-
-    print("wrong contact card length " + wrongContactCard.length.toString());
-    for(int i=0; i<wrongContactCard.length; i++){
-      print("wrong add : " + wrongContactCard[i].firstname);
-      await collectionUser
-          .doc(uid)
-          .collection('lists')
-          .doc(docList)
-          .update({
-        'wrongAnswers': FieldValue.arrayUnion([wrongContactCard[i].id])
-      });
-    }
-
-    return 'ok';
+  Future addIdToWrongAnswersData(String docList, String wrongContactId) async {
     return await collectionUser
         .doc(uid)
         .collection('lists')
         .doc(docList)
         .update({
-      'wrongAnswers': FieldValue.arrayUnion([wrongContactCard])
+      'wrongAnswers': FieldValue.arrayUnion([wrongContactId])
+    });
+  }
+
+  Future removeIdToWrongAnswersData(
+      String docList, String wrongContactId) async {
+    return await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(docList)
+        .update({
+      'wrongAnswers': FieldValue.arrayRemove([wrongContactId])
     });
   }
 
   //Delete the content of the wrong answers
-  Future deleteWrongAnswers(String doc) async{
-    return await collectionUser.doc(uid).collection('lists')
-        .doc(doc)
-        .update({'wrongAnswer' : FieldValue.delete()});
-  }
-
-  Future<DocumentSnapshot> getContactIdWrongOfTheListData(String listDoc) async {
+  Future deleteWrongAnswers(String doc) async {
     return await collectionUser
         .doc(uid)
         .collection('lists')
-        .doc(listDoc)
-        .get();
+        .doc(doc)
+        .update({'wrongAnswer': FieldValue.delete()});
   }
 
-  Future<List<GameCard>> getWrongContactFromTheListData(List<dynamic> contactsId) async{
-    DocumentSnapshot ds ;
+  Future<DocumentSnapshot> getContactIdWrongOfTheListData(
+      String listDoc) async {
+    return await collectionUser.doc(uid).collection('lists').doc(listDoc).get();
+  }
+
+  Future<List<GameCard>> getWrongContactFromTheListData(
+      List<dynamic> contactsId) async {
+    DocumentSnapshot ds;
     List<GameCard> wrongGameCard = new List<GameCard>();
-    for(int i=0; i<contactsId.length; i++){
-      ds = await collectionUser.doc(uid).collection('contacts').doc(contactsId.elementAt(i)).get();
+    for (int i = 0; i < contactsId.length; i++) {
+      ds = await collectionUser
+          .doc(uid)
+          .collection('contacts')
+          .doc(contactsId.elementAt(i))
+          .get();
 
       // print("ADDING TO WRONG GAME CARD " + ds.data()['firstname']);
-      wrongGameCard.add(GameCard(ds.id, ds.data()['image'], ds.data()['firstname'], ds.data()['lastname']));
+      wrongGameCard.add(GameCard(ds.id, ds.data()['image'],
+          ds.data()['firstname'], ds.data()['lastname']));
       // print(wrongGameCard.first.firstname);
     }
     return wrongGameCard;
   }
 
-  Stream<DocumentSnapshot> getContactIdWrongOfTheListStreamData(String listDoc) {
-    return collectionUser
-        .doc(uid)
-        .collection('lists')
-        .doc(listDoc)
-        .snapshots();
+  Stream<DocumentSnapshot> getContactIdWrongOfTheListStreamData(
+      String listDoc) {
+    return collectionUser.doc(uid).collection('lists').doc(listDoc).snapshots();
   }
 
   //Get contact details
   Future<String> getContactListNamesData(List<dynamic> listId) async {
-
-    DocumentSnapshot ds ;
+    DocumentSnapshot ds;
 
     //String of the list names
-    String listNames = "" ;
+    String listNames = "";
 
     //For each id list, add the name of the list
-    for(int i=0; i<listId.length; i++){
-
-      ds = await collectionUser.doc(uid).collection('lists').doc(listId.elementAt(i)).get();
+    for (int i = 0; i < listId.length; i++) {
+      ds = await collectionUser
+          .doc(uid)
+          .collection('lists')
+          .doc(listId.elementAt(i))
+          .get();
 
       //In case of a list is deleted, don't return null data
-      if(ds.data()!=null){
+      if (ds.data() != null) {
         //Add list name in the string
         listNames += ds.data()['listName'] + " ";
 
         //Display management to not add "/" for the last list name
-        if(i+1<listId.length){
+        if (i + 1 < listId.length) {
           listNames += "/ ";
         }
       }
     }
 
     //In case of the contact have no list
-    if(listNames.isEmpty){
-      return listNames  = "This contact is not in any list";
+    if (listNames.isEmpty) {
+      return listNames = "This contact is not in any list";
     }
 
     return listNames;
