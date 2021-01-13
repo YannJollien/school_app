@@ -186,6 +186,7 @@ class ContactDetailsState extends State<ContactDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                SizedBox(height: 10.0),
                 //IMAGE BUILDER
                 Container(
                     child: (editMode)
@@ -416,10 +417,9 @@ class ContactDetailsState extends State<ContactDetails> {
                               height: MediaQuery.of(context).size.width / 1.8,
                               child: CircularProgressIndicator(),
                             ))
-                  : Image.network(
-                      snapshot.data[content],
-                      width: MediaQuery.of(context).size.width / 2,
-                      height: MediaQuery.of(context).size.width / 2,
+                  : CircleAvatar(
+                      radius: 100.0,
+                      backgroundImage: NetworkImage(snapshot.data['image']),
                     ),
             ],
           ));
@@ -449,14 +449,14 @@ class ContactDetailsState extends State<ContactDetails> {
                       height: 250,
                       decoration: BoxDecoration(
                           color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(110)),
                       alignment: Alignment.center,
                       child: imageFile == null
                           ? Text(
                               "Tap to change profile picture",
                               style: TextStyle(color: Colors.grey[400]),
                             )
-                          : Image.file(imageFile)),
+                          : CircleAvatar(backgroundImage: new FileImage(imageFile), radius: 200.0)),
                 ),
               ),
             ],

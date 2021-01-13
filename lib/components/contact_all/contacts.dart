@@ -20,7 +20,7 @@ class ContactsState extends State<Contacts> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   Widget _appBarTitle =
-      new Text('All contacts', style: TextStyle(color: Colors.black));
+      new Text('All contacts', style: TextStyle(color: Colors.black, fontSize: 22));
   bool searchActive = false;
   String search = "";
   FocusNode myFocusNode = FocusNode();
@@ -174,10 +174,10 @@ class ContactsState extends State<Contacts> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Image.network(
-                    contactDoc.data()['image'],
-                    width: MediaQuery.of(context).size.width / 8,
-                    height: MediaQuery.of(context).size.width / 8,
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        contactDoc.data()['image']
+                    ),
                   ),
                   SizedBox(width: 10),
                   ({contactDoc.data()['firstname']}.toString().length +

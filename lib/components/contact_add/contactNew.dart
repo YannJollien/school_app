@@ -78,20 +78,24 @@ class ContactNewState extends State<ContactNew> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: () => getImage(),
-                  child: Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10)),
-                      alignment: Alignment.center,
-                      child: imageFile == null
-                          ? Text(
-                              "Tap to add profile picture",
-                              style: TextStyle(color: Colors.grey[400]),
-                            )
-                          : Image.file(imageFile)),
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.8,
+                  height: MediaQuery.of(context).size.width / 1.8,
+                  child: GestureDetector(
+                    onTap: () => getImage(),
+                    child: Container(
+                        height: 250,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(110)),
+                        alignment: Alignment.center,
+                        child: imageFile == null
+                            ? Text(
+                                "Tap to add profile picture",
+                                style: TextStyle(color: Colors.grey[400]),
+                              )
+                            : CircleAvatar(backgroundImage: new FileImage(imageFile), radius: 200.0)),
+                  ),
                 ),
                 imageAdded == false
                     ? Text("Profile picture cannot be empty",

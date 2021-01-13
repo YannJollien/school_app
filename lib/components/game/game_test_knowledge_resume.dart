@@ -5,13 +5,13 @@ import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/services/listService.dart';
 import '../lists.dart';
-import 'game_test_knowledge.dart';
 
 class GameTestKnowledgeResume extends StatefulWidget {
-  static List<GameCard> gameCard;
 
-  GameTestKnowledgeResume(List<GameCard> gc) {
-    gameCard = gc;
+  static String numberChoose ;
+
+  GameTestKnowledgeResume(String nbChoose){
+    numberChoose = nbChoose;
   }
 
   @override
@@ -77,28 +77,34 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                         AsyncSnapshot<List<GameCard>> snapshot2) {
                       wrongContactCard = snapshot2.data;
                       return (snapshot2.connectionState == ConnectionState.done)
-                          ? ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: wrongContactCard.length,
-                              itemBuilder: (context, index) {
-                                return Card(
-                                  child: ListTile(
-                                    //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
-                                    onTap: () {},
-                                    title: Text(
-                                      wrongContactCard[index].firstname +
-                                          " " +
-                                          wrongContactCard[index].lastname,
-                                    ),
-                                    leading: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                        wrongContactCard[index].image,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              })
+                          ? Expanded(
+                            // child: Column(
+                            //   children: [
+                            //     Text(wrongContactCard.length.toString() + "/" + GameTestKnowledgeResume.numberChoose.toString()),
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: wrongContactCard.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        child: ListTile(
+                                          //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
+                                          onTap: () {},
+                                          title: Text(
+                                            wrongContactCard[index].firstname +
+                                                " " +
+                                                wrongContactCard[index].lastname,
+                                          ),
+                                          leading: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              wrongContactCard[index].image,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              // ],
+                            // ),
+                          )
                           : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
