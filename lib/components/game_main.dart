@@ -4,6 +4,7 @@ import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'game/game_test_knowledge.dart';
+import 'game/game_test_knowledge_resume.dart';
 
 class GameScreen extends StatefulWidget {
   static String listDoc;
@@ -199,6 +200,17 @@ class _GameScreenState extends State<GameScreen> {
                   ],
                 )
               : Text(''),
+          FlatButton(
+            color: Colors.lightBlue,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GameTestKnowledgeResume()),
+              );
+            },
+            child: Text("List review"),
+          ),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,

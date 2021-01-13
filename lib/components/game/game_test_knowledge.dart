@@ -130,7 +130,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume(GameTestKnowledge.numberChoose)),
+                                  builder: (context) => GameTestKnowledgeResume()),
                             );
                           }
 
