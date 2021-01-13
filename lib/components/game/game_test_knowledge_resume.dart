@@ -1,18 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/services/listService.dart';
 import '../lists.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class GameTestKnowledgeResume extends StatefulWidget {
 
-  static String numberChoose ;
-
-  GameTestKnowledgeResume(String nbChoose){
-    numberChoose = nbChoose;
-  }
+  GameTestKnowledgeResume();
 
   @override
   _GameTestKnowledgeResumeState createState() =>
@@ -28,7 +26,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Test knowledge mode resume"),
+        title: Text(ContactFromList.listDoc.data()['listName'] + " list review"),
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -44,15 +42,6 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
       backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text(
-              "Your wrong answers",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
           _getWrongAnswers(),
         ],
       ),
@@ -76,45 +65,54 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<GameCard>> snapshot2) {
                       wrongContactCard = snapshot2.data;
+
                       return (snapshot2.connectionState == ConnectionState.done)
                           ? Expanded(
-                            // child: Column(
-                            //   children: [
-                            //     Text(wrongContactCard.length.toString() + "/" + GameTestKnowledgeResume.numberChoose.toString()),
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: wrongContactCard.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                        child: ListTile(
-                                          //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
-                                          onTap: () {},
-                                          title: Text(
-                                            wrongContactCard[index].firstname +
-                                                " " +
-                                                wrongContactCard[index].lastname,
-                                          ),
-                                          leading: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              wrongContactCard[index].image,
+                              child: Column(
+                                children: [
+                                  // Text(wrongContactCard.length.toString() +
+                                  //     "/" +
+                                  //     GameScreen.gameCard.length.toString()
+                                  //         .toString()),
+                                  _pieChart(wrongContactCard.length.toDouble()),
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: wrongContactCard.length,
+                                      itemBuilder: (context, index) {
+                                        return Card(
+                                          child: ListTile(
+                                            //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
+                                            onTap: () {},
+                                            title: Text(
+                                              wrongContactCard[index]
+                                                      .firstname +
+                                                  " " +
+                                                  wrongContactCard[index]
+                                                      .lastname,
+                                            ),
+                                            leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                wrongContactCard[index].image,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }),
-                              // ],
-                            // ),
-                          )
+                                        );
+                                      }),
+                                ],
+                              ),
+                            )
                           : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width / 1.8,
-                                  height: MediaQuery.of(context).size.width / 1.8,
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.8,
+                                  height:
+                                      MediaQuery.of(context).size.width / 1.8,
                                   child: CircularProgressIndicator(),
                                 ),
                               ],
-                          );
+                            );
                       return (snapshot2.connectionState == ConnectionState.done)
                           ? Text(snapshot2.data.length.toString() +
                               " Wrong answers")
@@ -125,5 +123,13 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
             });
       },
     );
+  }
+
+  Widget _pieChart(double wrongContactLength){
+    Map<String, double> dataMap = {
+      "Wrong": wrongContactLength,
+      "Right": GameScreen.gameCard.length.toDouble()-wrongContactLength,
+    };
+    return PieChart(dataMap: dataMap);
   }
 }
