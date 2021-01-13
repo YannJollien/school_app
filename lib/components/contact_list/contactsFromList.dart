@@ -125,7 +125,7 @@ class ContactFromListState extends State<ContactFromList> {
                       if (doc
                           .data()['lists']
                           .contains(ContactFromList.listDoc.id)) {
-                          gameCard.add(GameCard(doc.data()['image'],
+                          gameCard.add(GameCard(doc.id, doc.data()['image'],
                               doc.data()['firstname'], doc.data()['lastname']));
                       }
                       String unionFirstLastName =

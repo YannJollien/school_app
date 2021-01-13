@@ -1,11 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/components/game/game_trianing_resume.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/change_password.dart';
-import 'components/game/game_test_knowledge.dart';
-import 'components/game/game_test_knowledge_resume.dart';
-import 'components/game/game_training.dart';
 import 'components/home.dart';
 import 'components/lists.dart';
 import 'components/register.dart';
@@ -61,8 +57,8 @@ void main() async {
         '/settings': (context) => Settings(),
         '/password': (context) => Password(),
         // '/gamescreen': (context) => GameScreen(),
-        '/gametraining': (context) => GameTraining('0'),
-        '/gametrainingres': (context) => GameTrainingResume(),
+        // '/gametraining': (context) => GameTraining('0'),
+        // '/gametrainingres': (context) => GameTrainingResume(),
         // '/gametestknowledge': (context) => GameTestKnowledge('0'),
         // '/gametestknowledgegres': (context) => GameTestKnowledgeResume(),
       }

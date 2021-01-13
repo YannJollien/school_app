@@ -22,10 +22,7 @@ class GameTestKnowledgeResume extends StatefulWidget {
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
   ListService _listService = ListService();
 
-  List<GameCard> emptyList = new List<GameCard>();
   List<GameCard> wrongContactCard = new List<GameCard>();
-  GameTestKnowledge gameTestKnowledge =
-  new GameTestKnowledge(GameTestKnowledgeResume.gameCard, '0', '0');
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +41,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
           ),
         ),
       ),
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
           Padding(
@@ -56,53 +53,71 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
               ),
             ),
           ),
-          _buildWrongContactList(),
-          ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: wrongContactCard.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
-                    onTap: () {},
-                    title: Text(wrongContactCard[index].firstname,
-                    ),
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        wrongContactCard[index].image,
-                      ),
-                    ),
-                  ),
-                );
-              }),
+          _getWrongAnswers(),
         ],
       ),
     );
   }
 
-  Widget _buildWrongContactList() {
-    return FutureBuilder(
-        future: _listService.getContactIdWrongOfTheList(
-            GameScreen.listDoc),
-        builder: (BuildContext context,
-            AsyncSnapshot<DocumentSnapshot> snapshot1) {
-          List<dynamic> contactsId;
-          if (snapshot1.connectionState == ConnectionState.done) {
-            contactsId = snapshot1.data['wrongAnswers'];
-            return FutureBuilder(
-                future: _listService
-                    .getWrongContactFromTheList(contactsId),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<GameCard>> snapshot2) {
-                  // print("instance ? " + snapshot2.data.toString());
-                  wrongContactCard = snapshot2.data;
-                  return(snapshot2.connectionState == ConnectionState.done)
-                    ? Text(snapshot2.data.length.toString() + " Wrong answers")
-                      : Text('Loading...');
-                });
-          }
-          return Text('Loadinasdfasdfg...');
-        });
+  Widget _getWrongAnswers() {
+    return StreamBuilder(
+      stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot1) {
+        return FutureBuilder(
+            future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot1) {
+              List<dynamic> contactsId;
+              if (snapshot1.connectionState == ConnectionState.done) {
+                contactsId = snapshot1.data['wrongAnswers'];
+                return FutureBuilder(
+                    future: _listService.getWrongContactFromTheList(contactsId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<GameCard>> snapshot2) {
+                      wrongContactCard = snapshot2.data;
+                      return (snapshot2.connectionState == ConnectionState.done)
+                          ? ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: wrongContactCard.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  child: ListTile(
+                                    //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
+                                    onTap: () {},
+                                    title: Text(
+                                      wrongContactCard[index].firstname +
+                                          " " +
+                                          wrongContactCard[index].lastname,
+                                    ),
+                                    leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        wrongContactCard[index].image,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              })
+                          : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 1.8,
+                                  height: MediaQuery.of(context).size.width / 1.8,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ],
+                          );
+                      return (snapshot2.connectionState == ConnectionState.done)
+                          ? Text(snapshot2.data.length.toString() +
+                              " Wrong answers")
+                          : Text('Loading...');
+                    });
+              }
+              return Container();
+            });
+      },
+    );
   }
 }

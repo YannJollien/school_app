@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,22 +16,16 @@ ListService _listService = ListService();
 List<Widget> cardList = new List();
 
 List<GameCard> wrongAnswers = new List<GameCard>();
-
-
+List<GameCard> wrongAnswersToAddToFirebase = new List<GameCard>();
 
 //Test if the name that was entered by the user is correct
-bool test(String inputName, String toTest){
-  if(inputName == toTest){
+bool test(String inputName, String toTest) {
+  if (inputName == toTest) {
     return true;
   } else {
     return false;
   }
 }
-
-
-
-
-
 
 class GameTestKnowledge extends StatefulWidget {
   static String numberChoose;
@@ -43,16 +38,15 @@ class GameTestKnowledge extends StatefulWidget {
     listDoc = id;
   }
 
-
   @override
   _GameTestKnowledge createState() => _GameTestKnowledge();
 
-  List<GameCard> getList(){
+  List<GameCard> getList() {
     return wrongAnswers;
   }
 }
 
-class _GameTestKnowledge  extends State<GameTestKnowledge> {
+class _GameTestKnowledge extends State<GameTestKnowledge> {
   TCardController _controller = TCardController();
 
   TextEditingController answerController = new TextEditingController();
@@ -64,8 +58,9 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   int progress = 0;
   double percent = 0;
 
-  String progressText= "0%";
+  String progressText = "0%";
 
+  List<GameCard> wrongContactCard = new List<GameCard>();
 
   void removeCards(index) {
     setState(() {
@@ -77,17 +72,16 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   List<Widget> _generateCards() {
     //List<Widget> cardList = new List();
 
-    if(GameTestKnowledge.numberChoose==null){
-      GameTestKnowledge.numberChoose=GameTestKnowledge.gameCard.length.toString();
+    if (GameTestKnowledge.numberChoose == null) {
+      GameTestKnowledge.numberChoose =
+          GameTestKnowledge.gameCard.length.toString();
     }
 
     int loopIteration = int.parse(GameTestKnowledge.numberChoose);
-    if (int.parse(GameTestKnowledge.numberChoose) > GameTestKnowledge.gameCard.length) {
+    if (int.parse(GameTestKnowledge.numberChoose) >
+        GameTestKnowledge.gameCard.length) {
       loopIteration = GameTestKnowledge.gameCard.length;
     }
-
-    //Make learning random
-    GameTestKnowledge.gameCard.shuffle();
 
     for (int x = 0; x < loopIteration; x++) {
       cardList.add(
@@ -154,7 +148,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                           height: 350.0,
                           width: 320.0,
                         ),
-
                       ],
                     )),
               )),
@@ -164,7 +157,6 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
     return cardList;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,8 +164,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
           title: Text("Test my knowledge mode"),
         ),
         backgroundColor: Colors.grey[300],
-        body:
-        SingleChildScrollView(
+        body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -185,26 +176,25 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                   size: Size(350, 450),
                   controller: _controller,
                   onEnd: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GameTestKnowledgeResume(wrongAnswers)),
-                    );
-
-                    setState(() {
-                      int.parse(GameTestKnowledge.numberChoose);
-                    });
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           GameTestKnowledgeResume(wrongAnswers)),
+                    // );
+                    // setState(() {
+                    //   int.parse(GameTestKnowledge.numberChoose);
+                    // });
                   },
                   onForward: (index, info) {
                     _index = index;
-                    print( "INFOR DIRECTION : " + info.direction.toString());
-                    setState(() {
-
-                    });
+                    print("INFOR DIRECTION : " + info.direction.toString());
+                    setState(() {});
                   },
                 ),
               ),
               SizedBox(height: 20.0),
+              _triggerWrongAnswers(),
               Row(
                 children: [
                   Expanded(
@@ -226,76 +216,81 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                         icon: Icon(Icons.done, size: 40.0, color: Colors.green),
                         onPressed: () {
                           setState(() {
-
                             answer = answerController.text;
                             progress = progress + 1;
-                            percent = (100 / int.parse(GameTestKnowledge.numberChoose) * progress).toDouble() / 100;
-
+                            percent = (100 /
+                                        int.parse(
+                                            GameTestKnowledge.numberChoose) *
+                                        progress)
+                                    .toDouble() /
+                                100;
 
                             print("percent: " + percent.toString());
                             print("progress : " + progress.toString());
-                            print("nombre de contacts utilisés : " + int.parse(GameTestKnowledge.numberChoose).toString());
-                            print("my answer: " + answer +  " :  the correct answer :" + GameTestKnowledge.gameCard[_index].firstname);
+                            print("nombre de contacts utilisés : " +
+                                int.parse(GameTestKnowledge.numberChoose)
+                                    .toString());
+                            print("my answer: " +
+                                answer +
+                                " :  the correct answer :" +
+                                GameTestKnowledge.gameCard[_index].firstname);
 
-                            progressText = (100 / int.parse(GameTestKnowledge.numberChoose) * progress).toString();
-
-
+                            progressText = (100 /
+                                    int.parse(GameTestKnowledge.numberChoose) *
+                                    progress)
+                                .toString();
                           });
 
-
-                          //Test if the answer is correct
-                          test(answer, GameTestKnowledge.gameCard[_index].firstname);
-
-
-
-
                           //Add every wrong answer to the list of the wrong answers
-                          if (test(answer, GameTestKnowledge.gameCard[_index].firstname) == false) {
-                            wrongAnswers.add(GameCard(
-                                GameTestKnowledge.gameCard[_index].image, GameTestKnowledge.gameCard[_index].firstname, " "
-                            ));
+                          if (!test(
+                                  answer,
+                                  GameTestKnowledge
+                                      .gameCard[_index].firstname)) {
+                            print("adding contact to wa " + GameTestKnowledge.gameCard[_index].firstname);
+                            wrongAnswersToAddToFirebase.add(GameCard(
+                                  GameTestKnowledge.gameCard[_index].id,
+                                  GameTestKnowledge.gameCard[_index].image,
+                                  GameTestKnowledge.gameCard[_index].firstname,
+                                  GameTestKnowledge.gameCard[_index].lastname));
                           }
 
                           //
-                          if(progress == int.parse(GameTestKnowledge.numberChoose)){
-
+                          if (progress ==
+                              int.parse(GameTestKnowledge.numberChoose)) {
                             //Refresh variables
                             percent = 0.0;
                             progress = 0;
 
                             //Prepare the score
-                            int nbChosen = (int.parse(GameTestKnowledge.numberChoose));
+                            int nbChosen =
+                                (int.parse(GameTestKnowledge.numberChoose));
                             int listLenght = wrongAnswers.length;
                             int total = (nbChosen - listLenght) * 100;
                             int pourcant = total;
                             int score = pourcant ~/ 10;
 
-
                             //Update the score
-                            _listService.updateScore(GameTestKnowledge.listDoc, score.toString());
+                            _listService.updateScore(
+                                GameTestKnowledge.listDoc, score.toString());
 
 
-                            //At the end of the game update the wrong answer in the database
-                            for(int i=0; i<wrongAnswers.length; i++){
-                              _listService.updateWrongAnswers(GameTestKnowledge.listDoc, 'R8F7UN2tYTp1BicHrMn1');
-                            }
+                            print("WA LENGTH BEFORE SEND " + wrongAnswersToAddToFirebase.length.toString());
+                            _listService.updateWrongAnswers(
+                                GameTestKnowledge.listDoc, wrongAnswersToAddToFirebase);
 
                             //Define wrong answer as being the wrong answer from the db
 
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume(wrongAnswers)),
+                                  builder: (context) => GameTestKnowledgeResume(
+                                      wrongContactCard)),
                             );
                           }
 
                           answerController.text = "";
                           _controller.forward();
-
-
-
-                        }
-                    ),
+                        }),
                   ),
                 ],
               ),
@@ -306,9 +301,7 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
                   width: 360.0,
                   lineHeight: 20.0,
                   percent: percent,
-                  center: Text(
-                      progressText
-                  ),
+                  center: Text(progressText),
                   linearStrokeCap: LinearStrokeCap.butt,
                   backgroundColor: Colors.grey,
                   progressColor: Colors.cyan,
@@ -316,7 +309,35 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
               ),
             ],
           ),
-        )
+        ));
+  }
+
+  Widget _triggerWrongAnswers() {
+    return StreamBuilder(
+      stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot1) {
+        return FutureBuilder(
+            future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot1) {
+              List<dynamic> contactsId;
+              if (snapshot1.connectionState == ConnectionState.done) {
+                contactsId = snapshot1.data['wrongAnswers'];
+                return FutureBuilder(
+                    future: _listService.getWrongContactFromTheList(contactsId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<GameCard>> snapshot2) {
+                      // print("instance ? " + snapshot2.data.toString());
+                      wrongContactCard = snapshot2.data;
+                      return (snapshot2.connectionState == ConnectionState.done)
+                          ? Container()
+                          : Container();
+                    });
+              }
+              return Container();
+            });
+      },
     );
   }
 }
