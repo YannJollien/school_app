@@ -39,7 +39,6 @@ class ListService {
     await DatabaseService(uid: user.uid).updateListsData(doc, listName);
   }
 
-
   //Delete a list
   Future deleteLists(String doc) async{
     User user = await _auth.currentUser;
@@ -52,9 +51,9 @@ class ListService {
     await DatabaseService(uid: user.uid).deleteSubListsData(doc);
   }
 
-  Future updateWrongAnswers(String docList, String docContact) async{
+  Future updateWrongAnswers(String docList, List<GameCard> wrongContactCard) async{
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).updateWrongAnswersData(docList, docContact);
+    await DatabaseService(uid: user.uid).updateWrongAnswersData(docList, wrongContactCard);
   }
 
   Future<DocumentSnapshot> getContactIdWrongOfTheList(String listDoc) {
@@ -62,9 +61,13 @@ class ListService {
     return DatabaseService(uid: user.uid).getContactIdWrongOfTheListData(listDoc);
   }
 
+  Stream<DocumentSnapshot> getContactIdWrongOfTheListStream(String listDoc) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).getContactIdWrongOfTheListStreamData(listDoc);
+  }
+
   Future<List<GameCard>>getWrongContactFromTheList(List<dynamic> contactsId) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getWrongContactFromTheListData(contactsId);
   }
-
 }

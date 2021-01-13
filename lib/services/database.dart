@@ -63,6 +63,17 @@ class DatabaseService {
   //Delete contact in a list
   Future deleteContactFromListData(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
+
+    //Remove the contact from wrong contact array of the list
+    collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(docList.id)
+        .update({
+      'wrongAnswers': FieldValue.arrayRemove([docContact.id])
+    });
+
+    //Remove the contact from the list
     return await collectionUser
         .doc(uid)
         .collection('contacts')
@@ -130,7 +141,7 @@ class DatabaseService {
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
-    print("URL " + 'https://avatar.oxro.io/avatar.svg?name=' + firstname + "+" + lastname + '&background=random&caps=3&bold=true');
+    // print("URL " + 'https://avatar.oxro.io/avatar.svg?name=' + firstname + "+" + lastname + '&background=random&caps=3&bold=true');
     DocumentReference docRef =
         await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
@@ -211,7 +222,7 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({'listName': listName, 'score': '0'});
+        .set({'listName': listName, 'score': '0', 'wrongAnswers': []});
   }
 
   //Delete lists for a user
@@ -243,13 +254,27 @@ class DatabaseService {
 
   //Add data to the list of wrong answers
   Future updateWrongAnswersData(
-      String docList, String docContact) async {
+      String docList, List<GameCard> wrongContactCard) async {
+
+    print("wrong contact card length " + wrongContactCard.length.toString());
+    for(int i=0; i<wrongContactCard.length; i++){
+      print("wrong add : " + wrongContactCard[i].firstname);
+      await collectionUser
+          .doc(uid)
+          .collection('lists')
+          .doc(docList)
+          .update({
+        'wrongAnswers': FieldValue.arrayUnion([wrongContactCard[i].id])
+      });
+    }
+
+    return 'ok';
     return await collectionUser
         .doc(uid)
         .collection('lists')
-        .doc(docContact)
+        .doc(docList)
         .update({
-      'wrongAnswers': FieldValue.arrayUnion([docList])
+      'wrongAnswers': FieldValue.arrayUnion([wrongContactCard])
     });
   }
 
@@ -261,14 +286,6 @@ class DatabaseService {
   }
 
   Future<DocumentSnapshot> getContactIdWrongOfTheListData(String listDoc) async {
-    // DocumentSnapshot ds = await collectionUser
-    //     .doc(uid)
-    //     .collection('lists')
-    //     .doc(listDoc)
-    //     .get();
-    // print("document list " + listDoc);
-    // print(ds.data()['wrongAnswers']);
-
     return await collectionUser
         .doc(uid)
         .collection('lists')
@@ -278,18 +295,23 @@ class DatabaseService {
 
   Future<List<GameCard>> getWrongContactFromTheListData(List<dynamic> contactsId) async{
     DocumentSnapshot ds ;
-
     List<GameCard> wrongGameCard = new List<GameCard>();
-
     for(int i=0; i<contactsId.length; i++){
       ds = await collectionUser.doc(uid).collection('contacts').doc(contactsId.elementAt(i)).get();
 
-      print("ADDING TO WRONG GAME CARD " + ds.data()['firstname']);
-      wrongGameCard.add(GameCard(ds.data()['image'], ds.data()['firstname'], ds.data()['lastname']));
-      print(wrongGameCard.first.firstname);
+      // print("ADDING TO WRONG GAME CARD " + ds.data()['firstname']);
+      wrongGameCard.add(GameCard(ds.id, ds.data()['image'], ds.data()['firstname'], ds.data()['lastname']));
+      // print(wrongGameCard.first.firstname);
     }
-
     return wrongGameCard;
+  }
+
+  Stream<DocumentSnapshot> getContactIdWrongOfTheListStreamData(String listDoc) {
+    return collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc)
+        .snapshots();
   }
 
   //Get contact details
@@ -330,11 +352,11 @@ class FireStorageService extends ChangeNotifier {
   FireStorageService();
 
   static Future<dynamic> loadImage(String email, String docId) async {
-    print('LOAD IMAGE ' +
-        await FirebaseStorage.instance
-            .ref("contacts/$email/$docId")
-            .getDownloadURL()
-            .toString());
+    // print('LOAD IMAGE ' +
+    //     await FirebaseStorage.instance
+    //         .ref("contacts/$email/$docId")
+    //         .getDownloadURL()
+    //         .toString());
 
     return await FirebaseStorage.instance
         .ref("contacts/$email/$docId")
