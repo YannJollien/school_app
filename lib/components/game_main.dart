@@ -35,6 +35,10 @@ class _GameScreenState extends State<GameScreen> {
 
   List<GameCard> gameCardMode;
 
+  bool enableGame ;
+  var _onPressedTestMode ;
+  var _onPressedLearningMode ;
+
   @override
   Widget build(BuildContext context) {
     //Dropdown list management
@@ -49,6 +53,44 @@ class _GameScreenState extends State<GameScreen> {
             .add((GameScreen.gameCard.length * i).round().toString());
       }
     }
+
+    //If no contact in list disable the button to lauch the game
+    if(GameScreen.gameCard.length==0){
+      setState(() {
+        enableGame = false;
+        _onPressedTestMode = null;
+        _onPressedLearningMode = null;
+      });
+    }else{
+      setState(() {
+        enableGame = true;
+        _onPressedTestMode = (){
+          if(numberChose==null){
+            setState(() {
+              numberChose=gameCardMode.length.toString();
+            });
+          }
+          gameCardMode.shuffle();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GameTestKnowledge(
+                    gameCardMode,
+                    numberChose,
+                    GameScreen.listDoc)),
+          );
+        };
+        _onPressedLearningMode = (){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LearningMode(
+                    gameCardMode, numberChose)),
+          );
+        };
+      });
+    }
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -172,36 +214,14 @@ class _GameScreenState extends State<GameScreen> {
                         width: 200,
                         child: FlatButton(
                           color: Colors.lightBlue,
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LearningMode(
-                                      gameCardMode, numberChose)),
-                            );
-                          },
+                          onPressed: _onPressedLearningMode,
                           child: Text("Learning"),
                         ),
                       ),
                       SizedBox(
                         width: 200,
                         child: FlatButton(
-                          onPressed: () {
-                            if(numberChose==null){
-                              setState(() {
-                                numberChose=gameCardMode.length.toString();
-                              });
-                            }
-                            gameCardMode.shuffle();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledge(
-                                      gameCardMode,
-                                      numberChose,
-                                      GameScreen.listDoc)),
-                            );
-                          },
+                          onPressed: _onPressedTestMode,
                           color: Colors.lightBlue,
                           child: Text("Test my knowledge"),
                         ),

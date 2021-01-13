@@ -103,10 +103,10 @@ class ContactsListState extends State<ContactsList> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Image.network(
-                    contactDoc.data()['image'],
-                    width: MediaQuery.of(context).size.width / 8,
-                    height: MediaQuery.of(context).size.width / 8,
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        contactDoc.data()['image']
+                    ),
                   ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH

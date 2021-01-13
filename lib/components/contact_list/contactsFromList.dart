@@ -36,11 +36,8 @@ class ContactFromListState extends State<ContactFromList> {
   String search = "";
   Widget _appBarTitle = new Text(
       ContactFromList.listDoc.data()["listName"] +
-          " list" +
-          " " +
-          ContactFromList.listDoc.data()["score"] +
-          "%",
-      style: TextStyle(color: Colors.black));
+          " list",
+      style: TextStyle(color: Colors.black, fontSize: 22));
   FocusNode myFocusNode = FocusNode();
 
   @override
@@ -62,22 +59,20 @@ class ContactFromListState extends State<ContactFromList> {
               ),
             )),
         actions: <Widget>[
-          (gameCard.length != 0)
-              ? IconTheme(
-                  data: Theme.of(context).iconTheme,
-                  child: IconButton(
-                    icon: Icon(Icons.sports_esports),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GameScreen(
-                                ContactFromList.listDoc.id, gameCard)),
-                      );
-                    },
-                  ),
-                )
-              : Container(),
+          IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: IconButton(
+              icon: Icon(Icons.sports_esports),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          GameScreen(ContactFromList.listDoc.id, gameCard)),
+                );
+              },
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconTheme(
@@ -105,10 +100,7 @@ class ContactFromListState extends State<ContactFromList> {
                       search = "";
                       this._appBarTitle = new Text(
                           ContactFromList.listDoc.data()["listName"] +
-                              " list" +
-                              " " +
-                              ContactFromList.listDoc.data()["score"] +
-                              "%",
+                              " list",
                           style: Theme.of(context).textTheme.headline1);
                     }
                   });
@@ -330,10 +322,10 @@ class ContactFromListState extends State<ContactFromList> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Image.network(
-                    contactDoc.data()['image'],
-                    width: MediaQuery.of(context).size.width / 8,
-                    height: MediaQuery.of(context).size.width / 8,
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      contactDoc.data()['image']
+                    ),
                   ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH

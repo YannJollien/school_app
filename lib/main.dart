@@ -20,7 +20,7 @@ void main() async {
         primaryColor: Colors.cyan,
         textTheme: TextTheme(
           headline1: TextStyle(fontFamily: 'Hind',
-              fontSize: 20,
+              fontSize: 22,
               color: Colors.black,
               fontWeight: FontWeight.w500),
         ),
@@ -36,7 +36,7 @@ void main() async {
         primaryColor: Colors.blueGrey,
         textTheme: TextTheme(
           headline1: TextStyle(fontFamily: 'Hind',
-              fontSize: 20,
+              fontSize: 22,
               color: Colors.white,
               fontWeight: FontWeight.w500),
         ),

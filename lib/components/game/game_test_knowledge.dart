@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/game/game_card.dart';
+import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
 import '../game_main.dart';
@@ -70,19 +71,19 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                 },
               ),
             ),
-            _triggerWrongAnswers(),
-            Padding(
-              padding: EdgeInsets.only(left: 20.0, right: 10.0),
-              child: LinearPercentIndicator(
-                width: 300.0,
-                lineHeight: 20.0,
-                percent: cardDonePercent,
-                center: Text(cardDoneProgressionText),
-                linearStrokeCap: LinearStrokeCap.butt,
-                backgroundColor: Colors.grey,
-                progressColor: Colors.cyan,
-              ),
-            ),
+            // _triggerWrongAnswers(),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 20.0, right: 10.0),
+            //   child: LinearPercentIndicator(
+            //     width: 300.0,
+            //     lineHeight: 20.0,
+            //     percent: cardDonePercent,
+            //     center: Text(cardDoneProgressionText),
+            //     linearStrokeCap: LinearStrokeCap.butt,
+            //     backgroundColor: Colors.grey,
+            //     progressColor: Colors.cyan,
+            //   ),
+            // ),
             SizedBox(height: 10.0),
             Row(
               children: [
@@ -106,11 +107,12 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                     child: IconButton(
                         icon: Icon(Icons.done, size: 40.0, color: Colors.green),
                         onPressed: () {
+                          print("bar progression += " + int.parse(GameTestKnowledge.numberChoose).floor().toString());
                           setState(() {
                             cardDonePercent +=
-                                1 / GameTestKnowledge.gameCard.length;
+                                1 / int.parse(GameTestKnowledge.numberChoose).floor();
                             cardDoneProgressionText =
-                                (cardDonePercent * 100).round().toString() +
+                                (cardDonePercent * 100).floor().toString() +
                                     "%";
                           });
 
@@ -128,8 +130,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume(
-                                      wrongContactCard)),
+                                  builder: (context) => GameTestKnowledgeResume(GameTestKnowledge.numberChoose)),
                             );
                           }
 
