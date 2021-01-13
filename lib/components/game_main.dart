@@ -192,6 +192,7 @@ class _GameScreenState extends State<GameScreen> {
                                 numberChose=gameCardMode.length.toString();
                               });
                             }
+                            gameCardMode.shuffle();
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

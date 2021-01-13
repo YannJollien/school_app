@@ -35,7 +35,11 @@ class ContactFromListState extends State<ContactFromList> {
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle = new Text(
-      ContactFromList.listDoc.data()["listName"] + " list" + " " + ContactFromList.listDoc.data()["score"] + "%",
+      ContactFromList.listDoc.data()["listName"] +
+          " list" +
+          " " +
+          ContactFromList.listDoc.data()["score"] +
+          "%",
       style: TextStyle(color: Colors.black));
   FocusNode myFocusNode = FocusNode();
 
@@ -58,20 +62,22 @@ class ContactFromListState extends State<ContactFromList> {
               ),
             )),
         actions: <Widget>[
-          IconTheme(
-            data: Theme.of(context).iconTheme,
-            child: IconButton(
-              icon: Icon(Icons.sports_esports),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          GameScreen(ContactFromList.listDoc.id, gameCard)),
-                );
-              },
-            ),
-          ),
+          (gameCard.length != 0)
+              ? IconTheme(
+                  data: Theme.of(context).iconTheme,
+                  child: IconButton(
+                    icon: Icon(Icons.sports_esports),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GameScreen(
+                                ContactFromList.listDoc.id, gameCard)),
+                      );
+                    },
+                  ),
+                )
+              : Container(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconTheme(
@@ -98,7 +104,11 @@ class ContactFromListState extends State<ContactFromList> {
                     } else {
                       search = "";
                       this._appBarTitle = new Text(
-                          ContactFromList.listDoc.data()["listName"] + " list" + " " + ContactFromList.listDoc.data()["score"] + "%",
+                          ContactFromList.listDoc.data()["listName"] +
+                              " list" +
+                              " " +
+                              ContactFromList.listDoc.data()["score"] +
+                              "%",
                           style: Theme.of(context).textTheme.headline1);
                     }
                   });
@@ -117,7 +127,7 @@ class ContactFromListState extends State<ContactFromList> {
                 _contactService.getContactsFromList(ContactFromList.listDoc),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  gameCard.clear();
+              gameCard.clear();
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs.map(
@@ -125,8 +135,8 @@ class ContactFromListState extends State<ContactFromList> {
                       if (doc
                           .data()['lists']
                           .contains(ContactFromList.listDoc.id)) {
-                          gameCard.add(GameCard(doc.id, doc.data()['image'],
-                              doc.data()['firstname'], doc.data()['lastname']));
+                        gameCard.add(GameCard(doc.id, doc.data()['image'],
+                            doc.data()['firstname'], doc.data()['lastname']));
                       }
                       String unionFirstLastName =
                           doc.data()['firstname'].toString().toLowerCase() +

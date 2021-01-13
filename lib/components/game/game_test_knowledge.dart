@@ -9,24 +9,6 @@ import 'package:tcard/tcard.dart';
 import '../game_main.dart';
 import 'game_test_knowledge_resume.dart';
 
-final FirebaseAuth auth = FirebaseAuth.instance;
-final User user = auth.currentUser;
-ListService _listService = ListService();
-
-List<Widget> cardList = new List();
-
-List<GameCard> wrongAnswers = new List<GameCard>();
-List<GameCard> wrongAnswersToAddToFirebase = new List<GameCard>();
-
-//Test if the name that was entered by the user is correct
-bool test(String inputName, String toTest) {
-  if (inputName == toTest) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 class GameTestKnowledge extends StatefulWidget {
   static String numberChoose;
   static List<GameCard> gameCard;
@@ -40,38 +22,134 @@ class GameTestKnowledge extends StatefulWidget {
 
   @override
   _GameTestKnowledge createState() => _GameTestKnowledge();
-
-  List<GameCard> getList() {
-    return wrongAnswers;
-  }
 }
 
+final User user = auth.currentUser;
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class _GameTestKnowledge extends State<GameTestKnowledge> {
+  ListService _listService = new ListService();
+
+  //Card list
+  List<Widget> cardList = new List();
+
+  //Controller for input text
+  TextEditingController inputController = new TextEditingController();
+
+  //Card controller (go forward...)
   TCardController _controller = TCardController();
 
-  TextEditingController answerController = new TextEditingController();
+  //Card done management
+  double cardDonePercent = 0;
+  String cardDoneProgressionText = "0%";
 
-  int _index = 0;
-
-  String answer = " ";
-
-  int progress = 0;
-  double percent = 0;
-
-  String progressText = "0%";
-
+  //Gamecard wrong to send to the game resume
   List<GameCard> wrongContactCard = new List<GameCard>();
 
-  void removeCards(index) {
-    setState(() {
-      cardList.removeAt(index);
-    });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Test mode"),
+      ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AbsorbPointer(
+              absorbing: true,
+              child: TCard(
+                cards: _generateCards(),
+                size: Size(350, 450),
+                controller: _controller,
+                onForward: (index, info) {
+                  // _index = index;
+                  // print("INFOR DIRECTION : " + info.direction.toString());
+                },
+              ),
+            ),
+            _triggerWrongAnswers(),
+            Padding(
+              padding: EdgeInsets.only(left: 20.0, right: 10.0),
+              child: LinearPercentIndicator(
+                width: 300.0,
+                lineHeight: 20.0,
+                percent: cardDonePercent,
+                center: Text(cardDoneProgressionText),
+                linearStrokeCap: LinearStrokeCap.butt,
+                backgroundColor: Colors.grey,
+                progressColor: Colors.cyan,
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    width: 300,
+                    margin: const EdgeInsets.only(right: 0, left: 30),
+                    child: TextFormField(
+                      controller: inputController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Answer',
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 30.0),
+                  child: Container(
+                    child: IconButton(
+                        icon: Icon(Icons.done, size: 40.0, color: Colors.green),
+                        onPressed: () {
+                          setState(() {
+                            cardDonePercent +=
+                                1 / GameTestKnowledge.gameCard.length;
+                            cardDoneProgressionText =
+                                (cardDonePercent * 100).round().toString() +
+                                    "%";
+                          });
+
+                          //Test input and answer
+                          //False => push it to firestore array of wrong answers
+                          //True  => remove the id in array of wrong ansers if exist
+                          if(testInputAccordingToCard(inputController.text, GameTestKnowledge.gameCard[_controller.index].firstname)){
+                            _listService.removeIdToWrongAnswers(GameTestKnowledge.listDoc, GameTestKnowledge.gameCard[_controller.index].id);
+                          }else{
+                            _listService.addIdToWrongAnswers(GameTestKnowledge.listDoc, GameTestKnowledge.gameCard[_controller.index].id);
+                          }
+
+                          //If the game is finished
+                          if(_controller.index == int.parse(GameTestKnowledge.numberChoose)-1){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GameTestKnowledgeResume(
+                                      wrongContactCard)),
+                            );
+                          }
+
+                          //Reset the input
+                          inputController.text = "";
+
+                          //Move to next card
+                          _controller.forward();
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  //Generate the cards
   List<Widget> _generateCards() {
-    //List<Widget> cardList = new List();
-
     if (GameTestKnowledge.numberChoose == null) {
       GameTestKnowledge.numberChoose =
           GameTestKnowledge.gameCard.length.toString();
@@ -106,21 +184,11 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                         tag: "imageTag",
                         child: Image.network(
                           GameTestKnowledge.gameCard[x].image,
-                          width: 320.0,
                           height: 440.0,
-                          fit: BoxFit.fill,
+                          width: 320.0,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        child: Text(
-                          GameTestKnowledge.gameCard[x].firstname,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.cyan,
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -137,15 +205,13 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                       children: <Widget>[
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0)),
+                            borderRadius: BorderRadius.circular(20.0),
                             image: DecorationImage(
                                 image: NetworkImage(
                                     GameTestKnowledge.gameCard[x].image),
                                 fit: BoxFit.cover),
                           ),
-                          height: 350.0,
+                          height: 397.0,
                           width: 320.0,
                         ),
                       ],
@@ -157,159 +223,10 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     return cardList;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Test my knowledge mode"),
-        ),
-        backgroundColor: Colors.grey[300],
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              AbsorbPointer(
-                absorbing: true,
-                child: TCard(
-                  cards: _generateCards(),
-                  size: Size(350, 450),
-                  controller: _controller,
-                  onEnd: () {
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) =>
-                    //           GameTestKnowledgeResume(wrongAnswers)),
-                    // );
-                    // setState(() {
-                    //   int.parse(GameTestKnowledge.numberChoose);
-                    // });
-                  },
-                  onForward: (index, info) {
-                    _index = index;
-                    print("INFOR DIRECTION : " + info.direction.toString());
-                    setState(() {});
-                  },
-                ),
-              ),
-              SizedBox(height: 20.0),
-              _triggerWrongAnswers(),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 0, left: 30),
-                      child: TextFormField(
-                        controller: answerController,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Answer',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 30.0),
-                    child: IconButton(
-                        icon: Icon(Icons.done, size: 40.0, color: Colors.green),
-                        onPressed: () {
-                          setState(() {
-                            answer = answerController.text;
-                            progress = progress + 1;
-                            percent = (100 /
-                                        int.parse(
-                                            GameTestKnowledge.numberChoose) *
-                                        progress)
-                                    .toDouble() /
-                                100;
-
-                            print("percent: " + percent.toString());
-                            print("progress : " + progress.toString());
-                            print("nombre de contacts utilisés : " +
-                                int.parse(GameTestKnowledge.numberChoose)
-                                    .toString());
-                            print("my answer: " +
-                                answer +
-                                " :  the correct answer :" +
-                                GameTestKnowledge.gameCard[_index].firstname);
-
-                            progressText = (100 /
-                                    int.parse(GameTestKnowledge.numberChoose) *
-                                    progress)
-                                .toString();
-                          });
-
-                          //Add every wrong answer to the list of the wrong answers
-                          if (!test(
-                                  answer,
-                                  GameTestKnowledge
-                                      .gameCard[_index].firstname)) {
-                            print("adding contact to wa " + GameTestKnowledge.gameCard[_index].firstname);
-                            wrongAnswersToAddToFirebase.add(GameCard(
-                                  GameTestKnowledge.gameCard[_index].id,
-                                  GameTestKnowledge.gameCard[_index].image,
-                                  GameTestKnowledge.gameCard[_index].firstname,
-                                  GameTestKnowledge.gameCard[_index].lastname));
-                          }
-
-                          //
-                          if (progress ==
-                              int.parse(GameTestKnowledge.numberChoose)) {
-                            //Refresh variables
-                            percent = 0.0;
-                            progress = 0;
-
-                            //Prepare the score
-                            int nbChosen =
-                                (int.parse(GameTestKnowledge.numberChoose));
-                            int listLenght = wrongAnswers.length;
-                            int total = (nbChosen - listLenght) * 100;
-                            int pourcant = total;
-                            int score = pourcant ~/ 10;
-
-                            //Update the score
-                            _listService.updateScore(
-                                GameTestKnowledge.listDoc, score.toString());
-
-
-                            print("WA LENGTH BEFORE SEND " + wrongAnswersToAddToFirebase.length.toString());
-                            _listService.updateWrongAnswers(
-                                GameTestKnowledge.listDoc, wrongAnswersToAddToFirebase);
-
-                            //Define wrong answer as being the wrong answer from the db
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume(
-                                      wrongContactCard)),
-                            );
-                          }
-
-                          answerController.text = "";
-                          _controller.forward();
-                        }),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.0),
-              Padding(
-                padding: EdgeInsets.only(left: 20.0, right: 10.0),
-                child: LinearPercentIndicator(
-                  width: 360.0,
-                  lineHeight: 20.0,
-                  percent: percent,
-                  center: Text(progressText),
-                  linearStrokeCap: LinearStrokeCap.butt,
-                  backgroundColor: Colors.grey,
-                  progressColor: Colors.cyan,
-                ),
-              ),
-            ],
-          ),
-        ));
+  void removeCards(index) {
+    setState(() {
+      cardList.removeAt(index);
+    });
   }
 
   Widget _triggerWrongAnswers() {
@@ -339,5 +256,13 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
             });
       },
     );
+  }
+
+  bool testInputAccordingToCard(String inputFirstname, String answerFirstname) {
+    if(inputFirstname == answerFirstname){
+      return true ;
+    }else{
+      return false ;
+    }
   }
 }
