@@ -6,11 +6,11 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:schoolapp/components/contact_add/contactListImportation.dart';
 import 'package:schoolapp/components/contact_details/contactDetails.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'package:schoolapp/components/game_main.dart';
 import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_add/contactNew.dart';
 import '../contact_add/addContactFromAll.dart';
+import '../game_main.dart';
 
 class ContactFromList extends StatefulWidget {
   static DocumentSnapshot listDoc;

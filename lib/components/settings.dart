@@ -69,12 +69,15 @@ class SettingsState extends State<Settings> {
               ],
               onPressed: (int index) {
                 setState(() {
-                  for (int buttonIndex = 0; buttonIndex < toggled.length; buttonIndex++) {
-                    if (buttonIndex == index) {
-                      toggled[buttonIndex] = true;
-                    } else {
-                      toggled[buttonIndex] = false;
-                    }
+                  switch (index) {
+                    case 0:
+                      toggled[0] = true;
+                      toggled[1] = false;
+                      break;
+                    case 1:
+                      toggled[0] = false;
+                      toggled[1] = true;
+                      break;
                   }
                 });
               },

@@ -77,9 +77,13 @@ class _GameTestKnowledge  extends State<GameTestKnowledge> {
   List<Widget> _generateCards() {
     //List<Widget> cardList = new List();
 
+    if(GameTestKnowledge.numberChoose==null){
+      GameTestKnowledge.numberChoose=GameTestKnowledge.gameCard.length.toString();
+    }
+
     int loopIteration = int.parse(GameTestKnowledge.numberChoose);
-    if (int.parse(GameTestKnowledge.numberChoose) > GameScreen.gameCard.length) {
-      loopIteration = GameScreen.gameCard.length;
+    if (int.parse(GameTestKnowledge.numberChoose) > GameTestKnowledge.gameCard.length) {
+      loopIteration = GameTestKnowledge.gameCard.length;
     }
 
     //Make learning random
