@@ -71,6 +71,11 @@ class ListService {
     return DatabaseService(uid: user.uid).getContactIdWrongOfTheListStreamData(listDoc);
   }
 
+  Future resetWrongContactFromTheList(String listDoc, String numberChoose) {
+    User user = _auth.currentUser;
+    return DatabaseService(uid: user.uid).resetWrongContactFromTheListData(listDoc, numberChoose);
+  }
+
   Future<List<GameCard>>getWrongContactFromTheList(List<dynamic> contactsId) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getWrongContactFromTheListData(contactsId);
