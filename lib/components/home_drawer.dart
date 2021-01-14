@@ -168,6 +168,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         removePref();
                         _auth.signOut();
                         //Go to opening page when logged out
+                        Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => Login()),

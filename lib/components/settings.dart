@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/services/auth.dart';
 
 import 'home_drawer.dart';
+import 'login.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -103,7 +104,12 @@ class SettingsState extends State<Settings> {
       color: Colors.red,
       onPressed: () {
         _auth.deleteUser();
-        Navigator.of(context).pushNamed("/login");
+        //Go to opening page when logged out
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
       },
     );
     // set up the AlertDialog

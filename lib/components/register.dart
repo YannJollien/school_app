@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:schoolapp/components/verifyEmail.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/shared/loading.dart';
@@ -171,10 +172,10 @@ class _RegisterState extends State<Register> {
 
                             //SharedPreferences prefs = await SharedPreferences.getInstance();
                             //prefs.setString("email", emailController.text);
-                            //Go to lists when registerd
+                            //Go to verification
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => Lists()),
+                              MaterialPageRoute(builder: (context) => VerifyScreen()),
                             );
                           }
                         }
