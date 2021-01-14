@@ -40,7 +40,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
           ),
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.cyan[100],
       body: Column(
         children: <Widget>[
           _getWrongAnswers(),
@@ -53,64 +53,73 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
   Widget _getWrongAnswers() {
     return StreamBuilder(
-      stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
+      stream:
+          _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot> streamBuilderSnapshot) {
         numberChooseLastGame =
             double.parse(streamBuilderSnapshot.data['numberChoose']);
         return FutureBuilder(
-            future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
+            future:
+                _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> wrongContactIds) {
               List<dynamic> contactsId;
               if (wrongContactIds.connectionState == ConnectionState.done) {
                 contactsId = wrongContactIds.data['wrongAnswers'];
                 return FutureBuilder(
-                    future: _listService.getWrongContactFromTheList(contactsId),
+                    future:
+                        _listService.getWrongContactFromTheList(contactsId),
                     builder: (BuildContext context,
                         AsyncSnapshot<List<GameCard>> wrongContactCards) {
                       wrongContactCard = wrongContactCards.data;
+
                       return (wrongContactCards.connectionState ==
                               ConnectionState.done)
                           ? Column(
-                              children: [
-                                SizedBox(height: 10),
-                                _getTheScoreGame(
-                                    wrongContactCard.length.toDouble()),
-                                SizedBox(height: 10),
-                                _pieChart(wrongContactCard.length.toDouble()),
-                                ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: wrongContactCard.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                        child: ListTile(
-                                          //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
-                                          onTap: () {},
-                                          title: Text(
-                                            wrongContactCard[index].firstname +
-                                                " " +
-                                                wrongContactCard[index]
-                                                    .lastname,
-                                          ),
-                                          leading: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              wrongContactCard[index].image,
-                                            ),
+                            children: [
+                              SizedBox(height: 10),
+                              _getTheScoreGame(
+                                  wrongContactCard.length.toDouble()),
+                              SizedBox(height: 10),
+                              _pieChart(
+                                  wrongContactCard.length.toDouble()),
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: wrongContactCard.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      child: ListTile(
+                                        //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
+                                        onTap: () {},
+                                        title: Text(
+                                          wrongContactCard[index]
+                                                  .firstname +
+                                              " " +
+                                              wrongContactCard[index]
+                                                  .lastname,
+                                        ),
+                                        leading: CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                            wrongContactCard[index]
+                                                .image,
                                           ),
                                         ),
-                                      );
-                                    }),
-                              ],
-                            )
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.8,
+                                  width: MediaQuery.of(context).size.width /
+                                      1.8,
                                   height:
-                                      MediaQuery.of(context).size.width / 1.8,
+                                      MediaQuery.of(context).size.width /
+                                          1.8,
                                   child: CircularProgressIndicator(),
                                 ),
                               ],

@@ -63,7 +63,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
               absorbing: true,
               child: TCard(
                 cards: _generateCards(),
-                size: Size(350, 450),
+                size: Size(240, 300),
                 controller: _controller,
                 onForward: (index, info) {
                   // _index = index;
@@ -185,8 +185,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                         tag: "imageTag",
                         child: Image.network(
                           GameTestKnowledge.gameCard[x].image,
-                          height: 440.0,
-                          width: 320.0,
+                          width: 240.0,
+                          height: 300.0,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -212,8 +212,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                                     GameTestKnowledge.gameCard[x].image),
                                 fit: BoxFit.cover),
                           ),
-                          height: 397.0,
-                          width: 320.0,
+                          width: 210.0,
+                          height: 262.0,
                         ),
                       ],
                     )),
