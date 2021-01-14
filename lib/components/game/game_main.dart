@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
-import 'contact_list/contactsFromList.dart';
-import 'game/game_test_knowledge.dart';
-import 'game/game_test_knowledge_resume.dart';
+import '../contact_list/contactsFromList.dart';
+import 'game_test_knowledge.dart';
+import 'resume/game_test_knowledge_resume.dart';
 
 class GameScreen extends StatefulWidget {
   static String listDoc;

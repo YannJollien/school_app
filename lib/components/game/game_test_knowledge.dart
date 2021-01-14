@@ -7,8 +7,8 @@ import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
-import '../game_main.dart';
-import 'game_test_knowledge_resume.dart';
+import 'game_main.dart';
+import 'resume/game_test_knowledge_resume.dart';
 
 class GameTestKnowledge extends StatefulWidget {
   static String numberChoose;

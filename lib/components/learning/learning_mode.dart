@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 
-import '../game_main.dart';
+import '../game/game_main.dart';
 
 class LearningMode extends StatefulWidget {
   static String numberChoose;
