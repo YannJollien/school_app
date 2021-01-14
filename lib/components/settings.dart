@@ -63,32 +63,9 @@ class SettingsState extends State<Settings> {
             //     ),
             //   ),
             // ),
-            ToggleButtons(
-              children: <Widget>[
-                Icon(Icons.wb_sunny),
-                Icon(Icons.nights_stay),
-              ],
-              onPressed: (int index) {
-                setState(() {
-                  switch (index) {
-                    case 0:
-                      toggled[0] = true;
-                      toggled[1] = false;
-                      break;
-                    case 1:
-                      toggled[0] = false;
-                      toggled[1] = true;
-                      break;
-                  }
-                });
-              },
-              isSelected: toggled,
-            ),
           ],
         ));
   }
-  bool _value = true ;
-  List<bool> toggled = [false, true];
 
   showAlertDialog(BuildContext context) {
     // set up the buttons

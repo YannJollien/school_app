@@ -3,9 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/services/contactService.dart';
-
 import '../contact_details/contactDetails.dart';
-import '../contact_list/contactsFromList.dart';
 import '../home_drawer.dart';
 
 class Contacts extends StatefulWidget {

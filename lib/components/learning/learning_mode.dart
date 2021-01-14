@@ -31,14 +31,12 @@ class LearningModeState extends State<LearningMode> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     cardList = _generateCards();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text("Learning mode"),
@@ -59,12 +57,17 @@ class LearningModeState extends State<LearningMode> {
           ),
         ),
       ),
-      body: Stack(alignment: Alignment.topCenter, children: cardList),
+      body: Stack(alignment: Alignment.center, children: cardList),
     );
   }
 
   List<Widget> _generateCards() {
     List<Widget> cardList = new List();
+
+    if(LearningMode.gameCard.length==0){
+      List<Container> c = new List<Container>();
+      return c;
+    }
 
     if(LearningMode.numberChoose==null){
       LearningMode.numberChoose=LearningMode.gameCard.length.toString();
@@ -90,6 +93,7 @@ class LearningModeState extends State<LearningMode> {
                 removeCards(x);
               },
               childWhenDragging: Container(),
+              //Swipe card
               feedback: GestureDetector(
                 onTap: () {},
                 child: Card(
@@ -123,6 +127,7 @@ class LearningModeState extends State<LearningMode> {
                   ),
                 ),
               ),
+              //Displayed card
               child: GestureDetector(
                 onTap: () {},
                 child: Card(
