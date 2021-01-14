@@ -150,8 +150,9 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                           }
 
                           //If the game is finished
-                          if (_controller.index ==
-                              GameTestKnowledge.gameCard.length - 1) {
+                          if (_controller.index >=
+                              GameTestKnowledge.gameCard.length-1 || _controller.index >=
+                              int.parse(GameTestKnowledge.numberChoose)-1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -182,6 +183,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
       color: Colors.red,
       child: Text("Quit"),
       onPressed: () {
+        _listService.resetWrongContactFromTheList(
+            GameScreen.listDoc, '0');
         Navigator.push(
           context,
           MaterialPageRoute(

@@ -226,17 +226,25 @@ class _GameScreenState extends State<GameScreen> {
                               width: 200,
                               child: FlatButton(
                                 onPressed: () {
-                                  if (numberChoose == null) {
-                                    setState(() {
-                                      numberChoose =
-                                          gameCardMode.length.toString();
-                                    });
-                                  }
-                                  _listService.resetWrongContactFromTheList(
-                                      GameScreen.listDoc, numberChoose);
-                                  gameCardMode.shuffle();
-                                  // print("number selected " + numberChoose);
                                   if (gameCardMode.length != 0) {
+                                    if (numberChoose == null) {
+                                      setState(() {
+                                        numberChoose =
+                                            gameCardMode.length.toString();
+                                      });
+                                    }
+                                    //all contact
+                                    if (toggledButtonGameMode[0]) {
+                                      _listService.resetWrongContactFromTheList(
+                                        GameScreen.listDoc, numberChoose);
+                                    }
+                                    //wrong only
+                                    else {
+                                      _listService.resetWrongContactFromTheList(
+                                          GameScreen.listDoc, gameCardMode.length.toString());
+                                    }
+
+                                    gameCardMode.shuffle();
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
