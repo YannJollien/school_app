@@ -107,10 +107,14 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                     child: IconButton(
                         icon: Icon(Icons.done, size: 40.0, color: Colors.green),
                         onPressed: () {
-                          print("bar progression += " + int.parse(GameTestKnowledge.numberChoose).floor().toString());
+                          print("bar progression += " +
+                              int.parse(GameTestKnowledge.numberChoose)
+                                  .floor()
+                                  .toString());
                           setState(() {
-                            cardDonePercent +=
-                                1 / int.parse(GameTestKnowledge.numberChoose).floor();
+                            cardDonePercent += 1 /
+                                int.parse(GameTestKnowledge.numberChoose)
+                                    .floor();
                             cardDoneProgressionText =
                                 (cardDonePercent * 100).floor().toString() +
                                     "%";
@@ -119,18 +123,29 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                           //Test input and answer
                           //False => push it to firestore array of wrong answers
                           //True  => remove the id in array of wrong ansers if exist
-                          if(testInputAccordingToCard(inputController.text, GameTestKnowledge.gameCard[_controller.index].firstname)){
-                            _listService.removeIdToWrongAnswers(GameTestKnowledge.listDoc, GameTestKnowledge.gameCard[_controller.index].id);
-                          }else{
-                            _listService.addIdToWrongAnswers(GameTestKnowledge.listDoc, GameTestKnowledge.gameCard[_controller.index].id);
+                          if (testInputAccordingToCard(
+                              inputController.text,
+                              GameTestKnowledge
+                                  .gameCard[_controller.index].firstname)) {
+                            _listService.removeIdToWrongAnswers(
+                                GameTestKnowledge.listDoc,
+                                GameTestKnowledge
+                                    .gameCard[_controller.index].id);
+                          } else {
+                            _listService.addIdToWrongAnswers(
+                                GameTestKnowledge.listDoc,
+                                GameTestKnowledge
+                                    .gameCard[_controller.index].id);
                           }
 
                           //If the game is finished
-                          if(_controller.index == int.parse(GameTestKnowledge.numberChoose)-1){
+                          if (_controller.index ==
+                              int.parse(GameTestKnowledge.numberChoose) - 1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledgeResume()),
+                                  builder: (context) =>
+                                      GameTestKnowledgeResume()),
                             );
                           }
 
@@ -163,63 +178,17 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     }
 
     for (int x = 0; x < loopIteration; x++) {
-      cardList.add(
-        Positioned(
-          top: 70.0,
-          child: Draggable(
-              onDragEnd: (drag) {
-                removeCards(x);
-              },
-              childWhenDragging: Container(),
-              feedback: GestureDetector(
-                onTap: () {},
-                child: Card(
-                  elevation: 8.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  // color: Color.fromARGB(250, 112, 19, 179),
-                  child: Column(
-                    children: <Widget>[
-                      Hero(
-                        tag: "imageTag",
-                        child: Image.network(
-                          GameTestKnowledge.gameCard[x].image,
-                          width: 240.0,
-                          height: 300.0,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              child: GestureDetector(
-                onTap: () {},
-                child: Card(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    // color: Color.fromARGB(250, 112, 19, 179),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    GameTestKnowledge.gameCard[x].image),
-                                fit: BoxFit.cover),
-                          ),
-                          width: 210.0,
-                          height: 262.0,
-                        ),
-                      ],
-                    )),
-              )),
+      cardList.add(Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+              GameTestKnowledge.gameCard[x].image,
+            ),
+            fit: BoxFit.fitWidth,
+          ),
+          shape: BoxShape.rectangle,
         ),
-      );
+      ));
     }
     return cardList;
   }
@@ -260,10 +229,10 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
   }
 
   bool testInputAccordingToCard(String inputFirstname, String answerFirstname) {
-    if(inputFirstname == answerFirstname){
-      return true ;
-    }else{
-      return false ;
+    if (inputFirstname == answerFirstname) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
