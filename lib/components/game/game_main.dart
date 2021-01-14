@@ -56,6 +56,22 @@ class _GameScreenState extends State<GameScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Game"),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ContactFromList(ContactFromList.listDoc)),
+            );
+          },
+          child: IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: Icon(
+              Icons.arrow_back,
+            ),
+          ),
+        ),
       ),
       body: Column(
         // crossAxisAlignment: CrossAxisAlignment.center,
