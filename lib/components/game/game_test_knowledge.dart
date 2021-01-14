@@ -46,8 +46,11 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
   //Gamecard wrong to send to the game resume
   List<GameCard> wrongContactCard = new List<GameCard>();
 
+  FocusNode myFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
+    myFocusNode.requestFocus();
     return Scaffold(
       appBar: AppBar(
         title: Text("Test mode"),
@@ -73,7 +76,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
               absorbing: true,
               child: TCard(
                 cards: _generateCards(),
-                size: Size(240, 300),
+                size: Size(260, 320),
                 controller: _controller,
                 onForward: (index, info) {
                   // _index = index;
@@ -94,15 +97,16 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
             //     progressColor: Colors.cyan,
             //   ),
             // ),
-            SizedBox(height: 10.0),
+            // SizedBox(height: 10.0),
             Row(
               children: [
                 Expanded(
                   child: Container(
                     width: 300,
-                    margin: const EdgeInsets.only(right: 0, left: 30),
+                    margin: const EdgeInsets.only(right: 0, left: 20),
                     child: TextFormField(
                       controller: inputController,
+                      // focusNode: myFocusNode,
                       obscureText: false,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -112,7 +116,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: 30.0),
+                  padding: EdgeInsets.only(right: 20.0),
                   child: Container(
                     child: IconButton(
                         icon: Icon(Icons.done, size: 40.0, color: Colors.green),
