@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
+import 'contact_list/contactsFromList.dart';
 import 'game/game_test_knowledge.dart';
 import 'game/game_test_knowledge_resume.dart';
 
@@ -22,8 +23,8 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   _GameScreenState(data);
 
-  String numberChoose;
-  String gameMode;
+  String numberChoose = GameScreen.gameCard.length.toString();
+  String gameMode = "";
 
   ListService _listService = ListService();
 
@@ -32,7 +33,7 @@ class _GameScreenState extends State<GameScreen> {
   bool textGameModeVisible = false;
 
   //Toggled game mode choosen
-  List<bool> toggledButtonGameMode = [false, true];
+  List<bool> toggledButtonGameMode = [false, false];
 
   List<GameCard> gameCardMode;
 
@@ -130,7 +131,7 @@ class _GameScreenState extends State<GameScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Total : '),
+              Text('Total contact : '),
               (toggledButtonGameMode[0])
                   ? Text(GameScreen.gameCard.length.toString())
                   : _buildWrongCard(),
@@ -157,79 +158,121 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ],
                 )
-              : Text(''),
-          FlatButton(
+              : Container(),
+          SizedBox(height: 20.0),
+          FlatButton.icon(
+            icon: Icon(Icons.preview),
+            label: Text('Last game with ' +
+                ContactFromList.listDoc.data()['listName'] +
+                " list"),
             color: Colors.lightBlue,
-            onPressed: (){
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => GameTestKnowledgeResume()),
               );
             },
-            child: Text("List review"),
           ),
-          (GameScreen.gameCard.length==0)
-          ? Container()
+          (GameScreen.gameCard.length == 0 || gameMode == "")
+              ? Container()
               : Expanded(
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 30.0),
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 200,
-                        child: FlatButton(
-                          color: Colors.lightBlue,
-                          onPressed: (){
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LearningMode(
-                                      gameCardMode, numberChoose)),
-                            );
-                          },
-                          child: Text("Learning"),
+                  child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 30.0),
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: FlatButton(
+                                color: Colors.lightBlue,
+                                onPressed: () {
+                                  if (gameCardMode.length != 0) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LearningMode(
+                                              gameCardMode, numberChoose)),
+                                    );
+                                  } else {
+                                    showAlertDialog(context);
+                                  }
+                                },
+                                child: Text("Learning"),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: FlatButton(
+                                onPressed: () {
+                                  if (numberChoose == null) {
+                                    setState(() {
+                                      numberChoose =
+                                          gameCardMode.length.toString();
+                                    });
+                                  }
+                                  _listService.resetWrongContactFromTheList(
+                                      GameScreen.listDoc, numberChoose);
+                                  gameCardMode.shuffle();
+                                  // print("number selected " + numberChoose);
+                                  if (gameCardMode.length != 0) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              GameTestKnowledge(
+                                                  gameCardMode,
+                                                  numberChoose,
+                                                  GameScreen.listDoc)),
+                                    );
+                                  } else {
+                                    showAlertDialog(context);
+                                  }
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("Test my knowledge"),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        width: 200,
-                        child: FlatButton(
-                          onPressed: (){
-                            if(numberChoose==null){
-                              setState(() {
-                                numberChoose=gameCardMode.length.toString();
-                              });
-                            }
-                            _listService.resetWrongContactFromTheList(GameScreen.listDoc, numberChoose);
-                            gameCardMode.shuffle();
-                            // print("number selected " + numberChoose);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameTestKnowledge(
-                                      gameCardMode,
-                                      numberChoose,
-                                      GameScreen.listDoc)),
-                            );
-                          },
-                          color: Colors.lightBlue,
-                          child: Text("Test my knowledge"),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop(false);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Oops..."),
+      content: Text("You have no wrong contacts for this list, play again !"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

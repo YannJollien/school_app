@@ -9,6 +9,8 @@ import 'package:schoolapp/services/listService.dart';
 import '../lists.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import 'lastGameWrongAnswers.dart';
+
 class GameTestKnowledgeResume extends StatefulWidget {
   GameTestKnowledgeResume();
 
@@ -26,8 +28,9 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(ContactFromList.listDoc.data()['listName'] + " game review"),
+        title: Text("Game with " +
+            ContactFromList.listDoc.data()['listName'] +
+            " list"),
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -40,11 +43,13 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
           ),
         ),
       ),
-      backgroundColor: Colors.cyan[100],
-      body: Column(
-        children: <Widget>[
-          _getWrongAnswers(),
-        ],
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            _getWrongAnswers(),
+          ],
+        ),
       ),
     );
   }
@@ -53,77 +58,50 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
 
   Widget _getWrongAnswers() {
     return StreamBuilder(
-      stream:
-          _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
+      stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot> streamBuilderSnapshot) {
         numberChooseLastGame =
             double.parse(streamBuilderSnapshot.data['numberChoose']);
         return FutureBuilder(
-            future:
-                _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
+            future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> wrongContactIds) {
               List<dynamic> contactsId;
               if (wrongContactIds.connectionState == ConnectionState.done) {
                 contactsId = wrongContactIds.data['wrongAnswers'];
                 return FutureBuilder(
-                    future:
-                        _listService.getWrongContactFromTheList(contactsId),
+                    future: _listService.getWrongContactFromTheList(contactsId),
                     builder: (BuildContext context,
                         AsyncSnapshot<List<GameCard>> wrongContactCards) {
                       wrongContactCard = wrongContactCards.data;
-
                       return (wrongContactCards.connectionState ==
                               ConnectionState.done)
                           ? Column(
-                            children: [
-                              SizedBox(height: 10),
-                              _getTheScoreGame(
-                                  wrongContactCard.length.toDouble()),
-                              SizedBox(height: 10),
-                              _pieChart(
-                                  wrongContactCard.length.toDouble()),
-                              ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: wrongContactCard.length,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                      child: ListTile(
-                                        //Possibilité de cliquer sur le faux pour direct avoir des infos / écrire une note
-                                        onTap: () {},
-                                        title: Text(
-                                          wrongContactCard[index]
-                                                  .firstname +
-                                              " " +
-                                              wrongContactCard[index]
-                                                  .lastname,
-                                        ),
-                                        leading: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                            wrongContactCard[index]
-                                                .image,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ],
-                          )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width /
-                                      1.8,
-                                  height:
-                                      MediaQuery.of(context).size.width /
-                                          1.8,
-                                  child: CircularProgressIndicator(),
+                                SizedBox(height: 10),
+                                _getTheScoreGame(
+                                    wrongContactCard.length.toDouble()),
+                                SizedBox(height: 10),
+                                _pieChart(wrongContactCard.length.toDouble()),
+                                SizedBox(height: 20),
+                                (numberChooseLastGame == 0)
+                                ? Container()
+                                : FlatButton(
+                                  color: Colors.redAccent,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              LastGameWrongAnswers(wrongContactCard)),
+                                    );
+                                  },
+                                  child: Text("Show all wrong"),
                                 ),
                               ],
-                            );
+                            )
+                          : Container();
                     });
               }
               return Container();
@@ -197,3 +175,4 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     return PieChart(dataMap: dataMap);
   }
 }
+
