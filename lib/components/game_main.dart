@@ -22,7 +22,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   _GameScreenState(data);
 
-  String numberChose;
+  String numberChoose;
   String gameMode;
 
   ListService _listService = ListService();
@@ -66,18 +66,20 @@ class _GameScreenState extends State<GameScreen> {
       setState(() {
         enableGame = true;
         _onPressedTestMode = (){
-          if(numberChose==null){
+          // print("NUMBER CHOOSEN " + numberChoose)
+          if(numberChoose==null){
             setState(() {
-              numberChose=gameCardMode.length.toString();
+              numberChoose=gameCardMode.length.toString();
             });
           }
+          // _listService.resetWrongContactFromTheList(GameScreen.listDoc, numberChoose);
           gameCardMode.shuffle();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => GameTestKnowledge(
                     gameCardMode,
-                    numberChose,
+                    numberChoose,
                     GameScreen.listDoc)),
           );
         };
@@ -86,7 +88,7 @@ class _GameScreenState extends State<GameScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => LearningMode(
-                    gameCardMode, numberChose)),
+                    gameCardMode, numberChoose)),
           );
         };
       });
@@ -192,10 +194,10 @@ class _GameScreenState extends State<GameScreen> {
                       }).toList(),
                       onChanged: (String newValue) {
                         setState(() {
-                          numberChose = newValue;
+                          numberChoose = newValue;
                         });
                       },
-                      value: numberChose,
+                      value: numberChoose,
                     ),
                   ],
                 )
@@ -233,7 +235,24 @@ class _GameScreenState extends State<GameScreen> {
                       SizedBox(
                         width: 200,
                         child: FlatButton(
-                          onPressed: _onPressedTestMode,
+                          onPressed: (){
+                            if(numberChoose==null){
+                              setState(() {
+                                numberChoose=gameCardMode.length.toString();
+                              });
+                            }
+                            _listService.resetWrongContactFromTheList(GameScreen.listDoc, numberChoose);
+                            gameCardMode.shuffle();
+                            // print("number selected " + numberChoose);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GameTestKnowledge(
+                                      gameCardMode,
+                                      numberChoose,
+                                      GameScreen.listDoc)),
+                            );
+                          },
                           color: Colors.lightBlue,
                           child: Text("Test my knowledge"),
                         ),

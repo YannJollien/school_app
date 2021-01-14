@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/components/game/game_card.dart';
+import 'package:schoolapp/components/game/game_test_knowledge.dart';
+import 'package:schoolapp/components/game_main.dart';
 
 class DatabaseService {
   final String uid;
@@ -222,7 +224,7 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({'listName': listName, 'score': '0', 'wrongAnswers': []});
+        .set({'listName': listName, 'score': '0', 'wrongAnswers': [], 'numberChoose': '0'});
   }
 
   //Delete lists for a user
@@ -285,7 +287,15 @@ class DatabaseService {
 
   Future<DocumentSnapshot> getContactIdWrongOfTheListData(
       String listDoc) async {
+    // collectionUser.doc(uid).collection('lists').doc(listDoc).update({'numberChoose': GameTestKnowledge.numberChoose});
     return await collectionUser.doc(uid).collection('lists').doc(listDoc).get();
+  }
+
+  Future resetWrongContactFromTheListData(
+      String listDoc, String numberChoose) async {
+    collectionUser.doc(uid).collection('lists').doc(listDoc).update({'numberChoose': numberChoose});
+    await collectionUser.doc(uid).collection('lists').doc(listDoc).update({'wrongAnswers': FieldValue.delete()});
+    await collectionUser.doc(uid).collection('lists').doc(listDoc).update({'wrongAnswers': []});
   }
 
   Future<List<GameCard>> getWrongContactFromTheListData(
