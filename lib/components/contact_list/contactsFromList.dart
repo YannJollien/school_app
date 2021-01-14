@@ -10,7 +10,7 @@ import 'package:schoolapp/components/lists.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_add/contactNew.dart';
 import '../contact_add/addContactFromAll.dart';
-import '../game_main.dart';
+import '../game/game_main.dart';
 
 class ContactFromList extends StatefulWidget {
   static DocumentSnapshot listDoc;

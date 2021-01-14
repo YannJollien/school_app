@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/components/game/game_test_knowledge.dart';
-import 'package:schoolapp/components/game_main.dart';
+import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/game/game_main.dart';
 
 class DatabaseService {
   final String uid;

@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'package:schoolapp/components/learning/learning_mode.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
-import '../game_main.dart';
-import 'game_test_knowledge_resume.dart';
+import 'game_main.dart';
+import 'resume/game_test_knowledge_resume.dart';
 
 class GameTestKnowledge extends StatefulWidget {
   static String numberChoose;
@@ -52,6 +51,17 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Test mode"),
+        leading: GestureDetector(
+          onTap: () {
+            showAlertDialog(context);
+          },
+          child: IconTheme(
+            data: Theme.of(context).iconTheme,
+            child: Icon(
+              Icons.arrow_back,
+            ),
+          ),
+        ),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -162,6 +172,54 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
           ],
         ),
       ),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget quitButton = FlatButton(
+      color: Colors.red,
+      child: Text("Quit"),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ContactFromList(ContactFromList.listDoc)),
+        );
+      },
+    );
+
+    // set up the button
+    Widget stayButton = FlatButton(
+      color: Colors.cyan,
+      child: Text("Stay", style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        Navigator.of(context).pop(false);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.warning),
+          Text(' WARNING'),
+        ],
+      ),
+      content: Text("Know that by leaving, you will be redirected to your list and the game will be reset."),
+      actions: [
+        stayButton,
+        quitButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
