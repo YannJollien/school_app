@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/game/game_main.dart';
 import 'package:schoolapp/services/listService.dart';
 import '../../lists.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import '../game_main.dart';
 import 'lastGameWrongAnswers.dart';
 
 class GameTestKnowledgeResume extends StatefulWidget {
@@ -33,9 +33,11 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
             " list"),
         leading: GestureDetector(
           onTap: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Lists()),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ContactFromList(ContactFromList.listDoc)),
             );
           },
           child: Icon(

@@ -27,12 +27,6 @@ class ListService {
     await DatabaseService(uid: user.uid).addListsData(docId, listName);
   }
 
-  //Update score
-  Future updateScore(String doc, String newScore) async{
-    User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).updateScoreData(doc, newScore);
-  }
-
   //Update a list
   Future updateLists(String doc, String listName) async{
     User user = await _auth.currentUser;

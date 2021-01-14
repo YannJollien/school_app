@@ -6,6 +6,7 @@ import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:schoolapp/services/fireStorageService.dart';
 
 class ContactDetails extends StatefulWidget {
   static DocumentSnapshot contactDoc;
@@ -585,7 +586,7 @@ class ContactDetailsState extends State<ContactDetails> {
   Future<Widget> getImageFromFirestore(
       BuildContext context, String imageName, String docId) async {
     Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
       image = Image.network(value.toString(), fit: BoxFit.scaleDown);
     });
     return image;
@@ -597,17 +598,5 @@ class ContactDetailsState extends State<ContactDetails> {
   Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     up = ref.putFile(imageFile);
-  }
-}
-
-//Helper class to get the image
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-
-  static Future<dynamic> loadImage(
-      BuildContext context, String email, String docId) async {
-    return await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL();
   }
 }

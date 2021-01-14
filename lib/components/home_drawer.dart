@@ -6,7 +6,7 @@ import 'package:schoolapp/components/login.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:schoolapp/services/fireStorageService.dart';
 import 'contact_all/contacts.dart';
 
 
@@ -29,7 +29,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   //Get the image from storage
   Future<Widget> getImage(BuildContext context, String imageName) async {
     Image image;
-    await FireStorageService.loadImage(context, imageName).then((value) {
+    await FireStorageService.loadConnectedUserImage(context, imageName).then((value) {
       image = Image.network(
         value.toString(),
         fit: BoxFit.scaleDown
@@ -140,14 +140,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       },
                     ),
                     ListTile(
-                      leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.info)),
-                      title: Text(
-                        "About us",
-                          style: Theme.of(context).textTheme.headline1
-                      ),
-                      onTap: null,
-                    ),
-                    ListTile(
                       leading: IconTheme(data: Theme.of(context).iconTheme,child: Icon(Icons.settings)),
                       title: Text(
                         "Settings",
@@ -185,13 +177,4 @@ class _HomeDrawerState extends State<HomeDrawer> {
         )
     );
   }
-}
-
-//Helper class to get the image
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-  static Future<dynamic> loadImage(BuildContext context, String email) async {
-    return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
-  }
-
 }

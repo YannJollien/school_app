@@ -150,7 +150,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
 
                           //If the game is finished
                           if (_controller.index ==
-                              int.parse(GameTestKnowledge.numberChoose) - 1) {
+                              GameTestKnowledge.gameCard.length - 1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
