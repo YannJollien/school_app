@@ -106,7 +106,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                       obscureText: false,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Answer',
+                        labelText: 'Who is this person ? (fullname)',
                       ),
                     ),
                   ),
@@ -136,7 +136,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                           if (testInputAccordingToCard(
                               inputController.text,
                               GameTestKnowledge
-                                  .gameCard[_controller.index].firstname)) {
+                                  .gameCard[_controller.index].firstname, GameTestKnowledge
+                              .gameCard[_controller.index].lastname)) {
                             _listService.removeIdToWrongAnswers(
                                 GameTestKnowledge.listDoc,
                                 GameTestKnowledge
@@ -286,8 +287,11 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     );
   }
 
-  bool testInputAccordingToCard(String inputFirstname, String answerFirstname) {
-    if (inputFirstname == answerFirstname) {
+  bool testInputAccordingToCard(String inputFirstname, String answerFirstname, String answerLastname) {
+    String firstnameLastname = answerFirstname.toLowerCase() + " " + answerLastname.toLowerCase();
+    String lastnameFirstname  = answerLastname.toLowerCase() + " " + answerFirstname.toLowerCase();
+
+    if (inputFirstname.toLowerCase() == firstnameLastname || inputFirstname.toLowerCase() == lastnameFirstname) {
       return true;
     } else {
       return false;
