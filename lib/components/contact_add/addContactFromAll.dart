@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/components/learning/learning_mode.dart';
+import 'package:schoolapp/services/fireStorageService.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 class ContactsList extends StatefulWidget {
@@ -164,21 +164,9 @@ class ContactsListState extends State<ContactsList> {
   Future<Widget> getImage(
       BuildContext context, String imageName, String docId) async {
     Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
       image = Image.network(value.toString(), fit: BoxFit.scaleDown);
     });
     return image;
-  }
-}
-
-//Helper class to get the image
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-
-  static Future<dynamic> loadImage(
-      BuildContext context, String email, String docId) async {
-    return await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL();
   }
 }

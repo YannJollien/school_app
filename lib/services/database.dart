@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/components/game/game_card.dart';
-import 'package:schoolapp/components/game/game_test_knowledge.dart';
-import 'file:///C:/Users/aurel/flutterapps/school_app/lib/components/game/game_main.dart';
+import 'package:schoolapp/services/fireStorageService.dart';
 
 class DatabaseService {
   final String uid;
@@ -117,7 +114,7 @@ class DatabaseService {
   //Get the image from storage
   Future<String> getImageFromFirestore(String docId) async {
     String t;
-    await FireStorageService.loadImage(firebaseAuth.currentUser.email, docId)
+    await FireStorageService.loadImageForDatabase(firebaseAuth.currentUser.email, docId)
         .then((value) {
       t = value.toString();
     });
@@ -188,15 +185,6 @@ class DatabaseService {
         .update({'listName': listName});
   }
 
-  //Update the score of the game for each list
-  Future updateScoreData(String doc, String newScore) async {
-    return await collectionUser
-        .doc(uid)
-        .collection('lists')
-        .doc(doc)
-        .update({'score': newScore});
-  }
-
   //Get document from the collection lists
   Future<int> getDocumentData(String newListName) async {
     final QuerySnapshot result = await collectionUser
@@ -224,7 +212,7 @@ class DatabaseService {
         .doc(uid)
         .collection('lists')
         .doc(docID)
-        .set({'listName': listName, 'score': '0', 'wrongAnswers': [], 'numberChoose': '0'});
+        .set({'listName': listName, 'wrongAnswers': [], 'numberChoose': '0'});
   }
 
   //Delete lists for a user
@@ -355,21 +343,5 @@ class DatabaseService {
     }
 
     return listNames;
-  }
-}
-
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-
-  static Future<dynamic> loadImage(String email, String docId) async {
-    // print('LOAD IMAGE ' +
-    //     await FirebaseStorage.instance
-    //         .ref("contacts/$email/$docId")
-    //         .getDownloadURL()
-    //         .toString());
-
-    return await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL();
   }
 }

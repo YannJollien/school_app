@@ -11,6 +11,7 @@ import 'package:schoolapp/services/contactService.dart';
 import '../contact_add/contactNew.dart';
 import '../contact_add/addContactFromAll.dart';
 import '../game/game_main.dart';
+import 'package:schoolapp/services/fireStorageService.dart';
 
 class ContactFromList extends StatefulWidget {
   static DocumentSnapshot listDoc;
@@ -371,21 +372,9 @@ class ContactFromListState extends State<ContactFromList> {
   Future<Widget> getImage(
       BuildContext context, String imageName, String docId) async {
     Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
       image = Image.network(value.toString(), fit: BoxFit.scaleDown);
     });
     return image;
-  }
-}
-
-//Helper class to get the image
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-
-  static Future<dynamic> loadImage(
-      BuildContext context, String email, String docId) async {
-    return await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL();
   }
 }

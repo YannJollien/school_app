@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_details/contactDetails.dart';
 import '../home_drawer.dart';
+import 'package:schoolapp/services/fireStorageService.dart';
 
 class Contacts extends StatefulWidget {
   @override
@@ -280,21 +281,9 @@ class ContactsState extends State<Contacts> {
   Future<Widget> getImage(
       BuildContext context, String imageName, String docId) async {
     Image image;
-    await FireStorageService.loadImage(context, imageName, docId).then((value) {
+    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
       image = Image.network(value.toString(), fit: BoxFit.scaleDown);
     });
     return image;
-  }
-}
-
-//Helper class to get the image
-class FireStorageService extends ChangeNotifier {
-  FireStorageService();
-
-  static Future<dynamic> loadImage(
-      BuildContext context, String email, String docId) async {
-    return await FirebaseStorage.instance
-        .ref("contacts/$email/$docId")
-        .getDownloadURL();
   }
 }

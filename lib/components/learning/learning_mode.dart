@@ -73,17 +73,16 @@ class LearningModeState extends State<LearningMode> {
       LearningMode.numberChoose=LearningMode.gameCard.length.toString();
     }
     int loopIteration = int.parse(LearningMode.numberChoose);
-    print("LENGTHS");
-    print(int.parse(LearningMode.numberChoose));
-    print(GameScreen.gameCard.length);
+
     if (int.parse(LearningMode.numberChoose) > LearningMode.gameCard.length) {
-      loopIteration = GameScreen.gameCard.length;
+      loopIteration = LearningMode.gameCard.length;
     }
 
     //Make learning random
     LearningMode.gameCard.shuffle();
     double top = 10.0 ;
 
+    print("length " + LearningMode.gameCard.length.toString());
     for (int x = 0; x < loopIteration; x++) {
       cardList.add(
         Positioned(
