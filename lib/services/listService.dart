@@ -45,31 +45,37 @@ class ListService {
     await DatabaseService(uid: user.uid).deleteSubListsData(doc);
   }
 
+  //Game => contact wrong => add it to list array of wrong contact
   Future addIdToWrongAnswers(String docList, String wrongContactId) async{
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).addIdToWrongAnswersData(docList, wrongContactId);
   }
 
+  //Remove wrong contact of the list array of wrong contact (if right)
   Future removeIdToWrongAnswers(String docList, String wrongContactId) async{
     User user = await _auth.currentUser;
     await DatabaseService(uid: user.uid).removeIdToWrongAnswersData(docList, wrongContactId);
   }
 
+  //Get contact wrong id
   Future<DocumentSnapshot> getContactIdWrongOfTheList(String listDoc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactIdWrongOfTheListData(listDoc);
   }
 
+  //Streamer of contact wrong of the list
   Stream<DocumentSnapshot> getContactIdWrongOfTheListStream(String listDoc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactIdWrongOfTheListStreamData(listDoc);
   }
 
+  //Start game => reset wrong contact
   Future resetWrongContactFromTheList(String listDoc, String numberChoose) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).resetWrongContactFromTheListData(listDoc, numberChoose);
   }
 
+  //Get array list of wrong contact add return gamecard
   Future<List<GameCard>>getWrongContactFromTheList(List<dynamic> contactsId) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getWrongContactFromTheListData(contactsId);
