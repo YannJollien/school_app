@@ -1,3 +1,4 @@
+/// MODEL FOR THE GAME
 class GameCard {
   String id;
   String image;

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_details/contactDetails.dart';
 import '../home_drawer.dart';
-import 'package:schoolapp/services/fireStorageService.dart';
 
 class Contacts extends StatefulWidget {
   @override
@@ -14,15 +13,22 @@ class Contacts extends StatefulWidget {
   }
 }
 
+/// CLASS TO DISPLAY ALL THE CONTACT OF THE APPLICATION
 class ContactsState extends State<Contacts> {
+  //Connection with firestore
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  //Page title
   Widget _appBarTitle =
       new Text('All contacts', style: TextStyle(color: Colors.black, fontSize: 22));
+
+  //Search bar management
   bool searchActive = false;
   String search = "";
-  FocusNode myFocusNode = FocusNode();
+  FocusNode focusNodeSearchBar = FocusNode();
+
+  //Image management
   Reference ref;
 
   @override
@@ -42,7 +48,7 @@ class ContactsState extends State<Contacts> {
                     searchActive = !searchActive;
                     if (searchActive) {
                       this._appBarTitle = new TextField(
-                        focusNode: myFocusNode,
+                        focusNode: focusNodeSearchBar,
                         onChanged: (text) {
                           setState(() {
                             search = text;
@@ -58,7 +64,7 @@ class ContactsState extends State<Contacts> {
                       this._appBarTitle = new Text('All contacts', style: Theme.of(context).textTheme.headline1);
                     }
                   });
-                  myFocusNode.requestFocus();
+                  focusNodeSearchBar.requestFocus();
                 },
               ),
             ),
@@ -66,6 +72,7 @@ class ContactsState extends State<Contacts> {
         ],
       ),
       drawer: HomeDrawer(),
+      //Build list of contact
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
@@ -92,8 +99,6 @@ class ContactsState extends State<Contacts> {
                                       title: const Text("Confirm"),
                                       content: RichText(
                                         text: new TextSpan(
-                                          // Note: Styles for TextSpans must be explicitly defined.
-                                          // Child text spans will inherit styles from parent
                                           style: new TextStyle(
                                             fontSize: 16.0,
                                             color: Colors.black,
@@ -153,8 +158,8 @@ class ContactsState extends State<Contacts> {
     );
   }
 
+  //Card builder
   Card buildItem(DocumentSnapshot contactDoc) {
-
     DocumentSnapshot emptyDocumentSnapshot ;
     return Card(
       child: InkWell(
@@ -223,6 +228,7 @@ class ContactsState extends State<Contacts> {
     ref.delete();
   }
 
+  //Alert dialog on delete
   showAlertDialog(BuildContext context, DocumentSnapshot contactDoc) {
     // set up the buttons
     Widget cancelButton = FlatButton(

@@ -22,37 +22,28 @@ class ContactNew extends StatefulWidget {
   State<StatefulWidget> createState() => new ContactNewState(listDoc);
 }
 
+/// CLASS TO ADD A NEW CONTACT TO YOUR LIST
+/// 1. IMPORT INFORMATION FROM CONTACT APPLICATION OF THE SMARTPHONE ITSELF
+/// 2. FULLFILLED IT MANUALLY
 class ContactNewState extends State<ContactNew> {
+
+  //Constructor
+  ContactNewState(data);
+
+  //Connection with firestore
   ContactService _contactService = ContactService();
   final _formKey = GlobalKey<FormState>();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  ContactNewState(data);
-
+  //Image management
   File imageFile;
   Reference ref;
-  String downloadUrl;
   bool imageAdded = true;
   UploadTask up;
 
   //Contacts
   Iterable<Contact> _contacts;
   Contact _actualContact;
-
-  //Get image
-  Future getImage() async {
-    File image;
-    image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      imageFile = image;
-    });
-  }
-
-  //Upload image
-  Future uploadImage(String email, String docId) async {
-    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
-    up = ref.putFile(imageFile);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +97,23 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
-  var firstNameController = TextEditingController();
+  //Get image from gallery
+  Future getImage() async {
+    File image;
+    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      imageFile = image;
+    });
+  }
 
+  //Upload image to firebase storage in a folder according to user connected
+  Future uploadImage(String email, String docId) async {
+    ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
+    up = ref.putFile(imageFile);
+  }
+
+  //Build firstname field
+  var firstNameController = TextEditingController();
   Widget _buildFirstName() {
     return TextFormField(
       controller: firstNameController,
@@ -118,8 +124,8 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
+  //Build lastname field
   var lastNameController = TextEditingController();
-
   Widget _buildLastName() {
     return TextFormField(
       controller: lastNameController,
@@ -130,8 +136,8 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
+  //Build institution field
   var institutionController = TextEditingController();
-
   Widget _buildInstitution() {
     return TextFormField(
       controller: institutionController,
@@ -141,6 +147,8 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
+  //Build import button to access contact of smartphone
+  //And save button
   Widget _buildImportButton(BuildContext context) {
     return Center(
       child: Row(
@@ -151,7 +159,7 @@ class ContactNewState extends State<ContactNew> {
             iconSize: 50,
             color: Colors.cyan,
             onPressed: () {
-              _showContactList(context);
+              _showSmartphoneContactList(context);
             },
           ),
           IconButton(
@@ -164,12 +172,15 @@ class ContactNewState extends State<ContactNew> {
                   imageAdded = false;
                 });
               }
+              //If all required field are fullfilled
               if (_formKey.currentState.validate() && imageFile != null) {
+                //Add contact to db
                 var temp = _contactService.addContact(
                     widget.listDoc,
                     firstNameController.text,
                     lastNameController.text,
                     institutionController.text);
+                //Wait the contact to be added and push image with contact id just created
                 temp.then((value) {
                   uploadImage(firebaseAuth.currentUser.email, value.id);
                   up.whenComplete(() => _contactService.addImageLink(value.id));
@@ -188,7 +199,7 @@ class ContactNewState extends State<ContactNew> {
     );
   }
 
-  //Icon according to the textfield
+  //Icon according to the textfield decoration
   InputDecoration _buildInputDecoration(
       String hint, IconData icons, TextEditingController controller) {
     return InputDecoration(
@@ -211,7 +222,7 @@ class ContactNewState extends State<ContactNew> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.cyan)));
   }
 
-  // Getting list of contacts from AGENDA
+  // Refresh list of smartphone contact
   refreshContacts() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
@@ -255,8 +266,8 @@ class ContactNewState extends State<ContactNew> {
     }
   }
 
-  // Showing contact list.
-  Future _showContactList(BuildContext context) async {
+  //Showing contact list.
+  Future _showSmartphoneContactList(BuildContext context) async {
     List<Contact> favoriteElements = [];
     final InputDecoration searchDecoration = const InputDecoration();
 
@@ -265,6 +276,7 @@ class ContactNewState extends State<ContactNew> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
+          //Show the smartphone contact list
           return SelectionDialogContacts(
             _contacts.toList(),
             favoriteElements,
@@ -279,10 +291,12 @@ class ContactNewState extends State<ContactNew> {
             _actualContact = e;
           });
 
+          //Reset the field
           lastNameController.text = '';
           firstNameController.text = '';
           institutionController.text = '';
 
+          //Fullfield automatically the field (if the contact selected have the field in question)
           if (_actualContact.familyName != null) {
             lastNameController.text = _actualContact.familyName;
           }

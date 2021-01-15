@@ -14,7 +14,9 @@ class LastGameWrongAnswers extends StatefulWidget {
       new LastGameWrongAnswersState(wrongContactCard);
 }
 
+/// CLASS TO DISPLAY ALL WRONG CONTACT OF THE LAST GAME
 class LastGameWrongAnswersState extends State<LastGameWrongAnswers> {
+  //Constructor
   LastGameWrongAnswersState(data);
 
   @override

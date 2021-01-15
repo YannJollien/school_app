@@ -17,13 +17,17 @@ class GameTestKnowledgeResume extends StatefulWidget {
       _GameTestKnowledgeResumeState();
 }
 
+/// CLASS TO DISPLAY LAST GAME RESUME (SCORE + PIECHART)
 class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
+
+  //Database management
   ListService _listService = ListService();
 
+  //Card of wrong contact
   List<GameCard> wrongContactCard = new List<GameCard>();
 
+  //Number choose to play
   double numberChooseLastGame;
-
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +61,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     );
   }
 
+  //Get all wrong answers
   Widget _getWrongAnswers() {
     return StreamBuilder(
       stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
@@ -112,6 +117,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     );
   }
 
+  //Get score game
   Widget _getTheScoreGame(double wrongContactLength) {
     double rightAnswers;
     int percentageRight;
@@ -169,6 +175,7 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     }
   }
 
+  //Pie chart
   Widget _pieChart(double wrongContactLength) {
     Map<String, double> dataMap = {
       "Wrong": wrongContactLength,

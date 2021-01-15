@@ -9,6 +9,7 @@ class VerifyScreen extends StatefulWidget {
   _VerifyState createState() => _VerifyState();
 }
 
+/// CLASS TO VERIFY USER EMAIL ON REGISTRATION
 class _VerifyState extends State<VerifyScreen> {
 
   final auth = FirebaseAuth.instance;

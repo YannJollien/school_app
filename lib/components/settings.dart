@@ -11,7 +11,9 @@ class Settings extends StatefulWidget {
   }
 }
 
+/// SETTINGS PAGE (DELETE ACCOUNT)
 class SettingsState extends State<Settings> {
+  //Database management
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   AuthService _auth = AuthService();
 
@@ -52,6 +54,7 @@ class SettingsState extends State<Settings> {
         ));
   }
 
+  //Alert dialog on account delete
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(

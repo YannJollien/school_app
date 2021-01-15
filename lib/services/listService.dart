@@ -4,6 +4,7 @@ import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/services/database.dart';
 import 'database.dart';
 
+/// CLASS FOR LIST IN FIRESTORE DATABASE
 class ListService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;

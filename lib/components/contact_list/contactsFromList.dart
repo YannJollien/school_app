@@ -24,21 +24,27 @@ class ContactFromList extends StatefulWidget {
   State<StatefulWidget> createState() => new ContactFromListState(listDoc);
 }
 
+/// CLASS TO SHOW/ADD/DELETE CONTACT FROM A SPECIFIED LIST
 class ContactFromListState extends State<ContactFromList> {
-  String id;
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  //Game card creator to sent to the game
   List<GameCard> gameCard = new List<GameCard>();
 
+  //Constructor
   ContactFromListState(data);
 
+  //Search management
   bool searchActive = false;
   String search = "";
+  FocusNode focusNodeSearchBar = FocusNode();
+  String id;
+
+  //Page title
   Widget _appBarTitle = new Text(
       ContactFromList.listDoc.data()["listName"] + " list",
       style: TextStyle(color: Colors.black, fontSize: 22));
-  FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +90,7 @@ class ContactFromListState extends State<ContactFromList> {
                     searchActive = !searchActive;
                     if (searchActive) {
                       this._appBarTitle = new TextField(
-                        focusNode: myFocusNode,
+                        focusNode: focusNodeSearchBar,
                         onChanged: (text) {
                           setState(() {
                             search = text;
@@ -102,7 +108,7 @@ class ContactFromListState extends State<ContactFromList> {
                           style: Theme.of(context).textTheme.headline1);
                     }
                   });
-                  myFocusNode.requestFocus();
+                  focusNodeSearchBar.requestFocus();
                 },
               ),
             ),
@@ -258,6 +264,7 @@ class ContactFromListState extends State<ContactFromList> {
     );
   }
 
+  //Alert dialog on delete
   showAlertDialog(BuildContext context, DocumentSnapshot contactDoc) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -300,6 +307,7 @@ class ContactFromListState extends State<ContactFromList> {
     );
   }
 
+  //Card builder
   Card buildItem(DocumentSnapshot contactDoc) {
     return Card(
       child: InkWell(
