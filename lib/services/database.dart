@@ -7,6 +7,7 @@ class DatabaseService {
   final String uid;
 
   DatabaseService({this.uid});
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   //Collection reference user
   final CollectionReference collectionUser =
@@ -37,6 +38,7 @@ class DatabaseService {
     return collectionUser.doc(uid).collection('contacts').doc(doc.id).get();
   }
 
+  //Get contact notes
   Future<String> getContactNotesData(DocumentSnapshot doc) async {
     DocumentSnapshot ds =
         await collectionUser.doc(uid).collection('contacts').doc(doc.id).get();
@@ -109,7 +111,6 @@ class DatabaseService {
     });
   }
 
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   //Get the image from storage
   Future<String> getImageFromFirestore(String docId) async {
@@ -140,6 +141,7 @@ class DatabaseService {
       'notes': '',
       'lists': [docList.id],
       //API call in case of no image is added, this api create an image with the initials of the contact
+          //API : https://eu.ui-avatars.com
       'image': 'https://eu.ui-avatars.com/api/?name=' +
           firstname +
           "+" +
@@ -158,6 +160,7 @@ class DatabaseService {
         .snapshots();
   }
 
+  //Get wrong answers of list
   Future<DocumentSnapshot> getWrongAnswersFromList(
       DocumentSnapshot listDoc) async {
     DocumentSnapshot ds =
@@ -253,6 +256,7 @@ class DatabaseService {
     });
   }
 
+  //Remove wrong contact from list (if right)
   Future removeIdToWrongAnswersData(
       String docList, String wrongContactId) async {
     return await collectionUser
@@ -273,18 +277,22 @@ class DatabaseService {
         .update({'wrongAnswer': FieldValue.delete()});
   }
 
+  //Get contact id of wrong contact array of the list
   Future<DocumentSnapshot> getContactIdWrongOfTheListData(
       String listDoc) async {
     return await collectionUser.doc(uid).collection('lists').doc(listDoc).get();
   }
 
+  //Reset wrong contact and numberchoose (for the review calculation)
   Future resetWrongContactFromTheListData(
       String listDoc, String numberChoose) async {
+    //Reset numberchoose
     collectionUser
         .doc(uid)
         .collection('lists')
         .doc(listDoc)
         .update({'numberChoose': numberChoose});
+    //Delete and rebuild wrongAnswers
     await collectionUser
         .doc(uid)
         .collection('lists')
@@ -297,6 +305,7 @@ class DatabaseService {
         .update({'wrongAnswers': []});
   }
 
+  //Get wrong contact of the list (return gamecard)
   Future<List<GameCard>> getWrongContactFromTheListData(
       List<dynamic> contactsId) async {
     DocumentSnapshot ds;
@@ -314,6 +323,7 @@ class DatabaseService {
     return wrongGameCard;
   }
 
+  //Stream wrong contact array of the list
   Stream<DocumentSnapshot> getContactIdWrongOfTheListStreamData(
       String listDoc) {
     return collectionUser.doc(uid).collection('lists').doc(listDoc).snapshots();

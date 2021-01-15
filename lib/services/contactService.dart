@@ -52,21 +52,25 @@ class ContactService {
         .addContactData(docList, firstname, lastname, institution);
   }
 
+  //Add image url to the contact
   Future addImageLink(String id) async {
     User user = await _auth.currentUser;
     return await DatabaseService(uid: user.uid).addImageLinkData(id);
   }
 
+  //Get contact details
   Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactDetailsData(doc);
   }
 
+  //Get all the contact lists
   Future<DocumentSnapshot> getContactLists(DocumentSnapshot doc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactListsData(doc);
   }
 
+  //Get all the contact lists names
   Future<String> getContactListNames(List<dynamic> listId) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactListNamesData(listId);
@@ -78,12 +82,13 @@ class ContactService {
     return DatabaseService(uid: user.uid).getAllContactsData();
   }
 
-  //Get the lists
+  //Get the contacts list
   Stream<QuerySnapshot> getContactsFromList(DocumentSnapshot listDoc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactsFromListData(listDoc);
   }
 
+  //Get notes of a contact
   Future<String> getContactNotes(DocumentSnapshot doc) {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactNotesData(doc);
