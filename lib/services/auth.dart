@@ -69,6 +69,7 @@ class AuthService {
   Future deleteUser() async {
     User user = await _auth.currentUser;
     user.delete();
+
     await DatabaseService(uid: user.uid).deleteUserData();
   }
 }
