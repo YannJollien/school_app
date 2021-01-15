@@ -215,7 +215,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
           Text(' WARNING'),
         ],
       ),
-      content: Text("Know that by leaving, you will be redirected to your list and the game will be reset."),
+      content: Text("Know that by leaving, the game and the score will be resetting."),
       actions: [
         stayButton,
         quitButton,
