@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolapp/services/auth.dart';
-
 import 'home_drawer.dart';
 import 'login.dart';
 
@@ -49,20 +48,6 @@ class SettingsState extends State<Settings> {
                 ),
               ),
             ),
-            // SizedBox(
-            //   width: double.infinity,
-            //   child: FlatButton(
-            //     onPressed: () async {
-            //       Navigator.of(context).pushNamed("/password");
-            //     },
-            //     child: Align(
-            //       alignment: Alignment.topLeft,
-            //       child: Text(
-            //         "Change password",
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ));
   }
@@ -102,7 +87,9 @@ class SettingsState extends State<Settings> {
           ),
           children: <TextSpan>[
             new TextSpan(text: "Are you sure you want to delete your account "),
-            new TextSpan(text: ' definitively ?', style: new TextStyle(fontWeight: FontWeight.bold)),
+            new TextSpan(
+                text: ' definitively ?',
+                style: new TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -119,5 +106,4 @@ class SettingsState extends State<Settings> {
       },
     );
   }
-
 }

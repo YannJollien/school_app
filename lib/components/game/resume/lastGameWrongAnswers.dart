@@ -38,34 +38,37 @@ class LastGameWrongAnswersState extends State<LastGameWrongAnswers> {
                       Row(
                         children: <Widget>[
                           CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                LastGameWrongAnswers.wrongContactCard[index].image),
+                            backgroundImage: NetworkImage(LastGameWrongAnswers
+                                .wrongContactCard[index].image),
                           ),
                           SizedBox(width: 10),
                           //TEST FOR THE NAME/SURNAME LENGTH
-                          ({LastGameWrongAnswers.wrongContactCard[index].firstname}
-                              .toString()
-                              .length +
-                              {
-                                LastGameWrongAnswers
-                                    .wrongContactCard[index].lastname
-                              }.toString().length >
-                              22)
+                          ({
+                                        LastGameWrongAnswers
+                                            .wrongContactCard[index].firstname
+                                      }.toString().length +
+                                      {
+                                        LastGameWrongAnswers
+                                            .wrongContactCard[index].lastname
+                                      }.toString().length >
+                                  22)
                               ? Text(
-                            '${LastGameWrongAnswers.wrongContactCard[index].firstname}' +
-                                ' ' +
-                                '${LastGameWrongAnswers.wrongContactCard[index].lastname.toString().substring(0, 17 - {
-                                  LastGameWrongAnswers.wrongContactCard[index].firstname
-                                }.toString().length + 1)}' +
-                                '...',
-                            style: TextStyle(fontSize: 24),
-                          )
+                                  '${LastGameWrongAnswers.wrongContactCard[index].firstname}' +
+                                      ' ' +
+                                      '${LastGameWrongAnswers.wrongContactCard[index].lastname.toString().substring(0, 17 - {
+                                            LastGameWrongAnswers
+                                                .wrongContactCard[index]
+                                                .firstname
+                                          }.toString().length + 1)}' +
+                                      '...',
+                                  style: TextStyle(fontSize: 24),
+                                )
                               : Text(
-                            '${LastGameWrongAnswers.wrongContactCard[index].firstname}' +
-                                ' ' +
-                                '${LastGameWrongAnswers.wrongContactCard[index].lastname}',
-                            style: TextStyle(fontSize: 24),
-                          ),
+                                  '${LastGameWrongAnswers.wrongContactCard[index].firstname}' +
+                                      ' ' +
+                                      '${LastGameWrongAnswers.wrongContactCard[index].lastname}',
+                                  style: TextStyle(fontSize: 24),
+                                ),
                         ],
                       ),
                     ],
@@ -73,8 +76,6 @@ class LastGameWrongAnswersState extends State<LastGameWrongAnswers> {
                 ),
               ),
             );
-
-            return new Text(LastGameWrongAnswers.wrongContactCard[index].firstname);
           }),
     );
   }

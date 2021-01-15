@@ -5,7 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:schoolapp/services/contactService.dart';
 import '../contact_list/contactsFromList.dart';
@@ -24,7 +23,6 @@ class ContactNew extends StatefulWidget {
 }
 
 class ContactNewState extends State<ContactNew> {
-  String id;
   ContactService _contactService = ContactService();
   final _formKey = GlobalKey<FormState>();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -54,14 +52,6 @@ class ContactNewState extends State<ContactNew> {
   Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     up = ref.putFile(imageFile);
-  }
-
-  //Get image Url
-  Future downloadImage() async {
-    String downloadAddress = await ref.getDownloadURL();
-    setState(() {
-      downloadUrl = downloadAddress;
-    });
   }
 
   @override
@@ -94,7 +84,9 @@ class ContactNewState extends State<ContactNew> {
                                 "Tap to add profile picture",
                                 style: TextStyle(color: Colors.grey[400]),
                               )
-                            : CircleAvatar(backgroundImage: new FileImage(imageFile), radius: 200.0)),
+                            : CircleAvatar(
+                                backgroundImage: new FileImage(imageFile),
+                                radius: 200.0)),
                   ),
                 ),
                 imageAdded == false
@@ -111,21 +103,6 @@ class ContactNewState extends State<ContactNew> {
           ),
         ),
       ),
-      // floatingActionButton: SpeedDial(
-      //   backgroundColor: Colors.cyan,
-      //   animatedIcon: AnimatedIcons.menu_close,
-      //   children: [
-      //     SpeedDialChild(
-      //       child: Icon(Icons.contact_page_outlined),
-      //       backgroundColor: Colors.blue,
-      //       label: 'Import from contact',
-      //       labelStyle: TextStyle(fontSize: 18.0),
-      //       onTap: () {
-      //         _showContactList(context);
-      //       },
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -145,7 +122,6 @@ class ContactNewState extends State<ContactNew> {
 
   Widget _buildLastName() {
     return TextFormField(
-//      enabled: false,
       controller: lastNameController,
       validator: (value) => value.isEmpty ? "Last name cannot be empty" : null,
       style: TextStyle(color: Colors.grey, fontFamily: 'RadikalLight'),
@@ -198,7 +174,6 @@ class ContactNewState extends State<ContactNew> {
                   uploadImage(firebaseAuth.currentUser.email, value.id);
                   up.whenComplete(() => _contactService.addImageLink(value.id));
                 });
-                // downloadImage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -290,7 +265,6 @@ class ContactNewState extends State<ContactNew> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          print("im in");
           return SelectionDialogContacts(
             _contacts.toList(),
             favoriteElements,
@@ -318,18 +292,6 @@ class ContactNewState extends State<ContactNew> {
           if (_actualContact.company != null) {
             institutionController.text = _actualContact.company;
           }
-
-          // Uint8List avatar = _actualContact.avatar;
-          // File image;
-          // image = await ImagePicker.pickImage(source: ImageSource.gallery);
-          // image = File.fromRawPath(avatar);
-          // setState(() {
-          //   imageFile = image;
-          // });
-          // setState(() {
-          //   imageFile = ImagePicker.pickImage(source: ImageSource.camera) as File;
-          // imageFile = File.fromRawPath(avatar);
-          // });
         }
       });
     }

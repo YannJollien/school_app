@@ -3,8 +3,6 @@ import 'package:schoolapp/components/register.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/shared/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'home.dart';
 import 'lists.dart';
 
 class Login extends StatefulWidget {
@@ -23,13 +21,15 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading ? Loading() : Scaffold(
-      backgroundColor: Colors.grey[300],
-        appBar: AppBar(title: Text("Login")),
-        body: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-                child: Column(children: <Widget>[
+    return isLoading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.grey[300],
+            appBar: AppBar(title: Text("Login")),
+            body: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                    child: Column(children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(20.0),
                     child: TextFormField(
@@ -75,20 +75,25 @@ class _LoginState extends State<Login> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(20.0),
-                    child:  RaisedButton(
+                    child: RaisedButton(
                       color: Colors.lightBlue,
-                      onPressed: () async{
+                      onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           //Show loading
                           setState(() {
                             isLoading = true;
                           });
-                          SharedPreferences preferences = await SharedPreferences.getInstance();
+                          SharedPreferences preferences =
+                              await SharedPreferences.getInstance();
                           preferences.setString("email", emailController.text);
-                          dynamic result = await _auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
-                          if(result == null){
+                          dynamic result =
+                              await _auth.signInWithEmailAndPassword(
+                                  emailController.text,
+                                  passwordController.text);
+                          if (result == null) {
                             setState(() {
-                              error = 'Could not sign in with those credentials';
+                              error =
+                                  'Could not sign in with those credentials';
                               isLoading = false;
                             });
                           } else {
@@ -106,16 +111,16 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 20.0),
                   Padding(
                     padding: EdgeInsets.all(20.0),
-                    child:  FlatButton(
+                    child: FlatButton(
                       color: Colors.white,
-                      onPressed: () async{
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => Register()),
-                            );
-                        },
+                      onPressed: () async {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Register()),
+                        );
+                      },
                       child: Text(
-                          'Not registered yet clik here',
+                        'Not registered yet clik here',
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                         ),
@@ -129,6 +134,4 @@ class _LoginState extends State<Login> {
                   ),
                 ]))));
   }
-
-
 }

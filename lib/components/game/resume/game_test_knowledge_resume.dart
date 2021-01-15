@@ -5,9 +5,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/services/listService.dart';
-import '../../lists.dart';
 import 'package:pie_chart/pie_chart.dart';
-
 import '../game_main.dart';
 import 'lastGameWrongAnswers.dart';
 
@@ -23,6 +21,9 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
   ListService _listService = ListService();
 
   List<GameCard> wrongContactCard = new List<GameCard>();
+
+  double numberChooseLastGame;
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +57,6 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     );
   }
 
-  double numberChooseLastGame;
-
   Widget _getWrongAnswers() {
     return StreamBuilder(
       stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
@@ -88,19 +87,20 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
                                 _pieChart(wrongContactCard.length.toDouble()),
                                 SizedBox(height: 20),
                                 (numberChooseLastGame == 0)
-                                ? Container()
-                                : FlatButton(
-                                  color: Colors.redAccent,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LastGameWrongAnswers(wrongContactCard)),
-                                    );
-                                  },
-                                  child: Text("Show all wrong"),
-                                ),
+                                    ? Container()
+                                    : FlatButton(
+                                        color: Colors.redAccent,
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LastGameWrongAnswers(
+                                                        wrongContactCard)),
+                                          );
+                                        },
+                                        child: Text("Show all wrong"),
+                                      ),
                               ],
                             )
                           : Container();
@@ -177,4 +177,3 @@ class _GameTestKnowledgeResumeState extends State<GameTestKnowledgeResume> {
     return PieChart(dataMap: dataMap);
   }
 }
-

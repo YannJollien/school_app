@@ -23,6 +23,7 @@ class ContactsState extends State<Contacts> {
   bool searchActive = false;
   String search = "";
   FocusNode myFocusNode = FocusNode();
+  Reference ref;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,6 @@ class ContactsState extends State<Contacts> {
                         decoration: new InputDecoration(
                             border: InputBorder.none,
                             hintStyle: Theme.of(context).textTheme.headline1,
-                            // prefixIcon: new Icon(Icons.search, color: Colors.white,),
                             hintText: 'Search...'),
                       );
                     } else {
@@ -218,8 +218,6 @@ class ContactsState extends State<Contacts> {
   }
 
   //Delete image in storage
-  Reference ref;
-
   Future deleteImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     ref.delete();
@@ -275,15 +273,5 @@ class ContactsState extends State<Contacts> {
         return alert;
       },
     );
-  }
-
-  //Get the image from storage
-  Future<Widget> getImage(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
   }
 }

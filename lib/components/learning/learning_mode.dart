@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/components/game/game_card.dart';
 
-import '../game/game_main.dart';
-
 class LearningMode extends StatefulWidget {
   static String numberChoose;
   static List<GameCard> gameCard;
@@ -64,13 +62,13 @@ class LearningModeState extends State<LearningMode> {
   List<Widget> _generateCards() {
     List<Widget> cardList = new List();
 
-    if(LearningMode.gameCard.length==0){
+    if (LearningMode.gameCard.length == 0) {
       List<Container> c = new List<Container>();
       return c;
     }
 
-    if(LearningMode.numberChoose==null){
-      LearningMode.numberChoose=LearningMode.gameCard.length.toString();
+    if (LearningMode.numberChoose == null) {
+      LearningMode.numberChoose = LearningMode.gameCard.length.toString();
     }
     int loopIteration = int.parse(LearningMode.numberChoose);
 
@@ -80,13 +78,12 @@ class LearningModeState extends State<LearningMode> {
 
     //Make learning random
     LearningMode.gameCard.shuffle();
-    double top = 10.0 ;
+    double top = 10.0;
 
-    print("length " + LearningMode.gameCard.length.toString());
     for (int x = 0; x < loopIteration; x++) {
       cardList.add(
         Positioned(
-          top: top+=1.0,
+          top: top += 1.0,
           child: Draggable(
               onDragEnd: (drag) {
                 removeCards(x);
@@ -115,7 +112,9 @@ class LearningModeState extends State<LearningMode> {
                       Container(
                         padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                         child: Text(
-                          LearningMode.gameCard[x].firstname + " " + LearningMode.gameCard[x].lastname,
+                          LearningMode.gameCard[x].firstname +
+                              " " +
+                              LearningMode.gameCard[x].lastname,
                           style: TextStyle(
                             fontSize: 20.0,
                             color: Colors.cyan,
@@ -144,8 +143,7 @@ class LearningModeState extends State<LearningMode> {
                                 topRight: Radius.circular(20.0)),
                             image: DecorationImage(
                                 image: NetworkImage(
-                                    LearningMode.gameCard[x].image
-                                ),
+                                    LearningMode.gameCard[x].image),
                                 fit: BoxFit.cover),
                           ),
                           width: 320.0,
@@ -154,7 +152,9 @@ class LearningModeState extends State<LearningMode> {
                         Container(
                           padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                           child: Text(
-                            LearningMode.gameCard[x].firstname + " " + LearningMode.gameCard[x].lastname,
+                            LearningMode.gameCard[x].firstname +
+                                " " +
+                                LearningMode.gameCard[x].lastname,
                             style: TextStyle(
                               fontSize: 20.0,
                               color: Colors.cyan,
@@ -163,8 +163,7 @@ class LearningModeState extends State<LearningMode> {
                         )
                       ],
                     )),
-              )
-          ),
+              )),
         ),
       );
     }

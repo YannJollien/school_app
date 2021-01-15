@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/services/fireStorageService.dart';
 import 'package:schoolapp/services/contactService.dart';
 
 class ContactsList extends StatefulWidget {
@@ -77,9 +76,18 @@ class ContactsListState extends State<ContactsList> {
               if (snapshot.hasData) {
                 return Column(
                   children: snapshot.data.docs.map((doc) {
-                    String unionFirstLastName = doc.data()['firstname'].toString().toLowerCase() + " " + doc.data()['lastname'].toString().toLowerCase() ;
-                    String unionLastFirstName = doc.data()['lastname'].toString().toLowerCase() + " " + doc.data()['firstname'].toString().toLowerCase() ;
-                    return (unionLastFirstName.contains(search.toLowerCase()) || unionFirstLastName.contains(search.toLowerCase())) ? buildItem(doc) : Row();
+                    String unionFirstLastName =
+                        doc.data()['firstname'].toString().toLowerCase() +
+                            " " +
+                            doc.data()['lastname'].toString().toLowerCase();
+                    String unionLastFirstName =
+                        doc.data()['lastname'].toString().toLowerCase() +
+                            " " +
+                            doc.data()['firstname'].toString().toLowerCase();
+                    return (unionLastFirstName.contains(search.toLowerCase()) ||
+                            unionFirstLastName.contains(search.toLowerCase()))
+                        ? buildItem(doc)
+                        : Row();
                   }).toList(),
                 );
               } else {
@@ -103,9 +111,7 @@ class ContactsListState extends State<ContactsList> {
               Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        contactDoc.data()['image']
-                    ),
+                    backgroundImage: NetworkImage(contactDoc.data()['image']),
                   ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH
@@ -157,15 +163,5 @@ class ContactsListState extends State<ContactsList> {
         },
       );
     }
-  }
-
-  //Get the image from storage
-  Future<Widget> getImage(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
   }
 }

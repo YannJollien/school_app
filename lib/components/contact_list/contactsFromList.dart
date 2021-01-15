@@ -36,8 +36,7 @@ class ContactFromListState extends State<ContactFromList> {
   bool searchActive = false;
   String search = "";
   Widget _appBarTitle = new Text(
-      ContactFromList.listDoc.data()["listName"] +
-          " list",
+      ContactFromList.listDoc.data()["listName"] + " list",
       style: TextStyle(color: Colors.black, fontSize: 22));
   FocusNode myFocusNode = FocusNode();
 
@@ -94,14 +93,12 @@ class ContactFromListState extends State<ContactFromList> {
                         decoration: new InputDecoration(
                             border: InputBorder.none,
                             hintStyle: TextStyle(color: Colors.black),
-                            // prefixIcon: new Icon(Icons.search, color: Colors.white,),
                             hintText: 'Search...'),
                       );
                     } else {
                       search = "";
                       this._appBarTitle = new Text(
-                          ContactFromList.listDoc.data()["listName"] +
-                              " list",
+                          ContactFromList.listDoc.data()["listName"] + " list",
                           style: Theme.of(context).textTheme.headline1);
                     }
                   });
@@ -268,8 +265,6 @@ class ContactFromListState extends State<ContactFromList> {
       color: Colors.cyan,
       onPressed: () {
         Navigator.of(context).pop();
-        // Navigator.pushReplacement(context,
-        //     MaterialPageRoute(builder: (BuildContext context) => super.widget));
       },
     );
     Widget continueButton = FlatButton(
@@ -324,9 +319,7 @@ class ContactFromListState extends State<ContactFromList> {
               Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      contactDoc.data()['image']
-                    ),
+                    backgroundImage: NetworkImage(contactDoc.data()['image']),
                   ),
                   SizedBox(width: 10),
                   //TEST FOR THE NAME/SURNAME LENGTH
@@ -366,15 +359,5 @@ class ContactFromListState extends State<ContactFromList> {
         ),
       ),
     );
-  }
-
-  //Get the image from storage
-  Future<Widget> getImage(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
   }
 }

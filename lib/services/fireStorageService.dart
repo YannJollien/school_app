@@ -13,11 +13,13 @@ class FireStorageService extends ChangeNotifier {
         .getDownloadURL();
   }
 
-  static Future<dynamic> loadConnectedUserImage(BuildContext context, String email) async {
+  static Future<dynamic> loadConnectedUserImage(
+      BuildContext context, String email) async {
     return await FirebaseStorage.instance.ref("images/$email").getDownloadURL();
   }
 
-  static Future<dynamic> loadImageForDatabase(String email, String docId) async {
+  static Future<dynamic> loadImageForDatabase(
+      String email, String docId) async {
     return await FirebaseStorage.instance
         .ref("contacts/$email/$docId")
         .getDownloadURL();

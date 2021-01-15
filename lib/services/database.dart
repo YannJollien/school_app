@@ -114,7 +114,8 @@ class DatabaseService {
   //Get the image from storage
   Future<String> getImageFromFirestore(String docId) async {
     String t;
-    await FireStorageService.loadImageForDatabase(firebaseAuth.currentUser.email, docId)
+    await FireStorageService.loadImageForDatabase(
+            firebaseAuth.currentUser.email, docId)
         .then((value) {
       t = value.toString();
     });
@@ -131,7 +132,6 @@ class DatabaseService {
   //Add contact in a list
   Future addContactData(DocumentSnapshot docList, String firstname,
       String lastname, String institution) async {
-    // print("URL " + 'https://avatar.oxro.io/avatar.svg?name=' + firstname + "+" + lastname + '&background=random&caps=3&bold=true');
     DocumentReference docRef =
         await collectionUser.doc(uid).collection('contacts').add({
       'firstname': firstname,
@@ -275,15 +275,26 @@ class DatabaseService {
 
   Future<DocumentSnapshot> getContactIdWrongOfTheListData(
       String listDoc) async {
-    // collectionUser.doc(uid).collection('lists').doc(listDoc).update({'numberChoose': GameTestKnowledge.numberChoose});
     return await collectionUser.doc(uid).collection('lists').doc(listDoc).get();
   }
 
   Future resetWrongContactFromTheListData(
       String listDoc, String numberChoose) async {
-    collectionUser.doc(uid).collection('lists').doc(listDoc).update({'numberChoose': numberChoose});
-    await collectionUser.doc(uid).collection('lists').doc(listDoc).update({'wrongAnswers': FieldValue.delete()});
-    await collectionUser.doc(uid).collection('lists').doc(listDoc).update({'wrongAnswers': []});
+    collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc)
+        .update({'numberChoose': numberChoose});
+    await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc)
+        .update({'wrongAnswers': FieldValue.delete()});
+    await collectionUser
+        .doc(uid)
+        .collection('lists')
+        .doc(listDoc)
+        .update({'wrongAnswers': []});
   }
 
   Future<List<GameCard>> getWrongContactFromTheListData(
@@ -297,10 +308,8 @@ class DatabaseService {
           .doc(contactsId.elementAt(i))
           .get();
 
-      // print("ADDING TO WRONG GAME CARD " + ds.data()['firstname']);
       wrongGameCard.add(GameCard(ds.id, ds.data()['image'],
           ds.data()['firstname'], ds.data()['lastname']));
-      // print(wrongGameCard.first.firstname);
     }
     return wrongGameCard;
   }
