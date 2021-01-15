@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:schoolapp/services/database.dart';
 import 'database.dart';
 
@@ -11,14 +10,16 @@ class ContactService {
   Future updateContactLists(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).updateContactListsData(docList, docContact);
+    await DatabaseService(uid: user.uid)
+        .updateContactListsData(docList, docContact);
   }
 
   //Delete a contact from a list
   Future deleteContactFromList(
       DocumentSnapshot docList, DocumentSnapshot docContact) async {
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid).deleteContactFromListData(docList, docContact);
+    await DatabaseService(uid: user.uid)
+        .deleteContactFromListData(docList, docContact);
   }
 
   //Delete contact definitively
@@ -38,8 +39,8 @@ class ContactService {
   Future updateContactDetails(DocumentSnapshot docContact, String firstname,
       String lastname, String institution, String notes) async {
     User user = await _auth.currentUser;
-    await DatabaseService(uid: user.uid)
-        .updateContactDetailsData(docContact, firstname, lastname, institution, notes);
+    await DatabaseService(uid: user.uid).updateContactDetailsData(
+        docContact, firstname, lastname, institution, notes);
   }
 
   //Add a contact
@@ -52,8 +53,7 @@ class ContactService {
 
   Future addImageLink(String id) async {
     User user = await _auth.currentUser;
-    return await DatabaseService(uid: user.uid)
-        .addImageLinkData(id);
+    return await DatabaseService(uid: user.uid).addImageLinkData(id);
   }
 
   Stream<DocumentSnapshot> getContactDetails(DocumentSnapshot doc) {
@@ -65,7 +65,6 @@ class ContactService {
     User user = _auth.currentUser;
     return DatabaseService(uid: user.uid).getContactListsData(doc);
   }
-
 
   Future<String> getContactListNames(List<dynamic> listId) {
     User user = _auth.currentUser;

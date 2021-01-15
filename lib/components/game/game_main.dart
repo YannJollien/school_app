@@ -236,12 +236,13 @@ class _GameScreenState extends State<GameScreen> {
                                     //all contact
                                     if (toggledButtonGameMode[0]) {
                                       _listService.resetWrongContactFromTheList(
-                                        GameScreen.listDoc, numberChoose);
+                                          GameScreen.listDoc, numberChoose);
                                     }
                                     //wrong only
                                     else {
                                       _listService.resetWrongContactFromTheList(
-                                          GameScreen.listDoc, gameCardMode.length.toString());
+                                          GameScreen.listDoc,
+                                          gameCardMode.length.toString());
                                     }
 
                                     gameCardMode.shuffle();
@@ -312,7 +313,6 @@ class _GameScreenState extends State<GameScreen> {
                 future: _listService.getWrongContactFromTheList(contactsId),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<GameCard>> snapshot2) {
-                  // print(snapshot2.data);
                   gameCardMode = snapshot2.data;
                   return (snapshot2.connectionState == ConnectionState.done)
                       ? Text(snapshot2.data.length.toString())

@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'components/change_password.dart';
 import 'components/home.dart';
 import 'components/lists.dart';
 import 'components/register.dart';
@@ -55,7 +54,6 @@ void main() async {
         '/home': (context) => Home(),
         '/lists': (context) => Lists(),
         '/settings': (context) => Settings(),
-        '/password': (context) => Password(),
         // '/gamescreen': (context) => GameScreen(),
         // '/gametraining': (context) => GameTraining('0'),
         // '/gametrainingres': (context) => GameTrainingResume(),

@@ -8,10 +8,8 @@ import 'package:schoolapp/components/verifyEmail.dart';
 import 'package:schoolapp/services/auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'package:schoolapp/shared/loading.dart';
-import 'home.dart';
-import 'lists.dart';
 
-//inpiration https://github.com/PeterHdd/Firebase-Flutter-tutorials/blob/master/firebase_authentication_tutorial/lib/email_signup.dart
+//Inspiration https://github.com/PeterHdd/Firebase-Flutter-tutorials/blob/master/firebase_authentication_tutorial/lib/email_signup.dart
 
 class Register extends StatefulWidget {
   @override
@@ -19,14 +17,12 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   File imageFile;
   Reference ref;
   String downloadUrl;
 
-
   //Get image
-  Future getImage () async {
+  Future getImage() async {
     File image;
     image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -35,14 +31,14 @@ class _RegisterState extends State<Register> {
   }
 
   //Upload image
-  Future uploadImage (String email) async {
+  Future uploadImage(String email) async {
     ref = FirebaseStorage.instance.ref().child("images/$email");
     ref.putFile(imageFile);
     print("IMAGE PATH " + imageFile.path);
   }
 
   //Get image Url
-  Future downloadImage () async {
+  Future downloadImage() async {
     String downloadAddress = await ref.getDownloadURL();
     setState(() {
       downloadUrl = downloadAddress;
@@ -55,7 +51,7 @@ class _RegisterState extends State<Register> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final AuthService _auth = AuthService();
   DatabaseService service = DatabaseService();
-  String error =" ";
+  String error = " ";
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -64,13 +60,15 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading ? Loading() :  Scaffold(
-      backgroundColor: Colors.grey[300],
-        appBar: AppBar(title: Text("Sign Up")),
-        body: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-                child: Column(children: <Widget>[
+    return isLoading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.grey[300],
+            appBar: AppBar(title: Text("Sign Up")),
+            body: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                    child: Column(children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(20.0),
                     child: TextFormField(
@@ -137,30 +135,34 @@ class _RegisterState extends State<Register> {
                   GestureDetector(
                     onTap: () => getImage(),
                     child: Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      alignment: Alignment.center,
-                      child: imageFile == null ? Text(
-                        "TAp to add image",
-                        style: TextStyle(color: Colors.grey[400]),
-                      ) : Image.file(imageFile)
-                    ),
+                        height: 250,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10)),
+                        alignment: Alignment.center,
+                        child: imageFile == null
+                            ? Text(
+                                "TAp to add image",
+                                style: TextStyle(color: Colors.grey[400]),
+                              )
+                            : Image.file(imageFile)),
                   ),
                   Padding(
                     padding: EdgeInsets.all(20.0),
                     child: RaisedButton(
                       color: Colors.lightBlue,
-                      onPressed: () async{
+                      onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           //Show Loading
                           setState(() {
                             isLoading = true;
                           });
-                          dynamic result = await _auth.registerWithEmailAndPassword(emailController.text, passwordController.text, nameController.text);
-                          if(result == null){
+                          dynamic result =
+                              await _auth.registerWithEmailAndPassword(
+                                  emailController.text,
+                                  passwordController.text,
+                                  nameController.text);
+                          if (result == null) {
                             setState(() {
                               error = 'Please supply a valid email';
                               isLoading = false;
@@ -170,12 +172,11 @@ class _RegisterState extends State<Register> {
                             uploadImage(emailController.text);
                             downloadImage();
 
-                            //SharedPreferences prefs = await SharedPreferences.getInstance();
-                            //prefs.setString("email", emailController.text);
                             //Go to verification
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => VerifyScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => VerifyScreen()),
                             );
                           }
                         }
@@ -190,9 +191,6 @@ class _RegisterState extends State<Register> {
                   ),
                 ]))));
   }
-
-
-
 
   @override
   void dispose() {

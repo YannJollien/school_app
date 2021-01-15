@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
-import 'package:flutter/services.dart';
 
 class ContactListImportation extends StatefulWidget {
   static DocumentSnapshot listDoc;
@@ -75,8 +74,6 @@ class ContactListImportationState extends State<ContactListImportation> {
     );
   }
 
-  String message = "CSV uploaded successfully";
-
   //Method to get csv document of the user smartphone and push it to firestore according to field (firstname, lastname, institution)
   Future getCSVAndPushDataToFirestore() async {
     String path;
@@ -89,12 +86,9 @@ class ContactListImportationState extends State<ContactListImportation> {
     );
 
     //Open the document picker (to pick in the smartphone files of the user)
-    // try{
 
     path = await FlutterDocumentPicker.openDocument(params: params);
 
-    print("PATH");
-    print(path);
     //Save the file to import
     setState(() {
       fileToImport = File(path);
@@ -123,11 +117,5 @@ class ContactListImportationState extends State<ContactListImportation> {
             columnsValue[0], columnsValue[1], columnsValue[2]);
       }
     }
-    // }catch(Exception){
-    //   setState(() {
-    //     message = "Contact importation failed.";
-    //   });
-    //   throw Exception("Contact importation failed.");
-    // }
   }
 }

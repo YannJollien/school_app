@@ -122,7 +122,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 title: Text("Contact",
                     style: Theme.of(context).textTheme.headline1),
                 onTap: () {
-//                Navigator.of(context).pushNamed("/contacts");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Contacts()),

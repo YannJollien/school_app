@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
-import 'package:schoolapp/components/game/game_card.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
+import 'game_card.dart';
 import 'game_main.dart';
 import 'resume/game_test_knowledge_resume.dart';
 
@@ -78,10 +79,6 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                 cards: _generateCards(),
                 size: Size(260, 320),
                 controller: _controller,
-                onForward: (index, info) {
-                  // _index = index;
-                  // print("INFOR DIRECTION : " + info.direction.toString());
-                },
               ),
             ),
             // _triggerWrongAnswers(),
@@ -140,8 +137,9 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                           if (testInputAccordingToCard(
                               inputController.text,
                               GameTestKnowledge
-                                  .gameCard[_controller.index].firstname, GameTestKnowledge
-                              .gameCard[_controller.index].lastname)) {
+                                  .gameCard[_controller.index].firstname,
+                              GameTestKnowledge
+                                  .gameCard[_controller.index].lastname)) {
                             _listService.removeIdToWrongAnswers(
                                 GameTestKnowledge.listDoc,
                                 GameTestKnowledge
@@ -155,8 +153,10 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
 
                           //If the game is finished
                           if (_controller.index >=
-                              GameTestKnowledge.gameCard.length-1 || _controller.index >=
-                              int.parse(GameTestKnowledge.numberChoose)-1) {
+                                  GameTestKnowledge.gameCard.length - 1 ||
+                              _controller.index >=
+                                  int.parse(GameTestKnowledge.numberChoose) -
+                                      1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -187,13 +187,11 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
       color: Colors.red,
       child: Text("Quit"),
       onPressed: () {
-        _listService.resetWrongContactFromTheList(
-            GameScreen.listDoc, '0');
+        _listService.resetWrongContactFromTheList(GameScreen.listDoc, '0');
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  ContactFromList(ContactFromList.listDoc)),
+              builder: (context) => ContactFromList(ContactFromList.listDoc)),
         );
       },
     );
@@ -215,7 +213,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
           Text(' WARNING'),
         ],
       ),
-      content: Text("Know that by leaving, the game and the score will be resetting."),
+      content: Text(
+          "Know that by leaving, the game and the score will be resetting."),
       actions: [
         stayButton,
         quitButton,
@@ -265,40 +264,15 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     });
   }
 
-  Widget _triggerWrongAnswers() {
-    return StreamBuilder(
-      stream: _listService.getContactIdWrongOfTheListStream(GameScreen.listDoc),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot1) {
-        return FutureBuilder(
-            future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot1) {
-              List<dynamic> contactsId;
-              if (snapshot1.connectionState == ConnectionState.done) {
-                contactsId = snapshot1.data['wrongAnswers'];
-                return FutureBuilder(
-                    future: _listService.getWrongContactFromTheList(contactsId),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<GameCard>> snapshot2) {
-                      // print("instance ? " + snapshot2.data.toString());
-                      wrongContactCard = snapshot2.data;
-                      return (snapshot2.connectionState == ConnectionState.done)
-                          ? Container()
-                          : Container();
-                    });
-              }
-              return Container();
-            });
-      },
-    );
-  }
+  bool testInputAccordingToCard(
+      String inputFirstname, String answerFirstname, String answerLastname) {
+    String firstnameLastname =
+        answerFirstname.toLowerCase() + " " + answerLastname.toLowerCase();
+    String lastnameFirstname =
+        answerLastname.toLowerCase() + " " + answerFirstname.toLowerCase();
 
-  bool testInputAccordingToCard(String inputFirstname, String answerFirstname, String answerLastname) {
-    String firstnameLastname = answerFirstname.toLowerCase() + " " + answerLastname.toLowerCase();
-    String lastnameFirstname  = answerLastname.toLowerCase() + " " + answerFirstname.toLowerCase();
-
-    if (inputFirstname.toLowerCase() == firstnameLastname || inputFirstname.toLowerCase() == lastnameFirstname) {
+    if (inputFirstname.toLowerCase() == firstnameLastname ||
+        inputFirstname.toLowerCase() == lastnameFirstname) {
       return true;
     } else {
       return false;

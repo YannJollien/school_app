@@ -33,6 +33,14 @@ class ContactDetailsState extends State<ContactDetails> {
 
   UploadTask up;
 
+  List<dynamic> listsId;
+
+  bool contactWasEdited = false;
+
+  bool imageWasEdited = false;
+
+  File imageFile;
+
   @override
   Widget build(BuildContext context) {
     if (ContactDetails.listDoc == null) {
@@ -100,10 +108,6 @@ class ContactDetailsState extends State<ContactDetails> {
                               setState(() {
                                 editMode = !editMode;
                               });
-                              // Navigator.pushReplacement(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (BuildContext context) => super.widget));
                             },
                           ),
                         )
@@ -315,7 +319,6 @@ class ContactDetailsState extends State<ContactDetails> {
         });
   }
 
-  static List<dynamic> listsId;
 
   Widget _buildListNames(String content) {
     return FutureBuilder(
@@ -341,7 +344,6 @@ class ContactDetailsState extends State<ContactDetails> {
 
   static Widget _buildNotesNotEditable(String content, BuildContext context) {
     final int notesLength = 100;
-
     return Container(
       height: 5 * 24.0,
       child: TextFormField(
@@ -392,7 +394,6 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-  static bool contactWasEdited = false;
 
   Widget imageLoader(String content) {
     return StreamBuilder(
@@ -427,7 +428,6 @@ class ContactDetailsState extends State<ContactDetails> {
         });
   }
 
-  bool imageWasEdited = false;
 
   Widget imageLoaderEditable(String content) {
     return StreamBuilder(
@@ -457,7 +457,9 @@ class ContactDetailsState extends State<ContactDetails> {
                               "Tap to change profile picture",
                               style: TextStyle(color: Colors.grey[400]),
                             )
-                          : CircleAvatar(backgroundImage: new FileImage(imageFile), radius: 200.0)),
+                          : CircleAvatar(
+                              backgroundImage: new FileImage(imageFile),
+                              radius: 200.0)),
                 ),
               ),
             ],
@@ -572,24 +574,11 @@ class ContactDetailsState extends State<ContactDetails> {
   }
 
   //Get image
-  static File imageFile;
-  AsyncSnapshot docSnapshot;
-
   Future getImageFromGallery() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       imageFile = image;
     });
-  }
-
-  //Get the image from storage
-  Future<Widget> getImageFromFirestore(
-      BuildContext context, String imageName, String docId) async {
-    Image image;
-    await FireStorageService.loadContactImage(context, imageName, docId).then((value) {
-      image = Image.network(value.toString(), fit: BoxFit.scaleDown);
-    });
-    return image;
   }
 
   //Upload image

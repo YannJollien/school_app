@@ -126,7 +126,6 @@ class _SelectionDialogState extends State<SelectionDialogContacts> {
   }
 
   void _filterElements(String s) {
-    s = s.toUpperCase();
     setState(() {
       filteredElements =
           widget.elements.where((e) => e.displayName.contains(s)).toList();
