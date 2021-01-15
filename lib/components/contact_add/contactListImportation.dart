@@ -19,9 +19,12 @@ class ContactListImportation extends StatefulWidget {
       new ContactListImportationState(listDoc);
 }
 
+/// CLASS TO IMPORT CONTACT WITH A CSV FILE
 class ContactListImportationState extends State<ContactListImportation> {
+  //Constructor
   ContactListImportationState(data);
 
+  //Connection with firestore
   ContactService _contactService = ContactService();
 
   @override
@@ -35,6 +38,7 @@ class ContactListImportationState extends State<ContactListImportation> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            //Display
             Text('CSV Example', style: Theme.of(context).textTheme.headline1),
             SizedBox(height: 20),
             Text('firstname,lastname,institution',
@@ -86,7 +90,6 @@ class ContactListImportationState extends State<ContactListImportation> {
     );
 
     //Open the document picker (to pick in the smartphone files of the user)
-
     path = await FlutterDocumentPicker.openDocument(params: params);
 
     //Save the file to import

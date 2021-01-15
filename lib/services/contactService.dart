@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:schoolapp/services/database.dart';
 import 'database.dart';
 
+/// CLASS FOR CONTACT IN FIRESTORE DATABASE
 class ContactService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 

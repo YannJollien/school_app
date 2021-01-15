@@ -15,17 +15,24 @@ class ContactsList extends StatefulWidget {
   State<StatefulWidget> createState() => new ContactsListState(listDoc);
 }
 
+/// CLASS TO ADD CONTACT IN YOUR LIST FROM CONTACT ALREADY ADDED IN THE APPLICATION
 class ContactsListState extends State<ContactsList> {
+
+  //Connection with firestore
   ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  //Constructor
   ContactsListState(data);
 
+  //Search bar management
   bool searchActive = false;
   String search = "";
+  FocusNode focusNodeSearchBar = FocusNode();
+
+  //Page title
   Widget _appBarTitle =
       new Text("All contacts", style: TextStyle(color: Colors.black));
-  FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +40,7 @@ class ContactsListState extends State<ContactsList> {
       appBar: new AppBar(
         title: _appBarTitle,
         actions: <Widget>[
+          //Search bar
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
@@ -43,14 +51,13 @@ class ContactsListState extends State<ContactsList> {
                   searchActive = !searchActive;
                   if (searchActive) {
                     this._appBarTitle = new TextField(
-                      focusNode: myFocusNode,
+                      focusNode: focusNodeSearchBar,
                       onChanged: (text) {
                         setState(() {
                           search = text;
                         });
                       },
                       decoration: new InputDecoration(
-                          // border: InputBorder.none,
                           hintStyle: TextStyle(color: Colors.black),
                           hintText: 'Search...'),
                     );
@@ -60,12 +67,13 @@ class ContactsListState extends State<ContactsList> {
                         style: Theme.of(context).textTheme.headline1);
                   }
                 });
-                myFocusNode.requestFocus();
+                focusNodeSearchBar.requestFocus();
               },
             ),
           ),
         ],
       ),
+      //List all contact
       body: ListView(
         padding: EdgeInsets.all(8),
         children: <Widget>[
@@ -100,6 +108,7 @@ class ContactsListState extends State<ContactsList> {
     );
   }
 
+  //Card builder for the display
   Card buildItem(DocumentSnapshot contactDoc) {
     return Card(
       child: InkWell(
@@ -137,7 +146,7 @@ class ContactsListState extends State<ContactsList> {
                         ),
                   SizedBox(width: 8),
                   Spacer(),
-                  _buildChild(contactDoc),
+                  _buildAddToListBtn(contactDoc),
                 ],
               ),
             ],
@@ -147,7 +156,8 @@ class ContactsListState extends State<ContactsList> {
     );
   }
 
-  Widget _buildChild(DocumentSnapshot contactDoc) {
+  //Button builder to add a contact to the list
+  Widget _buildAddToListBtn(DocumentSnapshot contactDoc) {
     List values = contactDoc.data()['lists'];
     if (values.contains(widget.listDoc.id)) {
       return IconButton(

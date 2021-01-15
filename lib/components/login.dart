@@ -10,12 +10,15 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
+/// CLASS FOR THE LOGIN PAGE
 class _LoginState extends State<Login> {
+  //Databse management
   final _formKey = GlobalKey<FormState>();
   final AuthService _auth = AuthService();
+
+  //Field management
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
   bool isLoading = false;
   String error = "";
 

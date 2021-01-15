@@ -14,11 +14,11 @@ class HomeDrawer extends StatefulWidget {
   _HomeDrawerState createState() => _HomeDrawerState();
 }
 
+/// CLASS FOR THE MENU (DRAWER)
 class _HomeDrawerState extends State<HomeDrawer> {
+  //Database management
   final AuthService _auth = AuthService();
-
   final DatabaseService service = DatabaseService();
-
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   //Get the image from storage

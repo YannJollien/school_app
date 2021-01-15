@@ -16,7 +16,10 @@ class Register extends StatefulWidget {
   _RegisterState createState() => _RegisterState();
 }
 
+/// CLASS FOR THE REGISTRATION PAGE
 class _RegisterState extends State<Register> {
+
+  //Image mananagement
   File imageFile;
   Reference ref;
   String downloadUrl;

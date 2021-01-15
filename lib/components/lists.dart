@@ -11,68 +11,13 @@ class Lists extends StatefulWidget {
   }
 }
 
+/// CLASS TO SHOW/MODIFY/ADD LISTS
 class ListsState extends State<Lists> {
-  String id;
+
+  //Database management
   final db = FirebaseFirestore.instance;
-
   ListService _listService = ListService();
-
-  Card buildItem(DocumentSnapshot doc) {
-    return Card(
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ContactFromList(doc)),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    '${doc.data()['listName']}',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(width: 8),
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Colors.cyan,
-                    onPressed: () {
-                      AlertDialogDeleteList(context, doc);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.mode_edit),
-                    color: Colors.cyan,
-                    onPressed: () {
-                      AlertDialogUpdateList(context)
-                          .then((value) => setState(() async {
-                                final checkName =
-                                    await _listService.getDocument(value);
-                                if (value != null) {
-                                  if (checkName == 0) {
-                                    _listService.updateLists(doc.id, value);
-                                  } else {
-                                    AlertListName(context);
-                                  }
-                                }
-                              }));
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  String id;
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +103,64 @@ class ListsState extends State<Lists> {
             },
           )
         ],
+      ),
+    );
+  }
+
+  //Card builder
+  Card buildItem(DocumentSnapshot doc) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ContactFromList(doc)),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    '${doc.data()['listName']}',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(width: 8),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    color: Colors.cyan,
+                    onPressed: () {
+                      AlertDialogDeleteList(context, doc);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.mode_edit),
+                    color: Colors.cyan,
+                    onPressed: () {
+                      AlertDialogUpdateList(context)
+                          .then((value) => setState(() async {
+                        final checkName =
+                        await _listService.getDocument(value);
+                        if (value != null) {
+                          if (checkName == 0) {
+                            _listService.updateLists(doc.id, value);
+                          } else {
+                            AlertListName(context);
+                          }
+                        }
+                      }));
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

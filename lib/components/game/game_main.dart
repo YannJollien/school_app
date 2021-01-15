@@ -20,22 +20,24 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState(listDoc);
 }
 
+/// CLASS TO CHOOSE GAME MODE
 class _GameScreenState extends State<GameScreen> {
+
+  //Constructor
   _GameScreenState(data);
 
+  //Game management
   String numberChoose = GameScreen.gameCard.length.toString();
   String gameMode = "";
-
-  ListService _listService = ListService();
-
   bool textDropDownVisible = false;
-
   bool textGameModeVisible = false;
+  List<GameCard> gameCardMode;
+
+  //Database management
+  ListService _listService = ListService();
 
   //Toggled game mode choosen
   List<bool> toggledButtonGameMode = [false, false];
-
-  List<GameCard> gameCardMode;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,6 @@ class _GameScreenState extends State<GameScreen> {
             .add((GameScreen.gameCard.length * i).round().toString());
       }
     }
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -274,6 +275,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  //Alert dialog if contact list is empty
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
@@ -301,6 +303,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  //Wrong card builder
   Widget _buildWrongCard() {
     return FutureBuilder(
         future: _listService.getContactIdWrongOfTheList(GameScreen.listDoc),

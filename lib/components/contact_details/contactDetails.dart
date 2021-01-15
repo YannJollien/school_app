@@ -6,7 +6,6 @@ import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/contactService.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:schoolapp/services/fireStorageService.dart';
 
 class ContactDetails extends StatefulWidget {
   static DocumentSnapshot contactDoc;
@@ -21,25 +20,30 @@ class ContactDetails extends StatefulWidget {
   State<StatefulWidget> createState() => new ContactDetailsState(contactDoc);
 }
 
+/// CLASS TO DISPLAY A CONTACT DETAILS AND MODIFY IT
 class ContactDetailsState extends State<ContactDetails> {
-  bool comeFromList = true;
 
+  //Constructor
   ContactDetailsState(data);
 
-  bool editMode = false;
-
+  //Connection with firestore
   static ContactService _contactService = ContactService();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  UploadTask up;
-
+  //Manage the list of list name where the contact is
   List<dynamic> listsId;
 
+  //Bool to manage if the contact has been edited
   bool contactWasEdited = false;
+  bool editMode = false;
 
+  //Image management
   bool imageWasEdited = false;
-
   File imageFile;
+  UploadTask up;
+
+  //Bool to check if this page is opened from contact all or a list (disable the delete button of the list)
+  bool comeFromList = true;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +139,7 @@ class ContactDetailsState extends State<ContactDetails> {
         ));
   }
 
+  //Alert dialog on delete
   showAlertDialogOnDelete(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -181,6 +186,9 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Details builder according to the edit mode
+  //Edit on   => Switch to text field (note field not editable)
+  //Edit off  => Just display the contact (note field is editable)
   Widget detailsSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
@@ -249,6 +257,7 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Alert dialog on delete for note field
   static showAlertDialogNotes(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -295,8 +304,8 @@ class ContactDetailsState extends State<ContactDetails> {
         color: Colors.black, fontFamily: 'RadikalLight', fontSize: 20);
   }
 
+  //Notes management
   static final notesController = TextEditingController();
-
   static Widget _buildLiveUpdateNotes(String content, BuildContext context) {
     int notesLength = 100;
     return FutureBuilder(
@@ -319,7 +328,7 @@ class ContactDetailsState extends State<ContactDetails> {
         });
   }
 
-
+  //List name builder (list where the contact is)
   Widget _buildListNames(String content) {
     return FutureBuilder(
         future: _contactService.getContactLists(ContactDetails.contactDoc),
@@ -342,6 +351,7 @@ class ContactDetailsState extends State<ContactDetails> {
         });
   }
 
+  //Edit on => note no more editable
   static Widget _buildNotesNotEditable(String content, BuildContext context) {
     final int notesLength = 100;
     return Container(
@@ -358,6 +368,7 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Notes decoration edit off
   static InputDecoration _buildNotesDecoration() {
     return InputDecoration(
       enabled: false,
@@ -373,6 +384,7 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
+  //Notes decoration edit on
   static InputDecoration _buildUpdateNotesDecoration(BuildContext context) {
     return InputDecoration(
       contentPadding: EdgeInsets.all(10),
@@ -394,7 +406,7 @@ class ContactDetailsState extends State<ContactDetails> {
     );
   }
 
-
+  //Image loader
   Widget imageLoader(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
@@ -428,7 +440,7 @@ class ContactDetailsState extends State<ContactDetails> {
         });
   }
 
-
+  //Image loader editable
   Widget imageLoaderEditable(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
@@ -469,7 +481,6 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //FIRSTNAME EDITABLE CONTENT WIDGET
   static var firstnameController = TextEditingController();
-
   static Widget _firstnameEditable(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
@@ -490,7 +501,6 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //LASTNAME EDITABLE CONTENT WIDGET
   static var lastNameController = TextEditingController();
-
   static Widget _lastnameEditable(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
@@ -511,7 +521,6 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //INSTITUTION EDITABLE CONTENT WIDGET
   static var institutionController = TextEditingController();
-
   static Widget _institutionEditable(String content) {
     return StreamBuilder(
         stream: _contactService.getContactDetails(ContactDetails.contactDoc),
@@ -583,7 +592,6 @@ class ContactDetailsState extends State<ContactDetails> {
 
   //Upload image
   Reference ref;
-
   Future uploadImage(String email, String docId) async {
     ref = FirebaseStorage.instance.ref().child("contacts/$email/$docId");
     up = ref.putFile(imageFile);

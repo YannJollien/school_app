@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:schoolapp/components/contact_list/contactsFromList.dart';
 import 'package:schoolapp/services/listService.dart';
 import 'package:tcard/tcard.dart';
@@ -28,7 +26,9 @@ class GameTestKnowledge extends StatefulWidget {
 final User user = auth.currentUser;
 final FirebaseAuth auth = FirebaseAuth.instance;
 
+/// CLASS TO PLAY THE GAME IN TEST MODE
 class _GameTestKnowledge extends State<GameTestKnowledge> {
+  //Database management
   ListService _listService = new ListService();
 
   //Card list
@@ -47,11 +47,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
   //Gamecard wrong to send to the game resume
   List<GameCard> wrongContactCard = new List<GameCard>();
 
-  FocusNode myFocusNode = FocusNode();
-
   @override
   Widget build(BuildContext context) {
-    myFocusNode.requestFocus();
     return Scaffold(
       appBar: AppBar(
         title: Text("Test mode"),
@@ -81,20 +78,6 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
                 controller: _controller,
               ),
             ),
-            // _triggerWrongAnswers(),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 20.0, right: 10.0),
-            //   child: LinearPercentIndicator(
-            //     width: 300.0,
-            //     lineHeight: 20.0,
-            //     percent: cardDonePercent,
-            //     center: Text(cardDoneProgressionText),
-            //     linearStrokeCap: LinearStrokeCap.butt,
-            //     backgroundColor: Colors.grey,
-            //     progressColor: Colors.cyan,
-            //   ),
-            // ),
-            // SizedBox(height: 10.0),
             Row(
               children: [
                 Expanded(
@@ -181,6 +164,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     );
   }
 
+  //Alert dialog on quitting the game
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget quitButton = FlatButton(
@@ -230,6 +214,7 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     );
   }
 
+  //Card generator according to number choose and game mode
   List<Widget> _generateCards() {
     if (GameTestKnowledge.numberChoose == null) {
       GameTestKnowledge.numberChoose =
@@ -258,12 +243,8 @@ class _GameTestKnowledge extends State<GameTestKnowledge> {
     return cardList;
   }
 
-  void removeCards(index) {
-    setState(() {
-      cardList.removeAt(index);
-    });
-  }
-
+  //Method to test the input and the real contact firstname and lastname
+  //Not case sensitive and can be firstname lastname or lastname firstname
   bool testInputAccordingToCard(
       String inputFirstname, String answerFirstname, String answerLastname) {
     String firstnameLastname =

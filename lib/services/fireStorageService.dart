@@ -2,7 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-//Helper class to get the image
+/// HELPER CLASS TO GET AN IMAGE
 class FireStorageService extends ChangeNotifier {
   FireStorageService();
 

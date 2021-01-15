@@ -20,12 +20,14 @@ class LearningMode extends StatefulWidget {
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;
 
+/// CLASS TO PLAY THE GAME IN LEARNING MODE
 class LearningModeState extends State<LearningMode> {
+
+  //Constructor
   LearningModeState(data);
 
+  //Card management
   List<Widget> cardList = new List();
-
-  int cardLearned = 0;
 
   @override
   void initState() {
@@ -59,6 +61,7 @@ class LearningModeState extends State<LearningMode> {
     );
   }
 
+  //Card generator
   List<Widget> _generateCards() {
     List<Widget> cardList = new List();
 
@@ -170,6 +173,7 @@ class LearningModeState extends State<LearningMode> {
     return cardList;
   }
 
+  //On swipe remove card of the stack
   void removeCards(index) {
     setState(() {
       cardList.removeAt(index);

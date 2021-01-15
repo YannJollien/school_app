@@ -1,9 +1,9 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 
-/// Retrived on https://github.com/robertodevs/contactpicker and adapted by Aurélien May
+//Retrived on https://github.com/robertodevs/contactpicker and adapted by Aurélien May
 
-/// selection dialog used for selection of the country code
+/// CLASS TO DISPLAY CONTACT OF THE SMARTPHONE ITSELF
 class SelectionDialogContacts extends StatefulWidget {
   final List<Contact> elements;
   final bool showCountryOnly;
@@ -11,7 +11,7 @@ class SelectionDialogContacts extends StatefulWidget {
   final TextStyle searchStyle;
   final WidgetBuilder emptySearchBuilder;
 
-  /// elements passed as favorite
+  //elements passed as favorite
   final List<Contact> favoriteElements;
 
   SelectionDialogContacts(
@@ -32,7 +32,7 @@ class SelectionDialogContacts extends StatefulWidget {
 }
 
 class _SelectionDialogState extends State<SelectionDialogContacts> {
-  /// this is useful for filtering purpose
+  //this is useful for filtering purpose (search bar)
   List<Contact> filteredElements;
 
   @override
@@ -112,6 +112,7 @@ class _SelectionDialogState extends State<SelectionDialogContacts> {
     );
   }
 
+  //If search give nothing
   Widget _buildEmptySearchWidget(BuildContext context) {
     if (widget.emptySearchBuilder != null) {
       return widget.emptySearchBuilder(context);
@@ -125,6 +126,7 @@ class _SelectionDialogState extends State<SelectionDialogContacts> {
     super.initState();
   }
 
+  //Filter contact according to search done
   void _filterElements(String s) {
     setState(() {
       filteredElements =
