@@ -49,16 +49,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
             child: Column(
               children: <Widget>[
                 Container(
-                    width: 100,
-                    height: 100,
+                    width: 150,
+                    height: 150,
                     margin: EdgeInsets.only(top: 30.0),
                     child: FutureBuilder(
                       future: getImage(context, firebaseAuth.currentUser.email),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return Container(
-                            width: MediaQuery.of(context).size.width / 1.2,
-                            height: MediaQuery.of(context).size.width / 1.2,
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            height: MediaQuery.of(context).size.width / 1.5,
                             child: snapshot.data,
                           );
                         }

@@ -21,6 +21,7 @@ class DatabaseService {
 
   //Delete user from cloud firestore
   Future deleteUserData() async {
+    firebaseAuth.currentUser.delete();
     return await collectionUser.doc(uid).delete();
   }
 

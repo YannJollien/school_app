@@ -68,6 +68,7 @@ class SettingsState extends State<Settings> {
       child: Text("Delete"),
       color: Colors.red,
       onPressed: () {
+        firebaseAuth.currentUser.delete();
         _auth.deleteUser();
         //Go to opening page when logged out
         Navigator.pop(context);

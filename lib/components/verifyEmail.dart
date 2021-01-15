@@ -38,8 +38,11 @@ class _VerifyState extends State<VerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          "E-Mail has been sent to ${user.email} please confirm !"
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            "E-Mail has been sent to ${user.email} please confirm !"
+          ),
         ),
       ),
     );

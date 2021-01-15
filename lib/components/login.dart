@@ -12,7 +12,7 @@ class Login extends StatefulWidget {
 
 /// CLASS FOR THE LOGIN PAGE
 class _LoginState extends State<Login> {
-  //Databse management
+  //Database management
   final _formKey = GlobalKey<FormState>();
   final AuthService _auth = AuthService();
 
@@ -28,7 +28,11 @@ class _LoginState extends State<Login> {
         ? Loading()
         : Scaffold(
             backgroundColor: Colors.grey[300],
-            appBar: AppBar(title: Text("Login")),
+            appBar: AppBar(
+              title: Text("Login"),
+              leading: GestureDetector(
+              ),
+            ),
             body: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
